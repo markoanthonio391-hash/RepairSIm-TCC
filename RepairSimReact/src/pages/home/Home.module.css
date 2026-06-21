@@ -1,0 +1,85 @@
+.title{color : blue;
+    font-family: Unispace, monospace;
+    /*font-style: Bold;*/
+    text-align: center;
+    justify-content: center;
+    font-size : 90px;
+}
+
+.subtitle{color : orangered;
+    font-family: Unispace, monospace;
+    font-style: italic;
+    font-size : 50px;
+    justify-content: center;
+    text-align: center;
+}
+
+.teste{
+    border-radius: 100px;
+    width: auto;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+body{
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(255, 255, 255);
+}
+
+.container{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  /*margin-top: -100px; */
+    width: 100vw;
+    min-height: 100vh;
+    overflow: hidden;
+}
+.logoTechSolve{
+    position: absolute;
+    right: clamp(10px, 3vw, 40px);
+    bottom: clamp(10px, 3vh, 40px);
+}
+.tech-solve-logo{
+    width: clamp(150px, 6vw, 400px);
+    height: auto;
+}
+
+.menuButton{
+    font-family: Unispace, monospace;
+    width: 300px;
+    height: 75px;
+    margin: 10px;
+    font-size: 25px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: solid 4px black;
+    color: white;
+    padding: 10px 20px;
+}
+
+.jogar{
+    background-color: rgb(53, 167, 255);
+}
+
+.config{
+    background-color: rgb(79, 209, 197);
+}
+
+.conquistas{
+    background-color: rgb(167, 139, 250);
+}
+
+.sair{
+    background-color: rgb(243, 77, 0);
+}
