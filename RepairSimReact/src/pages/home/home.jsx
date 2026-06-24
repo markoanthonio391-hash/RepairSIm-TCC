@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import logoSair from '../../assets/logoSair.png'
 import logoConfig from '../../assets/logoConfig.png'
 import logoConquistas from '../../assets/logoConq.png'
-import logoPlay from '../../assets/logoPlay.png'
+import logoPlay from '../../assets/iconPlay.png'
+import backgroundImage from '../../assets/imgFundo.jpeg'
 
 function Home() {
  const navigate = useNavigate()
@@ -13,6 +14,9 @@ function Home() {
 
   return (
     <div className={styles.container}>
+      <div className={styles.bckground}>
+        <img src={backgroundImage} alt="Background" className={styles.bckground} />
+      </div>
       <div className={styles['tech-solve-logo']}>
         <img src={TechSolveLogo} alt="TechSolve Logo" className={`${styles.logoTechSolve} ${styles['tech-solve-logo']}`} />
       </div>
