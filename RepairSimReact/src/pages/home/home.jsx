@@ -1,8 +1,10 @@
 import styles from './Home.module.css';
 import { useState } from 'react'
-import TechSolveLogoV2 from './assets/TechSolveLogoV2.jpeg'
-function Home() {
+import TechSolveLogoV2 from '../../assets/TechSolveLogoV2.jpeg'
+import { useNavigate } from 'react-router-dom'
 
+function Home() {
+ const navigate = useNavigate()
  // const [count, setCount] = useState(0)
 
   return (
@@ -12,7 +14,8 @@ function Home() {
       </div>
       <h1 className={styles.title}>RepairSim</h1>
       <h2 className={styles.subtitle}>Aprenda. Repare. Evolua!</h2>
-      <button className={`${styles.menuButton} ${styles.jogar}`} onClick={() => alert('Jogar')}>Jogar</button>
+       
+     <button className={`${styles.menuButton} ${styles.jogar}`} onClick={() => navigate('/dificuldade')}>Jogar</button>
       <button className={`${styles.menuButton} ${styles.config}`} onClick={() => alert('Configurações')}>Configurações</button>
       <button className={`${styles.menuButton} ${styles.conquistas}`} onClick={() => alert('Conquistas')}>Conquistas</button>
       <button className={`${styles.menuButton} ${styles.sair}`} onClick={() => alert('Sair')}>Sair</button>  
