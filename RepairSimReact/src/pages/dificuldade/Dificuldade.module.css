@@ -58,16 +58,48 @@ body{
     height: auto;
     border-radius: 150px;
 }
+.logoFacil{
+    position: absolute;
+    left: clamp(12px, 2.5%, 16px);
+    height: clamp(10px, 8vh, 40px);
+    width: auto;
+    object-fit: contain;
+}
 
+.logoNormal{
+    position: absolute;
+    left: clamp(12px, 2.5%, 16px);
+    height: clamp(10px, 8vh, 40px);
+    width: auto;
+    object-fit: contain;
+}
+.logoDificil{
+    position: absolute;
+    left: clamp(12px, 2.5%, 16px);
+    height: clamp(10px, 8vh, 40px);
+    width: auto;
+    object-fit: contain;
+}
+.logoVoltar{
+    position: absolute;
+    left: clamp(16px, 1.5%, 16px);
+    height: clamp(30px, 6vh, 40px);
+    width: auto;
+    object-fit: contain;
+}
 .menuButton{
+    position: relative;
+    display: flex;
+    align-items:center;
+    justify-content: center;
     font-family: Unispace, monospace;
-    border: solid 4px black;
-    width: 300px;
-    height: 75px;
+    width: clamp(350px, 8vw, 400px);
+    height: clamp(75px, 8vh, 100px);
     margin: 10px;
     font-size: 25px;
     cursor: pointer;
     border-radius: 10px;
+    border: solid 4px black;
     color: white;
     padding: 10px 20px;
 }
@@ -78,8 +110,8 @@ body{
     bottom: clamp(10px, 6vh, 100px);
     font-family: Unispace, monospace;
     border: solid 4px black;
-    width: 300px;
-    height: 75px;
+    width: clamp(350px, 8vw, 400px);
+    height: clamp(75px, 8vh, 100px);
     margin: 10px;
     font-size: 25px;
     cursor: pointer;
@@ -89,17 +121,17 @@ body{
 }
 
 .facil{
-    background-color: lightgreen;
+    background-color: green;
 }
 
 .normal{
-    background-color: orange;
+    background-color: darkgoldenrod;
 }
 
 .dificil{
-    background-color: lightcoral;
+    background-color: rgb(190, 0, 0);
 }
 
 .voltar{
-    background-color: #A78BFA;
+    background-color: gray;
 }
