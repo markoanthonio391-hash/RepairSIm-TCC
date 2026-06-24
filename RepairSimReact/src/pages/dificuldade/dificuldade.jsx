@@ -1,11 +1,15 @@
 import { useState } from 'react'
 import styles from './Dificuldade.module.css'
+import TechSolveLogo from '../../assets/TechSolveLogo.png'
 function Dificuldade() {
 
  // const [count, setCount] = useState(0)
 
   return (
     <div className={styles.container}>
+      <div className={styles['tech-solve-logo']}>
+        <img src={TechSolveLogo} alt="TechSolve Logo" className={`${styles.logoTechSolve} ${styles['tech-solve-logo']}`} />
+      </div>
       <h1 className={styles.title}>DIFICULDADES</h1>
       <h2 className={styles.subtitle}>Selecione uma dificuldade</h2>
       <button className={`${styles.menuButton} ${styles.facil}`} onClick={() => alert('Fácil')}>Fácil</button>
