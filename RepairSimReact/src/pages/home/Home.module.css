@@ -51,8 +51,9 @@ body{
     bottom: clamp(10px, 3vh, 40px);
 }
 .tech-solve-logo{
-    width: clamp(150px, 6vw, 400px);
+    width: clamp(100px, 5vw, 350px);
     height: auto;
+    border-radius: 150px;
 }
 
 .logoPlay{
@@ -81,7 +82,7 @@ body{
 .logoSair{
     position: absolute;
     left: clamp(20px, 2.5%, 24px);
-    height: clamp(40px, 6vh, 80px);
+    height: clamp(25px, 6vh, 50px);
     width: auto;
     object-fit: contain;
 }
