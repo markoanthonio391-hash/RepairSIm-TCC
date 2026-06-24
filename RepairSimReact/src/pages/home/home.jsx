@@ -24,6 +24,7 @@ function Home() {
       <button className={`${styles.menuButton} ${styles.conquistas}`} onClick={() => alert('Conquistas')}><img src={logoConquistas} alt="Conquistas" className={styles['logoConquistas']} />Conquistas</button>
       <button className={`${styles.menuButton} ${styles.sair}`} onClick={() => alert('Sair')}><img src={logoSair} alt="Sair" className={styles['logoSair']} />Sair</button>  
     </div>
+    
   );
 }
 export default Home; 
