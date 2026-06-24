@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import styles from './Dificuldade.module.css'
-import TechSolveLogo from '../../assets/TechSolveLogo.png'
+import TechSolveLogo from './assets/TechSolveLogo.png'
 function Dificuldade() {
 
  // const [count, setCount] = useState(0)

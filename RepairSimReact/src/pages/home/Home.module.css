@@ -1,4 +1,4 @@
-.title{color : blue;
+.title{color : rgb(229, 229, 255);
     font-family: Unispace, monospace;
     /*font-style: Bold;*/
     text-align: center;
@@ -31,7 +31,7 @@ body{
     justify-content: center;
     align-items: center;
     justify-content: center;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(1, 0, 44);
 }
 
 .container{
@@ -55,10 +55,45 @@ body{
     height: auto;
 }
 
+.logoPlay{
+    position: absolute;
+    left: clamp(8px, 2.5%, 16px);
+    height: clamp(65px, 6vh, 130px);
+    width: auto;
+    object-fit: contain;
+
+}
+.logoConfig{
+    position: absolute;
+    left: clamp(8px, 2.5%, 12px);
+    height: clamp(8px, 6vh, 50px);
+    width: auto;
+    object-fit: contain;
+
+}
+.logoConquistas{
+    position: absolute;
+    left: clamp(9px, 2.5%, 16px);
+    height: clamp(75px, 6vh, 200px);
+    width: auto;
+    object-fit: contain;
+}
+.logoSair{
+    position: absolute;
+    left: clamp(20px, 2.5%, 24px);
+    height: clamp(40px, 6vh, 80px);
+    width: auto;
+    object-fit: contain;
+}
+
 .menuButton{
+    position: relative;
+    display: flex;
+    align-items:center;
+    justify-content: center;
     font-family: Unispace, monospace;
-    width: 300px;
-    height: 75px;
+    width: clamp(350px, 8vw, 400px);
+    height: clamp(75px, 8vh, 100px);
     margin: 10px;
     font-size: 25px;
     cursor: pointer;
