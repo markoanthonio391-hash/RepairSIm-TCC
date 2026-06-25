@@ -5,10 +5,14 @@ import logoFacil from '../../assets/logoFacil.png'
 import logoNormal from '../../assets/logoNormal.png'
 import logoDificil from '../../assets/logoDificil.png'
 import logoVoltar from '../../assets/logoVoltar.png'
+import { useNavigate } from 'react-router-dom';
 
-function Dificuldade() {
+
+function Dificuldade()
+ {
 
  // const [count, setCount] = useState(0)
+const navigate = useNavigate();
 
   return (
     <div className={styles.container}>
@@ -20,7 +24,7 @@ function Dificuldade() {
       <button className={`${styles.menuButton} ${styles.facil}`} onClick={() => alert('Fácil')}><img src={logoFacil} alt="Fácil" className={styles.logoFacil}/>Fácil</button>
       <button className={`${styles.menuButton} ${styles.normal}`} onClick={() => alert('Normal')}><img src={logoNormal} alt="Normal" className={styles.logoNormal}/>Normal</button>
       <button className={`${styles.menuButton} ${styles.dificil}`} onClick={() => alert('Difícil')}><img src={logoDificil} alt="Difícil" className={styles.logoDificil}/>Difícil</button>
-      <button className={`${styles.voltarButton} ${styles.voltar}`} onClick={() => alert('Voltar')}><img src={logoVoltar} alt="Voltar" className={styles.logoVoltar}/>Voltar</button>
+      <button className={`${styles.voltarButton} ${styles.voltar}`} onClick={() => navigate(-1)}><img src={logoVoltar} alt="Voltar" className={styles.logoVoltar}/>Voltar</button>
     </div>
   );
 }

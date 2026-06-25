@@ -12,7 +12,11 @@
     position: relative;    
     bottom: clamp(1rem, 5vw, 2rem);
 }
-
+.menuSairButton{
+    width: clamp(100px, 5vw, 350px);
+    height: auto;
+    border-radius: 150px;    
+}
 .subtitle{
     font-display: block;
     display: flex;
