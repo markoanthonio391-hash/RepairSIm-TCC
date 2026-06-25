@@ -10,8 +10,15 @@ import backgroundImage from '../../assets/imgFundo.jpeg'
 
 function Home() {
  const navigate = useNavigate()
- // const [count, setCount] = useState(0)
+ const [estaAberta, setEstaAberta] = useState(true)
+ 
+ const fecharJanela = () => {
+  setEstaAberta(false);
+ };
 
+ if (!estaAberta) {
+  return null;
+ }
   return (
     <div className={styles.container}>
       <div className={styles.bckground}>
@@ -26,7 +33,7 @@ function Home() {
       <button className={`${styles.menuButton} ${styles.jogar}`} onClick={() => navigate('/dificuldade')}><img src={logoPlay} alt="Jogar" className={styles['logoPlay']} />Jogar</button>
       <button className={`${styles.menuButton} ${styles.config}`} onClick={() => alert('Configurações')}><img src={logoConfig} alt="Configurações" className={styles['logoConfig']} />Configurações</button>
       <button className={`${styles.menuButton} ${styles.conquistas}`} onClick={() => alert('Conquistas')}><img src={logoConquistas} alt="Conquistas" className={styles['logoConquistas']} />Conquistas</button>
-      <button className={`${styles.menuButton} ${styles.sair}`} onClick={() => alert('Sair')}><img src={logoSair} alt="Sair" className={styles['logoSair']} />Sair</button>  
+      <button className={`${styles.menuButton} ${styles.sair}`} onClick={() => fecharJanela('Sair')}><img src={logoSair} alt="Sair" className={styles['logoSair']} />Sair</button>  
     </div>
     
   );
