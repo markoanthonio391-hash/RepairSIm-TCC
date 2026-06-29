@@ -1,5 +1,5 @@
 .title{
-    color : rgb(229, 229, 255);
+    color : #F5F7FA; 
     font-family: Unispace, monospace;
     /*font-style: Bold;*/
     text-align: center;
@@ -21,7 +21,7 @@
     font-display: block;
     display: flex;
     position: relative;
-    color : orangered;
+    color : #A8B3C7;
     font-family: Unispace, monospace;
     font-style: italic;
     justify-content: center;
@@ -63,6 +63,17 @@ body{
     min-height: 100vh;
     overflow: hidden;
 }
+.containerButtons{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+   /* margin-top: clamp(-35px, 3%, -100px); */
+    width: 75vw;
+    min-height: 75vh;
+    overflow: hidden;
+}
 .bckground{
     position: absolute;
     top: 0;
@@ -84,32 +95,31 @@ body{
 }
 
 .logoPlay{
-    position: relative;
-    right: clamp(2rem, 97.5%, 5.7rem);
-    height: clamp(65px, 2vh, 130px);
+    position: absolute;
+    right: clamp(8rem, 97.5%, 17.4rem);
+    height: clamp(55px, 2vh, 130px);
     width: auto;
     object-fit: contain;
-
 }
 .logoConfig{
-    position: relative;
-    right: clamp(1rem, 97.5%, 1.8rem);
-    height: clamp(8px, 6vh, 50px);
+    position: absolute;
+    right: clamp(8.5rem, 97.5%, 16.5rem);
+    height: clamp(8px, 5.8vh, 50px);
     width: auto;
     object-fit: contain;
 
 }
 .logoConquistas{
-    position: relative;
-    right: clamp(3rem, 97.5%, 3.3rem);
+    position:absolute;
+    right: clamp(9rem, 97.5%, 16.5rem);
     height: clamp(75px, 6vh, 200px);
     width: auto;
     object-fit: contain;
 }
 .logoSair{
-    position: relative;
-    right: clamp(3rem, 97.5%, 6rem);
-    height: clamp(25px, 6vh, 50px);
+    position: absolute;
+    right: clamp(12.5rem, 97.5%, 17.3rem);
+    height: clamp(25px, 5.5vh, 50px);
     width: auto;
     object-fit: contain;
 }
@@ -119,30 +129,38 @@ body{
     display: flex;
     align-items:center;
     justify-content: center;
-    font-family: Unispace, monospace;
     width: clamp(350px, 8vw, 400px);
     height: clamp(75px, 8vh, 100px);
     margin: 10px;
-    font-size: 25px;
     cursor: pointer;
     border-radius: 10px;
-    border: solid 4px black;
-    color: white;
-    padding: 10px 25px;
+    padding: 0px 0px;
 }
 
 .jogar{
-    background-color: rgb(53, 167, 255);
+    background-color: #009dff;
+    font-family: Unispace, monospace;
+    font-size: 25px;
+    color: #ffffff;
 }
 
 .config{
-    background-color: rgb(79, 209, 197);
+    background-color: #36d8ff;
+    font-family: Unispace, monospace;
+    font-size: 25px;
+    color: black;
 }
 
 .conquistas{
-    background-color: rgb(167, 139, 250);
+    background-color: #5ef2ff;
+    font-family: Unispace, monospace;
+    font-size: 25px;
+    color: black;
 }
 
 .sair{
-    background-color: rgb(243, 77, 0);
+    background-color: #ff4d4d;
+    font-family: Unispace, monospace;
+    font-size: 25px;
+    color: black;
 }
