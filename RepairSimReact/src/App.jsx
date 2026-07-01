@@ -4,6 +4,7 @@ import TechSolveLogo from './assets/TechSolveLogo.png'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/home/home'
 import Dificuldade from './pages/dificuldade/dificuldade'
+import Config from './pages/home/Config/Config'
 function App() {
 
  // const [count, setCount] = useState(0)
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/dificuldade' element={<Dificuldade />} />
+        <Route path='/config' element={<Config />} />
         <Route path='*' element={<h1>Not Found</h1>} />
       </Routes>
     </BrowserRouter>
