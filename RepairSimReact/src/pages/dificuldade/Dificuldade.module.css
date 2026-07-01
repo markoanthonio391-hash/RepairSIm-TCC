@@ -95,11 +95,10 @@ body{
     font-family: Unispace, monospace;
     width: clamp(350px, 8vw, 400px);
     height: clamp(75px, 8vh, 100px);
-    margin: 10px;
+    margin: 12px;
     font-size: 25px;
     cursor: pointer;
     border-radius: 10px;
-    border: solid 4px black;
     color: white;
     padding: 10px 20px;
 }
@@ -134,4 +133,13 @@ body{
 
 .voltar{
     background-color: gray;
+}
+
+.bckground{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
 }
