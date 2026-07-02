@@ -1,22 +1,19 @@
 .title{
     color : #F5F7FA; 
     font-family: Unispace, monospace;
+    font-style: italic;
     /*font-style: Bold;*/
     text-align: center;
     justify-content: center;
-    font-size: clamp(1rem, 3vw, 3rem);
+    font-size: clamp(20px, 3vw, 40px);
     word-break: break-word;
     line-height: 1.2;
     font-display: block;
     display: flex;
     position: relative;    
-    bottom: clamp(18rem, 6vh, 21rem);
+    bottom: clamp(5rem, 3vh, 10rem);
 }
-.menuSairButton{
-    width: clamp(100px, 5vw, 350px);
-    height: auto;
-    border-radius: 150px;    
-}
+
 .subtitle{
     font-display: block;
     display: flex;
@@ -64,54 +61,13 @@ body{
     overflow: hidden;
 }
 
-.bckground{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1;
-}
-
-.logoTechSolve{
-    position:fixed;
-    right: clamp(1.2rem, 3vw, 2rem);
-    bottom: clamp(1rem, 1vh, 2rem);
-}
-.tech-solve-logo{
-    width: clamp(100px, 5vw, 350px);
-    height: auto;
-    border-radius: 150px;
-}
-
-.logoPlay{
-    position: absolute;
-    right: clamp(12rem, 97.5%, 17.8rem);
-    height: clamp(45px, 2vh, 130px);
-    width: auto;
-    object-fit: contain;
-}
-.logoConfig{
-    position: absolute;
-    right: clamp(10.5rem, 100%, 16.9rem);
-    height: 45px;
-    width: auto;
-    object-fit: contain;
-
-}
-.logoConquistas{
-    position:absolute;
-    right: clamp(9rem, 97.5%, 16.7rem);
-    height: clamp(75px, 6vh, 200px);
-    width: auto;
-    object-fit: contain;
-}
-.logoSair{
-    position: absolute;
-    right: clamp(12.5rem, 97.5%, 17.67rem);
-    height: 45px;
-    width: auto;
-    object-fit: contain;
+.textTema{
+    font-family: Unispace, monospace;
+    color:aquamarine;
+    background-color: transparent;
+    justify-content: center;
+    text-align: left;
+    font-size: 15px;
 }
 
 .menuButton{
@@ -120,21 +76,39 @@ body{
     display: flex;
     align-items:center;
     justify-content: center;
-    width: clamp(21.9rem, 2vw, 30rem);
+    width: clamp(2.9rem, 2vw, 3rem);
     height: clamp(4.5rem, 2vh, 8rem);
-    margin: 12.5px;
+    margin: 0px;
     cursor: pointer;
     border-radius: 10px;
     padding: 0px 0px;
     border: 3px solid transparent; 
     transition: all 0.15s ease-in-out;
 }
+.containerTema{
+    width: 20vw;
+    height: 3vh;
+    position: relative;
+    display: flex;
+    flex-direction: inline;
 
+    left: clamp(-32.35rem, 2vh, -40.85rem );
+    align-items: left;
+    justify-content: left;
+    /* margin-top: clamp(-35px, 3%, -100px); */
+    overflow: hidden;
 
+}
+.buttonTema{
+    font-family: Unispace, monospace;
+    color: white;
+    background-color: #009dff;
+
+}
 
 .config{
     background-color: #36d8ff;
     font-family: Unispace, monospace;
-    font-size: 25px;
+    font-size: clamp(10px, 12px, 30px);
     color: black;
 }
