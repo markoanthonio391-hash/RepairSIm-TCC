@@ -12,7 +12,9 @@ conexao.connect((erro) => { //tentativa de conexão
     if (erro) {
         console.log("Erro ao conectar!");
     }
-    console.log("Banco conectado!");
+    else{
+        console.log("Banco conectado!");
+    }
 });
 
 module.exports = conexao; //exportando a conexão, qualquer aquivo pode usar ela. EX: const conexao = require('../config/db');
