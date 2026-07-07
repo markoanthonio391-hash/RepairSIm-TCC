@@ -86,13 +86,11 @@ body{
     transition: all 0.15s ease-in-out;
 }
 .containerTema{
-    width: 20vw;
+    width: 100vw;
     height: 3vh;
-    position: relative;
+    position: absolute;
     display: flex;
     flex-direction: inline;
-
-    left: clamp(-32.35rem, 2vh, -40.85rem );
     align-items: left;
     justify-content: left;
     /* margin-top: clamp(-35px, 3%, -100px); */
@@ -101,9 +99,14 @@ body{
 
 }
 .buttonTema{
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items:center;
     font-family: Unispace, monospace;
     color: white;
     background-color: #009dff;
+    left: clamp(2rem, 2vw, 25rem);
 
 }
 
