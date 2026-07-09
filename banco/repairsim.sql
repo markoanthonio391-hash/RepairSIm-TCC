@@ -1,199 +1,99 @@
--- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
---
--- Host: 127.0.0.1    Database: repairsim1
--- ------------------------------------------------------
--- Server version	8.0.45
+create database repairsim1;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+use repairsim1;
 
---
--- Table structure for table `desafio_itens`
---
+create table usuario (
+    id_usuario int auto_increment primary key,
+    nome varchar(100) not null,
+    username varchar(40) not null unique,
+    data_nascimento date not null,
+    email varchar(100) not null unique,
+    senha varchar(255) not null,
+    criado_em timestamp not null default current_timestamp
+);
 
-DROP TABLE IF EXISTS `desafio_itens`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `desafio_itens` (
-  `id_desafio_item` int NOT NULL AUTO_INCREMENT,
-  `id_desafio` int NOT NULL,
-  `id_item` int NOT NULL,
-  `e_correto` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id_desafio_item`),
-  KEY `fk_desafio_itens_desafio` (`id_desafio`),
-  KEY `fk_desafio_itens_item` (`id_item`),
-  CONSTRAINT `fk_desafio_itens_desafio` FOREIGN KEY (`id_desafio`) REFERENCES `desafios` (`id_desafio`) ON DELETE CASCADE,
-  CONSTRAINT `fk_desafio_itens_item` FOREIGN KEY (`id_item`) REFERENCES `itens` (`id_item`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- tabela dos desafios
+create table desafios (
+    id_desafio int auto_increment primary key,
+    titulo varchar(80) not null,
+    descricao varchar(255) not null,
+    imagem_pc varchar(255) not null, 
+    dica varchar(255),
+    dificuldade enum('Facil', 'Medio', 'Dificil') not null,
+    pontos_base int not null default 0
+);
 
---
--- Dumping data for table `desafio_itens`
---
+-- tabela de todas as peças e ferramentas do jogo
+create table itens (
+    id_item int auto_increment primary key,
+    nome varchar(80) not null,
+    tipo enum('peca', 'ferramenta') not null,
+    caminho_imagem varchar(255) not null
+);
 
-LOCK TABLES `desafio_itens` WRITE;
-/*!40000 ALTER TABLE `desafio_itens` DISABLE KEYS */;
-/*!40000 ALTER TABLE `desafio_itens` ENABLE KEYS */;
-UNLOCK TABLES;
+-- relaciona os desafios com os itens
+create table desafio_itens (
+    id_desafio_item int auto_increment primary key,
+    id_desafio int not null,
+    id_item int not null,
+    e_correto boolean not null default false,
 
---
--- Table structure for table `desafios`
---
+    constraint fk_desafio_itens_desafio
+        foreign key (id_desafio)
+        references desafios(id_desafio)
+        on delete cascade,
 
-DROP TABLE IF EXISTS `desafios`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `desafios` (
-  `id_desafio` int NOT NULL AUTO_INCREMENT,
-  `titulo` varchar(80) NOT NULL,
-  `descricao` varchar(255) NOT NULL,
-  `imagem_pc` varchar(255) NOT NULL,
-  `dica` varchar(255) DEFAULT NULL,
-  `dificuldade` enum('Facil','Medio','Dificil') NOT NULL,
-  `pontos_base` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id_desafio`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+    constraint fk_desafio_itens_item
+        foreign key (id_item)
+        references itens(id_item)
+);
 
---
--- Dumping data for table `desafios`
---
+-- resultado final do jogador
+create table resultado (
+    id_resultado int auto_increment primary key,
+    id_usuario int not null,
+    id_desafio int not null,
+    erros int not null default 0,
+    pontos int not null default 0,
+    tempo_segundos int not null default 0,
 
-LOCK TABLES `desafios` WRITE;
-/*!40000 ALTER TABLE `desafios` DISABLE KEYS */;
-/*!40000 ALTER TABLE `desafios` ENABLE KEYS */;
-UNLOCK TABLES;
+    constraint fk_resultado_usuario
+        foreign key (id_usuario)
+        references usuario(id_usuario),
 
---
--- Table structure for table `itens`
---
+    constraint fk_resultado_desafio
+        foreign key (id_desafio)
+        references desafios(id_desafio)
+);
 
-DROP TABLE IF EXISTS `itens`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `itens` (
-  `id_item` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(80) NOT NULL,
-  `tipo` enum('peca','ferramenta') NOT NULL,
-  `caminho_imagem` varchar(255) NOT NULL,
-  PRIMARY KEY (`id_item`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- relatório preenchido pelo jogador
+create table relatorio (
+    id_relatorio int auto_increment primary key,
+    id_resultado int not null unique,
+    texto_base text not null,
+    peca_escolhida varchar(80) not null,
+    ferramenta_escolhida varchar(80) not null,
+    observacao text,
 
---
--- Dumping data for table `itens`
---
+    constraint fk_relatorio_resultado
+        foreign key (id_resultado)
+        references resultado(id_resultado)
+        on delete cascade
+);
 
-LOCK TABLES `itens` WRITE;
-/*!40000 ALTER TABLE `itens` DISABLE KEYS */;
-/*!40000 ALTER TABLE `itens` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO itens (nome, tipo, caminho_imagem) VALUES
+('Pasta termica','ferramenta','/imagens/itens/pasta_termica.jpeg'),
+('Chave de Fenda', 'ferramenta', '/imagens/itens/chave_philips.jpeg'),
+('Pincel', 'ferramenta', '/imagens/itens/pincel.jpeg');
 
---
--- Table structure for table `relatorio`
---
+INSERT INTO desafios (titulo, descricao, imagem_pc, dica, dificuldade, pontos_base) VALUES
+('Caso 01 – Acúmulo de Poeira', ' Meu computador está ficando muito quente quando uso programas simples. As ventoinhas fazem bastante barulho e às vezes o sistema fica lento ou trava','/imagens/pc/pc_ligado.jpeg', 'Abra o gabinete e faça uma limpeza geral.', 'Facil', 100),
+('Caso 02 - Memória ram Mal Emcaixada',' Quando aperto o botão de ligar, as luzes acendem, mas a tela continua preta','/imagens/pc/pc_ligado.jpeg', 'Verifique o encaixe e limpe os contatos das memórias.', 'Facil', 100),
+('Caso 03 - Cabo sata Desconectado',' Meu computador liga, mas aparece uma mensagem dizendo que não encontrou o sistema', '/imagens/pc/pc_ligado.jpeg', 'Verifique se os cabos do HD/SSD estão bem firmes.', 'Facil', 100),
+('Caso 04 - Pasta termica ressecada',' O computador está esquentando muito e desligando sozinho', '/imagens/pc/pc_ligado.jpeg', 'Verifique se os cabos do HD/SSD estão bem firmes.', 'Facil', 100);
 
-DROP TABLE IF EXISTS `relatorio`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `relatorio` (
-  `id_relatorio` int NOT NULL AUTO_INCREMENT,
-  `id_resultado` int NOT NULL,
-  `texto_base` text NOT NULL,
-  `peca_escolhida` varchar(80) NOT NULL,
-  `ferramenta_escolhida` varchar(80) NOT NULL,
-  `observacao` text,
-  PRIMARY KEY (`id_relatorio`),
-  UNIQUE KEY `id_resultado` (`id_resultado`),
-  CONSTRAINT `fk_relatorio_resultado` FOREIGN KEY (`id_resultado`) REFERENCES `resultado` (`id_resultado`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+update desafios
+set dica = 'Verifique a pasta térmica e o sistema de refrigeração do processador.'
+where id_desafio = 4;
 
---
--- Dumping data for table `relatorio`
---
-
-LOCK TABLES `relatorio` WRITE;
-/*!40000 ALTER TABLE `relatorio` DISABLE KEYS */;
-/*!40000 ALTER TABLE `relatorio` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `resultado`
---
-
-DROP TABLE IF EXISTS `resultado`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `resultado` (
-  `id_resultado` int NOT NULL AUTO_INCREMENT,
-  `id_usuario` int NOT NULL,
-  `id_desafio` int NOT NULL,
-  `erros` int NOT NULL DEFAULT '0',
-  `pontos` int NOT NULL DEFAULT '0',
-  `tempo_segundos` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id_resultado`),
-  KEY `fk_resultado_usuario` (`id_usuario`),
-  KEY `fk_resultado_desafio` (`id_desafio`),
-  CONSTRAINT `fk_resultado_desafio` FOREIGN KEY (`id_desafio`) REFERENCES `desafios` (`id_desafio`),
-  CONSTRAINT `fk_resultado_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `resultado`
---
-
-LOCK TABLES `resultado` WRITE;
-/*!40000 ALTER TABLE `resultado` DISABLE KEYS */;
-/*!40000 ALTER TABLE `resultado` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `usuario`
---
-
-DROP TABLE IF EXISTS `usuario`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `usuario` (
-  `id_usuario` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(100) NOT NULL,
-  `username` varchar(40) NOT NULL,
-  `data_nascimento` date NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `senha` varchar(255) NOT NULL,
-  `criado_em` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id_usuario`),
-  UNIQUE KEY `username` (`username`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `usuario`
---
-
-LOCK TABLES `usuario` WRITE;
-/*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-/*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2026-06-30 22:03:12
+select * from desafios;

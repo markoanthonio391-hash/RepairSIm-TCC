@@ -22,4 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+RepairSimBackend/node_modules/
+RepairSimReact/node_modules/
+
 .env
