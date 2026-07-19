@@ -10,7 +10,11 @@ const desafioRoutes = require('./routes/desafioRoutes'); // importa as informaç
 
 const itemRoutes = require('./routes/itemRoutes');
 
+const cors = require('cors');
+
 const app = express(); // Cria a aplicação Express
+
+app.use(cors());
 
 app.use(express.static(path.join(__dirname, '../public')));
 
