@@ -10,6 +10,14 @@ const desafioRoutes = require('./routes/desafioRoutes'); // importa as informaç
 
 const itemRoutes = require('./routes/itemRoutes');
 
+const usuarioRoutes = require('./routes/usuarioRoutes');
+
+const resultadoRoutes = require('./routes/resultadoRoutes');
+
+const relatorioRoutes = require('./routes/relatorioRoutes');
+
+const desafioImagemRoutes = require('./routes/desafioImagemRoutes');
+
 const cors = require('cors');
 
 const app = express(); // Cria a aplicação Express
@@ -23,6 +31,14 @@ require('./config/db'); // Executa a conexão com o banco de dados
 app.use('/desafios', desafioRoutes);
 
 app.use('/itens', itemRoutes);
+
+app.use('/usuarios', usuarioRoutes);
+
+app.use('/resultados', resultadoRoutes);
+
+app.use('/relatorios', relatorioRoutes);
+
+app.use('/desafioImagem', desafioImagemRoutes);
 
 const porta = 3000; // Define a porta do servidor
 
