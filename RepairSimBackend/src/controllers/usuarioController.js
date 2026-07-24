@@ -40,6 +40,12 @@ exports.cadastrar = async (req, res) => {
         });
     }
 
+    if(senha.length > 20) { //verifica se a senha tem menos de 6 caracteres
+        return res.status(400).json({
+            mensagem: 'A senha não pode passar de 20 caracteres!'
+        });
+    }
+
     try {
         const verificacaoUsuario = 'select id_usuario from usuario where email = ? or username = ?'; //verifica se o email ou username já estão cadastrados
     
