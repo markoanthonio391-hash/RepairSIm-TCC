@@ -1,12 +1,12 @@
-// Arquivo principal do Backend: inicia o servidor e estabelece a conexão com o banco.
+//arquivo principal do Backend: inicia o servidor e estabelece a conexão com o banco.
 
-require('dotenv').config(); // Carrega as variáveis do arquivo .env
+require('dotenv').config(); //carrega as variáveis do arquivo .env
 
-const express = require('express'); // Importa o framework Express
+const express = require('express'); //importa o framework Express
 
 const path = require('path'); //se um arquivo existe ele pode abri no navergador, como imagens
 
-const desafioRoutes = require('./routes/desafioRoutes'); // importa as informações de deafios
+const desafioRoutes = require('./routes/desafioRoutes'); //importa as informações de deafios
 
 const itemRoutes = require('./routes/itemRoutes');
 
@@ -20,15 +20,15 @@ const desafioImagemRoutes = require('./routes/desafioImagemRoutes');
 
 const cors = require('cors');
 
-const app = express(); // cria a aplicação Express
+const app = express(); //cria a aplicação Express
 
 app.use(cors());
 
-app.use(express.json()); // permite que o servidor receba dados em formato json
+app.use(express.json()); //permite que o servidor receba dados em formato json
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-require('./config/db'); // executa a conexão com o banco de dados
+require('./config/db'); //executa a conexão com o banco de dados
 
 app.use('/desafios', desafioRoutes);
 
@@ -42,8 +42,8 @@ app.use('/relatorios', relatorioRoutes);
 
 app.use('/desafioImagem', desafioImagemRoutes);
 
-const porta = 3000; // define a porta do servidor
+const porta = 3000; //define a porta do servidor
 
-app.listen(porta, () => { // inicia o servidor
+app.listen(porta, () => { //inicia o servidor
     console.log(`Servidor rodando na porta ${porta}`);
 });
