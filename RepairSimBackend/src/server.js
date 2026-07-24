@@ -20,13 +20,15 @@ const desafioImagemRoutes = require('./routes/desafioImagemRoutes');
 
 const cors = require('cors');
 
-const app = express(); // Cria a aplicação Express
+const app = express(); // cria a aplicação Express
 
 app.use(cors());
 
+app.use(express.json()); // permite que o servidor receba dados em formato json
+
 app.use(express.static(path.join(__dirname, '../public')));
 
-require('./config/db'); // Executa a conexão com o banco de dados
+require('./config/db'); // executa a conexão com o banco de dados
 
 app.use('/desafios', desafioRoutes);
 
@@ -40,8 +42,8 @@ app.use('/relatorios', relatorioRoutes);
 
 app.use('/desafioImagem', desafioImagemRoutes);
 
-const porta = 3000; // Define a porta do servidor
+const porta = 3000; // define a porta do servidor
 
-app.listen(porta, () => { // Inicia o servidor
+app.listen(porta, () => { // inicia o servidor
     console.log(`Servidor rodando na porta ${porta}`);
 });
