@@ -58,7 +58,15 @@
     border: none;
 }
 
-
+.error{
+    color: red;
+    font-family: Unispace, monospace;
+    font-size: clamp(10px, 2vw, 20px);
+    position: relative;
+    display: flex;
+    bottom: clamp(1rem, 2vw, 2rem);
+    padding-top: 10px;
+}
 
 .input{
     position: relative;
