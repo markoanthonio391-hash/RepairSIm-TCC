@@ -172,6 +172,7 @@ body{
     background-color: transparent;
     font-family: Unispace, monospace;
     font-size: 25px;
-    color: black;
+    color: white;
     border-radius: 150px;
+    width: 90px; /*editando a largura*/
 }
