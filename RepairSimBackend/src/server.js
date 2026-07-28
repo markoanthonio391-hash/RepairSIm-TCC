@@ -2,11 +2,13 @@
 
 require('dotenv').config(); //carrega as variáveis do arquivo .env
 
-const express = require('express'); //importa o framework Express
+const express = require('express'); //importa o framework Express, ele permite fazer rotas simples do banco. Ex: /desafios
 
-const path = require('path'); //se um arquivo existe ele pode abri no navergador, como imagens
+const path = require('path'); //ajuda o servidor a achar a pasta certa de arquivos e imagens
 
-const desafioRoutes = require('./routes/desafioRoutes'); //importa as informações de deafios
+
+//a seguir, vem as variaveis routers, elas tem o objetivo de puxa todas as informações de cada tabela separadamente 
+const desafioRoutes = require('./routes/desafioRoutes'); 
 
 const itemRoutes = require('./routes/itemRoutes');
 
@@ -18,18 +20,22 @@ const relatorioRoutes = require('./routes/relatorioRoutes');
 
 const desafioImagemRoutes = require('./routes/desafioImagemRoutes');
 
-const cors = require('cors');
 
-const app = express(); //cria a aplicação Express
+const cors = require('cors'); //permite o acesso ao servidor pelo FrontEnd
 
-app.use(cors());
+const app = express(); //cria a aplicação Express para ser usada
 
-app.use(express.json()); //permite que o servidor receba dados em formato json
+app.use(cors()); //realiza a conversa entre o back e front
 
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.json()); //permite que o servidor entenda e receba dados no formato JSON
 
-require('./config/db'); //executa a conexão com o banco de dados
+app.use(express.static(path.join(__dirname, '../public'))); //libera acesso público a arquivos estáticos (fotos, PDFs, etc.) na pasta 'public'
 
+require('./config/db'); //importa e executa a conexão com o banco de dados
+
+
+//a seguir, vinculação dos caminhos da URL (endpoints. Ex: /desafios) com os seus respectivos arquivos de rotas
+//usado para facilitar a leitura
 app.use('/desafios', desafioRoutes);
 
 app.use('/itens', itemRoutes);
@@ -42,8 +48,10 @@ app.use('/relatorios', relatorioRoutes);
 
 app.use('/desafioImagem', desafioImagemRoutes);
 
-const porta = 3000; //define a porta do servidor
 
-app.listen(porta, () => { //inicia o servidor
-    console.log(`Servidor rodando na porta ${porta}`);
+const porta = 3000; //define a porta que o servidor vai rodar durante a aplicação
+
+//inicia o servidor Node.js e deixa ele escutando as requisições na porta definida
+app.listen(porta, () => { 
+    console.log(`Servidor rodando na porta ${porta}`);//mensagem que aparece se o servidor roda
 });
