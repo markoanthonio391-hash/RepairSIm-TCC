@@ -1,5 +1,5 @@
 .title{
-    color : #F5F7FA; 
+    color : #000000; 
     font-family: Unispace, monospace;
     font-style: italic;
     /*font-style: Bold;*/
@@ -8,11 +8,14 @@
     font-size: clamp(20px, 3vw, 40px);
     word-break: break-word;
     line-height: 1.2;
-    font-display: block;
+    font-display: flex;
     display: flex;
     position: relative;    
-    bottom: clamp(5rem, 3vh, 10rem);
+    bottom: clamp(15rem, 2vh, 20rem);
+    width: 25vw;
+    height: 10vh;
 }
+
 
 .subtitle{
     font-display: block;
@@ -29,6 +32,7 @@
     bottom: clamp(1rem, 3vw, 4rem);
 }
 
+
 .teste{
     border-radius: 100px;
     width: auto;
@@ -39,6 +43,7 @@
     justify-content: center;
 }
 
+
 body{
     margin: 0;
     min-height: 100vh;
@@ -46,7 +51,15 @@ body{
     justify-content: center;
     align-items: center;
     justify-content: center;
-    background-color: rgb(1, 0, 44);
+    background-color: transparent;
+}
+.bckground{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
 }
 
 .container{
@@ -55,20 +68,98 @@ body{
     flex-direction:column;
     align-items: center;
     justify-content: center;
-   /* margin-top: clamp(-35px, 3%, -100px); */
     width: 100vw;
     min-height: 100vh;
     overflow: hidden;
 }
 
-.textTema{
+
+
+.buttonSom{
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    width: clamp(8rem, 3vw, 16rem);
+    height: clamp(2rem, 3vh, 3rem);
+    margin: 0px;
+    cursor: pointer;
+    border-radius: 20px;
+    font-family: Unispace, monospace;
+    border: 3px solid transparent; 
+    transition: all 0.15s ease-in-out;
+    background-color: #009dff;
+}
+.textSom{
     font-family: Unispace, monospace;
     color:aquamarine;
+    color: #000000;
     background-color: transparent;
     justify-content: center;
     text-align: left;
-    font-size: 15px;
+    bottom: clamp(2rem, 2vw, 25rem);
+    font-size: clamp(15px, 2vw, 20px);
+    padding-right: 10px;
 }
+
+
+.buttonFonte{
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    width: clamp(8rem, 3vw, 16rem);
+    height: clamp(2rem, 3vh, 3rem);
+    margin: 0px;
+    cursor: pointer;
+    border-radius: 20px;
+    font-family: Unispace, monospace;
+    border: 3px solid transparent; 
+    transition: all 0.15s ease-in-out;
+    background-color: #009dff;
+}
+.textFonte{
+    font-family: Unispace, monospace;
+    color:aquamarine;
+    color: #000000;
+    background-color: transparent;
+    justify-content: center;
+    text-align: left;
+    bottom: clamp(2rem, 2vw, 25rem);
+    font-size: clamp(15px, 2vw, 20px);
+    padding-right: 10px;
+}
+
+
+.buttonIdioma{
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    width: clamp(8rem, 3vw, 16rem);
+    height: clamp(2rem, 3vh, 3rem);
+    margin: 0px;
+    cursor: pointer;
+    border-radius: 20px;
+    font-family: Unispace, monospace;
+    border: 3px solid transparent; 
+    transition: all 0.15s ease-in-out;
+    background-color: #009dff;
+}
+.textIdioma{
+    font-family: Unispace, monospace;
+    color:aquamarine;
+    color: #000000;
+    background-color: transparent;
+    justify-content: center;
+    text-align: left;
+    padding-right: 10px;
+    font-size: clamp(15px, 2vw, 20px);
+}
+
 
 .menuButton{
     position: relative;
@@ -85,30 +176,36 @@ body{
     border: 3px solid transparent; 
     transition: all 0.15s ease-in-out;
 }
-.containerTema{
-    width: 100vw;
-    height: 3vh;
-    position: absolute;
-    display: flex;
-    flex-direction: inline;
-    align-items: left;
-    justify-content: left;
-    /* margin-top: clamp(-35px, 3%, -100px); */
-    overflow: hidden;
 
 
-}
+
 .buttonTema{
     position: relative;
     overflow: hidden;
     display: flex;
-    align-items:center;
+    align-items: center;
+    justify-content: center;
+    width: clamp(8rem, 3vw, 16rem);
+    height: clamp(2rem, 3vh, 3rem);
+    margin: 0px;
+    cursor: pointer;
+    border-radius: 20px;
     font-family: Unispace, monospace;
-    color: white;
+    border: 3px solid transparent; 
+    transition: all 0.15s ease-in-out;
     background-color: #009dff;
-    left: clamp(2rem, 2vw, 25rem);
-
 }
+.textTema{
+    font-family: Unispace, monospace;
+    color:aquamarine;
+    color: #000000;
+    background-color: transparent;
+    justify-content: center;
+    text-align: left;
+    font-size: clamp(15px, 2vw, 20px);
+    padding-right: 10px;
+}
+
 
 .config{
     background-color: #36d8ff;

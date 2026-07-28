@@ -29,11 +29,11 @@ function Home() {
       </div>
       <h1 className={styles.title}>RepairSim</h1>
       <h2 className={styles.subtitle}>Aprenda. Repare. Evolua!</h2>
-       
       <button className={`${styles.menuButton} ${styles.jogar} ${styles['button:focus-visible']}`} onClick={() => navigate('/dificuldade')}><img src={logoPlay} alt="Jogar" className={styles['logoPlay']} />Jogar</button>
       <button className={`${styles.menuButton} ${styles.config} ${styles['button:focus-visible']}`} onClick={() => navigate('/Config')}><img src={logoConfig} alt="Configurações" className={styles['logoConfig']} />Configurações</button>
       <button className={`${styles.menuButton} ${styles.conquistas} ${styles['button:focus-visible']}`} onClick={() => alert('Conquistas')}><img src={logoConquistas} alt="Conquistas" className={styles['logoConquistas']} />Conquistas</button>
       <button className={`${styles.menuButton} ${styles.sair} ${styles['button:focus-visible']}`} onClick={() => fecharJanela('Sair')}><img src={logoSair} alt="Sair" className={styles['logoSair']} />Sair</button>  
+      <button className={`${styles.menuButton} ${styles.login} ${styles['button:focus-visible']} ${styles.buttonLogin}`} onClick={() => navigate('/login')}>Login</button>
     </div>
     
   );

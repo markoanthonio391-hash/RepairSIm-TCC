@@ -6,6 +6,7 @@ import Home from './pages/home/home'
 import Dificuldade from './pages/dificuldade/dificuldade'
 import Config from './pages/home/Config/Config'
 import TesteApi from './pages/testeAPI/api'; //teste de api
+import Login from './pages/Login/Login'
 function App() {
 
  // const [count, setCount] = useState(0)
@@ -16,8 +17,9 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/dificuldade' element={<Dificuldade />} />
         <Route path='/config' element={<Config />} />
-        <Route path='*' element={<h1>Not Found</h1>} />
+        <Route path='*'element={<h1>Not Found</h1>} />
         <Route path="/teste" element={<TesteApi />} />
+        <Route path="/Login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
