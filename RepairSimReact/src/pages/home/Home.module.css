@@ -167,3 +167,11 @@ body{
     font-size: 25px;
     color: black;
 }
+
+.buttonLogin{
+    background-color: transparent;
+    font-family: Unispace, monospace;
+    font-size: 25px;
+    color: black;
+    border-radius: 150px;
+}

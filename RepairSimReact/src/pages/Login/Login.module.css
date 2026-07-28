@@ -1,0 +1,75 @@
+
+.subtitle{
+    font-display: block;
+    display: flex;
+    position: relative;
+    color : #A8B3C7;
+    font-family: Unispace, monospace;
+    font-style: italic;
+    justify-content: center;
+    text-align: center;
+    font-size: clamp(1rem, 3vw, 2rem);
+    word-break: break-word;
+    line-height: 1.2;
+    bottom: clamp(1rem, 3vw, 4rem);
+}
+
+.container{
+    background-color: #0A192F;
+    position: relative;
+    display: flex;
+    flex-direction:column;
+    align-items: center;
+    justify-content: center;
+   /* margin-top: clamp(-35px, 3%, -100px); */
+    width: 100vw;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.loginButton{
+    background-color: #009dff;
+    font-family: Unispace, monospace;
+    font-size: 22px;
+    color: black;
+    border-radius: 15px;
+    position : relative;
+    right: clamp(6rem, 2vw, 8rem);
+    width: clamp(10rem, 2vw, 15rem);
+    height: clamp(2.5rem, 2vh, 6rem);
+    border: none;
+    justify-content: center;
+    align-items: center;
+}
+.cancelarButton{
+    background-color: #ff0000;
+    font-family: Unispace, monospace;
+    font-size: 22px;
+    width: clamp(10rem, 2vw, 15rem);
+    height: clamp(2.5rem, 2vh, 6rem);
+    color: black;
+    border-radius: 15px;
+    position : relative;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    bottom: clamp(2rem, 2vw, 4rem);
+    left: clamp(6rem, 2vw, 8rem);
+    border: none;
+}
+
+
+
+.input{
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    width: clamp(24rem, 2vw, 32rem);
+    height: clamp(2.5rem, 2vh, 6rem);
+    margin: 12.5px;
+    cursor: pointer;
+    border-radius: 150px;
+    padding: 0px 0px;
+}
