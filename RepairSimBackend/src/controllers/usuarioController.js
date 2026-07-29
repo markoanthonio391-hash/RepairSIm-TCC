@@ -46,6 +46,15 @@ exports.cadastrar = async (req, res) => {
         });
     }
 
+    //molde do padrão do email, q permite apenas email com @ e que venha seguido de um ponto depois
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+
+    if (!regexEmail.test(email)) {
+        return res.status(400).json({
+            mensagem: "Digite um e-mail válido."
+        });
+    }
+
     try {
         const verificacaoUsuario = 'select id_usuario from usuario where email = ? or username = ?'; //verifica se o email ou username já estão cadastrados
     
