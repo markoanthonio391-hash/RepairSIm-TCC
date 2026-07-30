@@ -18,7 +18,9 @@ const resultadoRoutes = require('./routes/resultadoRoutes');
 
 const relatorioRoutes = require('./routes/relatorioRoutes');
 
-const desafioImagemRoutes = require('./routes/desafioImagemRoutes');
+const imagensPcRoutes = require('./routes/imagensPcRoutes');
+
+const desafioImagensPcRoutes = require('./routes/desafioImagensPcRoutes');
 
 
 const cors = require('cors'); //permite o acesso ao servidor pelo FrontEnd
@@ -46,7 +48,10 @@ app.use('/resultados', resultadoRoutes);
 
 app.use('/relatorios', relatorioRoutes);
 
-app.use('/desafioImagem', desafioImagemRoutes);
+app.use('/imagens-pc', imagensPcRoutes);
+
+app.use('/desafio-imagens-pc', desafioImagensPcRoutes);
+
 
 
 const porta = 3000; //define a porta que o servidor vai rodar durante a aplicação
