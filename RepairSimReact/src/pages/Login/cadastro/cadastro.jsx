@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Cadastro.module.css'
 // import backgroundImage from '../../../assets/imgFundoBranco.jpeg'
-function cadastro() {
+function Cadastro() {
 
       return(
         <div className={styles.container}>
@@ -24,4 +24,4 @@ function cadastro() {
         </div>
       )
     };
-    export default cadastro;
+    export default Cadastro;
