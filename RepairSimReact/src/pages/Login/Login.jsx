@@ -48,6 +48,7 @@ function Login() {
                     <button className={styles.cancelarButton} onClick={() => navigate(-1)}>
                       Cancelar
                     </button>
+                    <button className={styles.cadButton} onClick={() => navigate('/cadastro')}>Clique aqui para cadastro.</button>
             </div>
       )
     };
