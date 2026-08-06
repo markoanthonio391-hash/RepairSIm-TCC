@@ -20,6 +20,7 @@ function App() {
         <Route path='*'element={<h1>Not Found</h1>} />
         <Route path="/teste" element={<TesteApi />} />
         <Route path="/Login" element={<Login />} />
+        <Route path='/cadastro' element={<Cadastro />} />
       </Routes>
     </BrowserRouter>
   );
