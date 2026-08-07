@@ -38,22 +38,24 @@ function Login() {
       }
     };
       return(
-            <div className={styles.container}>
-              <input  type="email" placeholder="   E-mail" className={styles.input}  value={email} onChange={(e)=>setEmail(e.target.value)} />
-              <input type="password" placeholder="   Senha" className={styles.input}  value={senha} onChange={(e)=>setSenha(e.target.value)} />
-              {error && <p className={styles.error}>{error}</p>}
-                    {loading && <p className={styles.loading}>Carregando...</p>}
-                    <div className={styles.containerButtons}>
-                      <button type="submit" className={`${styles.loginButton} ${styles.styleButton}`} onClick={handleSubmit} disabled={loading}  >
-                        Entrar
-                      </button>
-                      <button className={`${styles.cancelarButton} ${styles.styleButton}`} onClick={() => navigate(-1)}>
-                        Cancelar
-                      </button>
-                    </div>
+            
+            <label>
+              <div className={styles.container}>
+                <input  type="email" placeholder="   E-mail" className={styles.input}  value={email} onChange={(e)=>setEmail(e.target.value)} />
+                <input type="password" placeholder="   Senha" className={styles.input}  value={senha} onChange={(e)=>setSenha(e.target.value)} />
+                {error && <p className={styles.error}>{error}</p>}
+                      {loading && <p className={styles.loading}>Carregando...</p>}
+                      <div className={styles.containerButtons}>
+                        <button type="submit" className={`${styles.loginButton} ${styles.styleButton}`} onClick={handleSubmit} disabled={loading}  >
+                          Entrar
+                        </button>
+                        <button className={`${styles.cancelarButton} ${styles.styleButton}`} onClick={() => navigate(-1)}>
+                          Cancelar
+                        </button>
+                      </div>
                     <button className={styles.cadButton} onClick={() => navigate('/cadastro')}>Clique aqui para cadastro.</button>
-                    
-            </div>
+              </div>
+            </label>
       )
     };
     export default Login;

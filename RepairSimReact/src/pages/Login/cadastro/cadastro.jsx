@@ -22,7 +22,7 @@ function Cadastro() {
             <input type="text" placeholder='   Sobrenome' className={styles.input}/>
             <input type='text' placeholder='   Username' className={styles.input}/>
             <input type="date" placeholder='   Data de Nascimento' className={styles.input}/>
-            <input type='number' placeholder='   Telefone' className={styles.input}/>
+            <input type='tel' placeholder='   (00) 00000-0000' className={styles.input}/>
             <input  type="email" placeholder="   E-mail" className={styles.input} />
             <input type="password" placeholder="   Senha" className={styles.input} />
             <input type='password'  placeholder='   Confirme a senha'  className={styles.input} />
