@@ -18,44 +18,23 @@
     background-color: #0A192F;
     position: relative;
     display: flex;
-    flex-direction:column;
     align-items: center;
     justify-content: center;
    /* margin-top: clamp(-35px, 3%, -100px); */
     width: 100vw;
     min-height: 100vh;
     overflow: hidden;
+    flex-direction: column;
+
 }
 
 .loginButton{
     background-color: #009dff;
-    font-family: Unispace, monospace;
-    font-size: 22px;
     color: black;
-    border-radius: 15px;
-    position : relative;
-    right: clamp(6rem, 2vw, 8rem);
-    width: clamp(10rem, 2vw, 15rem);
-    height: clamp(2.5rem, 2vh, 6rem);
-    border: none;
-    justify-content: center;
-    align-items: center;
 }
 .cancelarButton{
     background-color: #ff0000;
-    font-family: Unispace, monospace;
-    font-size: 22px;
-    width: clamp(10rem, 2vw, 15rem);
-    height: clamp(2.5rem, 2vh, 6rem);
     color: black;
-    border-radius: 15px;
-    position : relative;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    bottom: clamp(2rem, 2vw, 4rem);
-    left: clamp(6rem, 2vw, 8rem);
-    border: none;
 }
 
 .error{
@@ -80,4 +59,39 @@
     cursor: pointer;
     border-radius: 150px;
     padding: 0px 0px;
+    border: 1px solid black;
+    flex-direction: column;
+}
+
+.cadButton{
+    background-color: transparent;
+    font-family: Unispace, monospace;
+    color: white;
+    font-size: clamp(10px, 2vw, 20px);
+    border: none;
+}
+
+.styleButton{
+    font-family: Unispace, monospace;
+    font-size: 19px;
+    border-radius: 15px;
+    right: clamp(6rem, 2vw, 8rem);
+    width: clamp(10rem, 2vw, 15rem);
+    height: clamp(2.5rem, 2vh, 6rem);
+    border: none;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin: 12.5px;
+}
+
+.containerButtons{
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+   /* margin-top: clamp(-35px, 3%, -100px); */
+    width: 100vw;
+    max-height: 10vh;
+    overflow: hidden;
 }

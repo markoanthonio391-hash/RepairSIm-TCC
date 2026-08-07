@@ -8,6 +8,7 @@ import Config from './pages/home/Config/Config'
 import TesteApi from './pages/testeAPI/api'; //teste de api
 import Login from './pages/Login/Login'
 import Cadastro from './pages/Login/cadastro/cadastro'
+import Cliente from './pages/cliente/cliente';
 function App() {
 
  // const [count, setCount] = useState(0)
@@ -22,6 +23,7 @@ function App() {
         <Route path="/teste" element={<TesteApi />} />
         <Route path="/Login" element={<Login />} />
         <Route path='/cadastro' element={<Cadastro />} />      
+        <Route path="/cliente" element={<Cliente />} />
       </Routes>
     </BrowserRouter>
   );

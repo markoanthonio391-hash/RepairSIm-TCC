@@ -1,8 +1,6 @@
 .container{
     background-color: #0A192F;
-    position: relative;
-    display: flex;
-    flex-direction:column;
+    
     align-items: center;
     justify-content: center;
    /* margin-top: clamp(-35px, 3%, -100px); */
@@ -17,17 +15,22 @@
     display: flex;
     align-items:center;
     justify-content: center;
-    width: clamp(15rem, 2vw, 32rem);
+    width: clamp(18rem, 2vw, 32rem);
     height: clamp(2.5rem, 2vh, 6rem);
-    right: clamp(39.5rem, 4vw, 42rem);
+    left: clamp(32.3rem, 3vw, 39.7rem); 
     margin: 12.5px;
     cursor: pointer;
     border-radius: 150px;
     padding: 0px 0px;
+    border: 1px solid black;
+    
 }
 
 .terms{
     color: white;
+    font-family: Arial, sans-serif;
+    font-style: italic;
+    font-size: 12px;
 }
 
 .containerTerms{
@@ -35,7 +38,29 @@
     align-items: inline;
     width: 100vw;
     height: 30vh;
+    flex-direction: row;
 }
 
-/* .inputTerms{
-} */
+.styleButton{
+    font-family: Unispace, monospace;
+    font-size: 16px;
+    border-radius: 15px;
+    position: relative;
+    width: clamp(8.5rem, 2vw, 12rem);
+    height: clamp(2rem, 2vh, 4rem);
+    border: none;
+    margin: 5.3px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    left: clamp(32.8rem, 2vw, 32.6rem);
+    bottom: clamp(10.3rem, 2vw, 12rem);
+}
+.confirmarButton{
+    background-color: #009dff;
+    color: black;
+}
+.cancelarButton{
+    background-color: #ff0000;
+    color: black;
+}
