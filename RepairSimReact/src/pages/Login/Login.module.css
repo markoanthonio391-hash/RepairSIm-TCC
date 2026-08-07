@@ -94,4 +94,5 @@
     width: 100vw;
     max-height: 10vh;
     overflow: hidden;
+    box-shadow: #009dff;
 }
