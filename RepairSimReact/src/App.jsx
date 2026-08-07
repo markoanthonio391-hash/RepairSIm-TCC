@@ -7,6 +7,7 @@ import Dificuldade from './pages/dificuldade/dificuldade'
 import Config from './pages/home/Config/Config'
 import TesteApi from './pages/testeAPI/api'; //teste de api
 import Login from './pages/Login/Login'
+import Cadastro from './pages/Login/cadastro/cadastro'
 function App() {
 
  // const [count, setCount] = useState(0)
