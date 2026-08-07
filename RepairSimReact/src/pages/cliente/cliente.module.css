@@ -1,0 +1,51 @@
+.quiz {
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+}
+
+.progress {
+  height: 15px;
+  background: #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress div {
+  height: 100%;
+  background: #58cc02;
+  transition: .3s;
+}
+
+.timer {
+  color: #ff9800;
+}
+
+.balao {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  margin: 30px;
+  font-size: 20px;
+  box-shadow: 0 5px 15px #ccc;
+}
+
+.opcoes button {
+  width: 100%;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 15px;
+  border: 2px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.correta {
+  background: #58cc02 !important;
+  color: white;
+}
+
+.errada {
+  background: #ff4b4b !important;
+  color: white;
+}
