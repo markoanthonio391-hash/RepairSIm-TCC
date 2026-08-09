@@ -13,6 +13,34 @@ function Cadastro() {
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
     const [termosAceitos, setTermosAceitos] = useState(false);
+    const handleSubmit = async (e) => {
+       try {
+          e.preventDefault();
+          setLoading(true);
+          setError('');
+          const response = await fetch('http://localhost:3000/cadastro', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ nome, sobrenome, username, dataNascimento, telefone, email, senha, confirmarSenha, termosAceitos }),
+          });
+          const data = await response.json();
+          if (response.ok) {
+              localStorage.setItem('usuario', JSON.stringify(data.usuario));
+              alert(`Login realizado com sucesso!\n\nOlá ${data.usuario.username}!`);
+              navigate('/');
+          }
+         
+        else {
+            setError(data.mensagem);
+        }
+      } catch (error) {
+        console.error(error);
+        setError("Não foi possível conectar ao servidor.");
+
+      } finally {
+      setLoading(false);
+      }
+    };
       return(
         <div className={styles.container}>
             {/* <div className={styles.bckground}>

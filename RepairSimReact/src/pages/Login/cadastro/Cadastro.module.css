@@ -3,7 +3,6 @@
     
     align-items: center;
     justify-content: center;
-   /* margin-top: clamp(-35px, 3%, -100px); */
     width: 100vw;
     min-height: 100vh;
     overflow: hidden;
