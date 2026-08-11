@@ -65,7 +65,7 @@ body{
 .container{
     position: relative;
     display: flex;
-    flex-direction:column;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100vw;
@@ -78,7 +78,7 @@ body{
 .buttonSom{
     position: relative;
     overflow: hidden;
-    display: flex;
+    display: inline-flex;
     align-items:center;
     justify-content: center;
     width: clamp(8rem, 3vw, 16rem);
@@ -90,6 +90,7 @@ body{
     border: 3px solid transparent; 
     transition: all 0.15s ease-in-out;
     background-color: #009dff;
+    flex-direction: inline-flex;
 }
 .textSom{
     font-family: Unispace, monospace;
