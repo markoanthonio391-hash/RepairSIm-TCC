@@ -2,13 +2,14 @@
 import { useState } from 'react'
 import TechSolveLogo from './assets/TechSolveLogo.png'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Home from './pages/home/home'
-import Dificuldade from './pages/dificuldade/dificuldade'
-import Config from './pages/home/Config/Config'
+import Home from './pages/home/home';
+import Dificuldade from './pages/dificuldade/dificuldade';
+import Config from './pages/home/Config/Config';
 import TesteApi from './pages/testeAPI/api'; //teste de api
-import Login from './pages/Login/Login'
-import Cadastro from './pages/Login/cadastro/cadastro'
+import Login from './pages/Login/Login';
+import Cadastro from './pages/Login/cadastro/cadastro';
 import Cliente from './pages/cliente/cliente';
+import Conquistas from './pages/home/Conquistas/Conquistas';
 function App() {
 
  // const [count, setCount] = useState(0)
@@ -24,6 +25,7 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path='/cadastro' element={<Cadastro />} />      
         <Route path="/cliente" element={<Cliente />} />
+        <Route path="/Conquistas" element={<Conquistas />} />
       </Routes>
     </BrowserRouter>
   );
