@@ -1,0 +1,78 @@
+.container{
+    font-family: Unispace, monospace;
+    color: snow;
+}
+
+body{
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    position: fixed;
+    display: flex;
+}
+
+.mainContainer{
+    width: 800px;
+    height: 625px;
+    font-family: Unispace, monospace;
+    color:aquamarine;
+    background-color: black;
+}
+
+/* .textContainer{
+
+}
+.componContainer{
+
+} */
+.toolsContainer{
+    
+    position: absolute;
+    justify-content: center;
+    display: table-column;
+    display: flex;
+    left: 1200px;
+    top: clamp(25px, 75px, 100px);
+    width: clamp(75px, 125px, 150px);
+    height: clamp(297px, 445px, 625px);
+    background-color: transparent;
+    z-index: 9999;
+    pointer-events: none;
+    font-family: Unispace, monospace;
+}
+
+.textTools{
+    font-size: clamp(6px, 12px, 16px);
+    padding-left: clamp(12px, 18px, 30px);
+    color:darkblue;
+}
+
+.btnToolsBox{
+    background: #4a3728; 
+    border: 3px solid #ffd700; 
+    color: #ffd700;
+    cursor: pointer;
+    border-radius: 6px;
+    pointer-events: auto; 
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+    font-weight: bold;
+    width: 140px;
+    height: 30px;
+    position: absolute;
+    left: 1px;
+}
+
+.iconBtnTools{
+    right:1px;
+    position: absolute;
+}
+
+.contentTools{
+    margin-top: 1px;
+    justify-content: center;
+    position: absolute;
+    left: 1px;
+    padding-top: 10px;
+}

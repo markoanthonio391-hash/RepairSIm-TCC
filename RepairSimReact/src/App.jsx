@@ -10,6 +10,7 @@ import Login from './pages/Login/Login';
 import Cadastro from './pages/Login/cadastro/cadastro';
 import Cliente from './pages/cliente/cliente';
 import Conquistas from './pages/home/Conquistas/Conquistas';
+import Caso from './pages/caso/caso';
 function App() {
 
  // const [count, setCount] = useState(0)
@@ -20,12 +21,13 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/dificuldade' element={<Dificuldade />} />
         <Route path='/config' element={<Config />} />
-        <Route path='*'element={<h1>Not Found</h1>} />
         <Route path="/teste" element={<TesteApi />} />
         <Route path="/Login" element={<Login />} />
         <Route path='/cadastro' element={<Cadastro />} />      
         <Route path="/cliente" element={<Cliente />} />
         <Route path="/Conquistas" element={<Conquistas />} />
+        <Route path="/caso" element={<Caso />} />
+        <Route path='*'element={<h1>Not Found</h1>} />
       </Routes>
     </BrowserRouter>
   );
