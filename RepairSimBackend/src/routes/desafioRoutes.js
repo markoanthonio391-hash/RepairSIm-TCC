@@ -9,4 +9,6 @@ router.get('/', desafioController.listar);
 
 router.get('/:id', desafioController.buscarPorId);
 
+router.post('/:id/verificar', desafioController.verificarItem);
+
 module.exports = router;
