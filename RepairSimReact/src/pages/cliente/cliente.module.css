@@ -1,51 +1,225 @@
-.quiz {
-  max-width: 600px;
-  margin: auto;
-  text-align: center;
+/* Container que junta os dois botões no final da tela */
+.acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+  border-top: 1px solid #f0f2f5;
+  padding-top: 15px;
 }
 
-.progress {
-  height: 15px;
-  background: #ddd;
-  border-radius: 10px;
+/* Estilo do botão de Cancelar */
+.btnCancelar {
+  background-color: #dc3545 !important;
+  color: white !important;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btnCancelar:hover {
+  background-color: #c82333 !important;
+}
+
+/* Estilo do botão de Aceitar */
+.btnAceitar {
+  background-color: #28a745 !important;
+  color: white !important;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btnAceitar:hover {
+  background-color: #218838 !important;
+}
+
+/* Cores novas para a tag de status do cabeçalho */
+.aprovado {
+  background-color: #d4edda !important;
+  color: #155724 !important;
+}
+.reprovado {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: 
+    radial-gradient(circle at 30% 20%, rgba(64, 130, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(29, 78, 216, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at center, #0a1128 0%, #040814 100%);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
   overflow: hidden;
 }
 
-.progress div {
-  height: 100%;
-  background: #58cc02;
-  transition: .3s;
+.container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
 }
 
-.timer {
-  color: #ff9800;
+/* Títulos principais da tela de fundo */
+.container h2 {
+  font-size: 2.4rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  margin-bottom: 8px !important;
+  letter-spacing: -0.5px !important;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
-.balao {
-  background: white;
-  padding: 25px;
-  border-radius: 20px;
-  margin: 30px;
-  font-size: 20px;
-  box-shadow: 0 5px 15px #ccc;
+.container p {
+  font-size: 1.1rem !important;
+  color: #94a3b8 !important; /* Azul acinzentado claro de alta leitura */
+  margin-bottom: 32px !important;
+  font-weight: 400 !important;
 }
 
-.opcoes button {
-  width: 100%;
-  padding: 15px;
-  margin: 10px;
-  border-radius: 15px;
-  border: 2px solid #ccc;
-  background: white;
-  cursor: pointer;
+.carregando {
+  text-align: center;
+  padding: 50px;
+  color: #ffffff;
+  font-size: 16px;
 }
 
-.correta {
-  background: #58cc02 !important;
-  color: white;
+.btnPrincipal {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important; /* Degradê azul robusto */
+  color: #ffffff !important;
+  border: 1px solid #3b82f6 !important; /* Borda brilhante sutil */
+  padding: 14px 36px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 20px rgba(29, 78, 216, 0.4) !important; /* Sombra com brilho azul */
 }
 
-.errada {
-  background: #ff4b4b !important;
-  color: white;
+.btnPrincipal:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  transform: translateY(-2px) !important; /* Levanta levemente o botão */
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5) !important;
 }
+
+.btnPrincipal:active {
+  transform: translateY(1px) !important;
+  box-shadow: 0 2px 10px rgba(29, 78, 216, 0.4) !important;
+}
+
+.modalOverlay {
+ position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px) !important; /* desfoca o fundo atrás do modal */
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 9999 !important;
+  animation: fadeIn 0.2s ease-out !important;
+}
+
+.modalConteudo {
+  background-color: #ffffff !important;
+  padding: 25px !important;
+  width: 90% !important;
+  max-width: 550px !important;
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+  border-radius: 12px !important;
+  border-top: 4px solid #1d4ed8 !important;
+  box-shadow: 0 10px 40px rgba(10, 17, 40, 0.6) !important;
+  position: relative !important;
+  text-align: left !important;
+  color: #333333 !important;
+  animation: slideUp 0.25s ease-out !important;
+}
+
+.modalConteudo::-webkit-scrollbar {
+  width: 8px;
+}
+.modalConteudo::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+.modalConteudo::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+@media (max-width: 480px) {
+  .modalConteudo {
+    padding: 18px !important;
+    width: 95% !important;
+  }
+}
+
+.modalHeader {
+  display: flex !important;
+  align-items: center !important;
+  border-bottom: 2px solid #e9ecef !important;
+  padding-bottom: 12px !important;
+  margin-bottom: 15px !important;
+}
+
+.modalHeader h3 {
+  margin: 0 !important;
+  color: #212529 !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.3px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  flex: 1 !important;
+}
+
+.aprovado, .reprovado {
+  padding: 4px 12px !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  white-space: nowrap !important;
+}
+
+.secaoInfo {
+  margin-bottom: 15px !important;
+  background: #f8f9fa !important; /* Fundo cinza claro para destacar os blocos */
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  border-left: 4px solid #007bff !important;
+}
+
+.secaoInfo h4 {
+  margin: 0 0 6px 0 !important;
+  color: #495057 !important; /* Subtítulos das seções */
+}
+
+.secaoInfo p {
+  margin: 4px 0 !important;
+  font-size: 14px !important;
+  color: #495057 !important; /* Texto interno legível */
+}
+
+

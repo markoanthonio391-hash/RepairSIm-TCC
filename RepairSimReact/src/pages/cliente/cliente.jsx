@@ -1,124 +1,114 @@
 import { useState, useEffect } from "react";
-import styles from "./Cliente.module.css";
+import styles from "./cliente.module.css";
+import { useNavigate } from "react-router-dom";
+
 
 function Cliente() {
-const perguntas = [
-{
-   pergunta: "Qual é a função do CPU?",
-      opcoes: [
-        "Armazenar arquivos",
-        "Processar informações",
-        "Mostrar imagens",
-        "Conectar na internet",
-      ],
-      correta:1,
-    },
-    {
-      pergunta: "Qual linguagem usamos no React?",
-      opcoes: [
-        "Python",
-        "Java",
-        "JavaScript",
-        "C++",
-      ],
-      correta: 2,
-    },
-  ];
 
-  const [perguntaAtual, setPerguntaAtual] = useState(0);
-  const [tempo, setTempo] = useState(10);
-  const [respostaSelecionada, setRespostaSelecionada] = useState(null);
-  const [bloqueado, setBloqueado] = useState(false);
+   const navigate = useNavigate();
 
-  // Timer
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+
+  const [manutencao, setManutencao] = useState(null);
+
+
   useEffect(() => {
-    if (tempo <= 0) {
-      proximaPergunta();
-      return;
-    }
+    const carregarDadosCaso = () => {
+      const dadosMockados = {
+        id: "2026",
+        status: "Em Andamento", 
+        cliente: "Cliente001",
+        aparelho: "Notebook Dell Inspiron 15",
+        especificacoes: "Core i5, 8GB RAM, SSD 256GB",
+        relato: "Computador liga, mas a tela fica preta e emite 3 bipes.",
+        analise: "Mau contato nos módulos de memória RAM devido à oxidação.",
+        servico: "Limpeza química dos contatos e substituição de 1 pente de 4GB.",
+        valor: "R$ 250,00"
+      };
+      
+      setManutencao(dadosMockados);
+    };
 
-    const timer = setTimeout(() => {
-      setTempo(tempo - 1);
-    }, 1000);
+    carregarDadosCaso();
+  }, []);
 
-    return () => clearTimeout(timer);
-  }, [tempo]);
+  const responderOrcamento = (novoStatus) => {
+    setManutencao((prev) => ({ ...prev, status: novoStatus }));
+    alert(`Orçamento ${novoStatus === "Aprovado" ? "aceito" : "cancelado"} com sucesso!`);
+  };
 
 
-  function responder(index) {
-    if (bloqueado) return;
-
-    setRespostaSelecionada(index);
-    setBloqueado(true);
-
-    setTimeout(() => {
-      proximaPergunta();
-    }, 1500);
+  if (!manutencao) {
+    return <div className={styles.carregando}>Carregando dados do cliente...</div>;
   }
-
-
-  function proximaPergunta() {
-    if (perguntaAtual < perguntas.length - 1) {
-      setPerguntaAtual(perguntaAtual + 1);
-      setTempo(10);
-      setRespostaSelecionada(null);
-      setBloqueado(false);
-    }
-  }
-
-
-  const pergunta = perguntas[perguntaAtual];
-
 
   return (
-    <div className={styles.quiz}>
+    <div className={styles.container}>
+      <h2>Área do Cliente</h2>
+      <p>Bem-vindo, {manutencao.cliente}!</p>
+      
+      {/* Botão para abrir o histórico do caso */}
+      <button 
+        className={styles.btnPrincipal} 
+        onClick={() => setIsModalOpen(true)}
+      >
+        Sistema de Manutenção
+      </button>
 
-      <h2>
-        Pergunta {perguntaAtual + 1} de {perguntas.length}
-      </h2>
+      {/* Tela de Caso (Modal) condicional */}
+      {isModalOpen && (
+        <div className={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
+          <div className={styles.modalConteudo} onClick={(e) => e.stopPropagation()}>
+          
+            
+            <div className={styles.modalHeader}>
+              <h3>Ordem de Serviço #{manutencao.id}</h3>
+              {/* Mudança dinâmica na classe do badge conforme o status muda */}
+              <span className={`${styles.status} ${
+                manutencao.status === "Em Andamento" ? styles.emAndamento : 
+                manutencao.status === "Aprovado" ? styles.aprovado : styles.reprovado
+              }`}>
+                {manutencao.status}
+              </span>
+            </div>
 
+            <div className={styles.modalCorpo}>
+              <div className={styles.secaoInfo}>
+                <h4> Equipamento</h4>
+                <p><strong>Aparelho:</strong> {manutencao.aparelho}</p>
+                <p><strong>Configuração:</strong> {manutencao.especificacoes}</p>
+              </div>
 
-      <div className={styles.progress}>
-        <div
-          style={{
-            width: `${((perguntaAtual + 1) / perguntas.length) * 100}%`
-          }}
-        />
-      </div>
+              <div className={styles.secaoInfo}>
+                <h4> Situação e Diagnóstico</h4>
+                <p><strong>Sintomas:</strong> {manutencao.relato}</p>
+                <p><strong>Informações Adicionais:</strong> {manutencao.analise}</p>
+              </div>
 
-
-      <h3 className={styles.timer}>
-        ⏱️ {tempo}s
-      </h3>
-
-
-      <div className={styles.balao}>
-        💬 {pergunta.pergunta}
-      </div>
-
-
-      <div className={styles.opcoes}>
-        {pergunta.opcoes.map((opcao, index) => (
-
-          <button
-            key={index}
-            onClick={() => responder(index)}
-            className={
-              respostaSelecionada === index
-                ? index === pergunta.correta
-                  ? styles.correta
-                  : styles.errada
-                : ""
-            }
-          >
-            {opcao}
-          </button>
-
-        ))}
-      </div>
-
+              {manutencao.status === "Em Andamento" && (
+                <div className={styles.acoes}>
+                  <button 
+                    className={styles.btnCancelar} 
+                    onClick={() => navigate('/dificuldade')}
+                    
+                  >
+                    Cancelar Orçamento
+                  </button>
+                  <button 
+                    className={styles.btnAceitar} 
+                  >
+                    Aceitar Desafio
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default Cliente;
+
