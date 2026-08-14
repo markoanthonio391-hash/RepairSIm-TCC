@@ -7,4 +7,6 @@ const desafioController = require('../controllers/desafioController');
 
 router.get('/', desafioController.listar);
 
+router.get('/:id', desafioController.buscarPorId);
+
 module.exports = router;
