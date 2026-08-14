@@ -10,7 +10,7 @@ const conexao = mysql.createConnection({ //conexao do banco
 
 conexao.connect((erro) => { //tentativa de conexão
     if (erro) {
-        console.log("Erro ao conectar!");
+        console.log("Erro ao conectar:", erro.message);
     }
     else{
         console.log("Banco conectado!");
