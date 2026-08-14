@@ -8,5 +8,8 @@ const desafioImagemPcController = require('../controllers/desafioImagensPcContro
 //define a rota GET(pegar) para a raiz ("/") que aciona o método de listagem do controlador
 router.get('/', desafioImagemPcController.listar);
 
+//listar apenas as imagens de um desafio
+router.get('/desafio/:id', desafioImagemPcController.listarPorDesafio);
+
 //exporta para que outros tenham acesso (como o servidor)
 module.exports = router;
