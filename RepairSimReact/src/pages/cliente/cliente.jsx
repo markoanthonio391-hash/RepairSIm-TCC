@@ -97,6 +97,10 @@ function Cliente() {
                   </button>
                   <button 
                     className={styles.btnAceitar} 
+                    onClick={() => {
+                      responderOrcamento("Aprovado");
+                      navigate('/caso');
+                    }}
                   >
                     Aceitar Desafio
                   </button>
