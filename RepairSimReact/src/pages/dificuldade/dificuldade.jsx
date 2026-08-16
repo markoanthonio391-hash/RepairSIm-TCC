@@ -28,7 +28,7 @@ function Dificuldade()
       <button className={`${styles.menuButton} ${styles.facil}`} onClick={() => alert('/fácil')}><img src={logoFacil} alt="Fácil" className={styles.logoFacil}/>Fácil</button>
       <button className={`${styles.menuButton} ${styles.normal}`} onClick={() => navigate('/cliente')}><img src={logoNormal} alt="Normal" className={styles.logoNormal}/>Normal</button>
       <button className={`${styles.menuButton} ${styles.dificil}`} onClick={() => alert('/difícil')}><img src={logoDificil} alt="Difícil" className={styles.logoDificil}/>Difícil</button>
-      <button className={`${styles.voltarButton} ${styles.voltar}`} onClick={() => navigate(-1)}><img src={logoVoltar} alt="Voltar" className={styles.logoVoltar}/>Voltar</button>
+      <button className={`${styles.voltarButton} ${styles.voltar}`} onClick={() => navigate('/')}><img src={logoVoltar} alt="Voltar" className={styles.logoVoltar}/>Voltar</button>
 
     </div>
   );

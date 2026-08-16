@@ -34,7 +34,7 @@ function Home() {
       <button className={`${styles.menuButton} ${styles.conquistas} ${styles['button:focus-visible']}`} onClick={() => navigate('/Conquistas')}><img src={logoConquistas} alt="Conquistas" className={styles['logoConquistas']} />Conquistas</button>
       <button className={`${styles.menuButton} ${styles.sair} ${styles['button:focus-visible']}`} onClick={() => fecharJanela('Sair')}><img src={logoSair} alt="Sair" className={styles['logoSair']} />Sair</button>  
       <button className={`${styles.menuButton} ${styles.login} ${styles['button:focus-visible']} ${styles.buttonLogin}`} onClick={() => navigate('/login')}>Login</button>
-      <button className={`${styles.skip}`} onDoubleClick={() => navigate('/caso')}> skip </button>
+      {/* <button className={`${styles.skip}`} onDoubleClick={() => navigate('/caso')}> skip </button> */}
     </div>
     
   );

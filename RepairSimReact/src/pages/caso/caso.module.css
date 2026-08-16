@@ -27,7 +27,7 @@ body{
 } */
 .toolsContainer{
     
-    position: absolute;
+    position: relative;
     justify-content: center;
     display: table-column;
     display: flex;
