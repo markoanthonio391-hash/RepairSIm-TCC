@@ -85,3 +85,92 @@ body{
     border-radius: 4px;
     background-color: white;  
 }
+
+/*===========================================================================*/
+/*TESTE DE ESTILO DOS PCS QUE FICAM NA BANCADA E BOTÕES, MUDAR SE NECESSARIO*/
+/*===========================================================================*/
+/*AREA DO PC*/
+.pcContainer {
+    position: absolute;
+    top: 50%;
+    left: 58%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 600px;
+    height: 450px;
+}
+
+/*MONITOR*/
+.monitorImage {
+    width: 380px;
+    height: auto;
+    object-fit: contain;
+}
+
+/*GABINETE*/
+.gabineteImage {
+    width: 190px;
+    height: auto;
+    object-fit: contain;
+}
+
+/*GABINETE DURANTE A MANUTENÇÃO*/
+.gabineteManutencao {
+    width: 420px;
+    height: auto;
+    object-fit: contain;
+}
+
+/*GABINETE CLICÁVEL*/
+.gabineteClicavel {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+.gabineteClicavel:hover {/*Efeito quando o mouse passar*/
+    transform: scale(1.03);
+}
+
+/*BOTÃO DESLIGAR*/
+.btnDesligar {
+    position: absolute;
+    left: 58%;
+    bottom: 35px;
+    transform: translateX(-50%);
+    background-color: #8b0000;
+    border: 3px solid #ff4d4d;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 10000;
+}
+
+/*MENSAGEM*/
+.mensagem {
+    position: absolute;
+    left: 58%;
+    bottom: 80px;
+    transform: translateX(-50%);
+    width: 400px;
+    padding: 10px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.85);
+    border: 2px solid #ffd700;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    z-index: 10000;
+}
+
+/*ITEM CLICÁVEL*/
+.itemClicavel {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+.itemClicavel:hover { /*efeito quando o mouse passar*/
+    transform: scale(1.08);
+}
