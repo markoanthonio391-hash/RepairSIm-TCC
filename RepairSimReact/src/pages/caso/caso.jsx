@@ -1,65 +1,111 @@
 import styles from './caso.module.css'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import imgFundo from '../../assets/imgFundo.jpeg';
-// // import test from '../../assets/TesteDeAnim/gabinete_preto_ligado_1.png'
-function Caso() {
-  const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
-  const [itens, setItens] = useState ([]);
 
-  return(
-     <div className={styles.mainContainer}>
-        <div className={styles.toolsContainer}>
-          <button className={styles.btnToolsBox} onClick={() => setIsOpen(!isOpen)}> FERRAMENTAS
-            <span className={styles.iconBtnTools}>🛠️</span>  
-          </button>
-          {isOpen && (
-            <div className={styles.toolsBox}>
-              <h3 className={styles.titleTools}></h3>
-              <div className={styles.contentTools}>
-                <p> VOCÊS PRECISAM TESTAR COM O BACKEND DEPOIS SE VAI APARECER OS ITENS AQUI </p>
-              </div>
+function Caso() {
+
+  const navigate = useNavigate();
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [itens, setItens] = useState([]);
+
+  const [tipoSelecionado, setTipoSelecionado] = useState('ferramenta');
+
+
+  useEffect(() => {
+
+    fetch(`http://localhost:3000/itens/tipo/${tipoSelecionado}`)
+
+      .then(resposta => {
+
+        if (!resposta.ok) {
+          throw new Error('Erro ao buscar os itens.');
+        }
+
+        return resposta.json();
+
+      })
+
+      .then(dados => {
+
+        console.log('Itens recebidos do backend:', dados);
+
+        setItens(dados);
+
+      })
+
+      .catch(erro => {
+
+        console.error('Erro ao buscar itens:', erro);
+
+      });
+
+  }, [tipoSelecionado]);
+
+
+  function abrirCategoria(tipo) {
+
+    setTipoSelecionado(tipo);
+
+    setIsOpen(true);
+
+  }
+
+
+  return (
+
+    <div className={styles.mainContainer}>
+      <div className={styles.toolsContainer}>
+        {/* BOTÃO FERRAMENTAS */}
+        <button className={styles.btnToolsBox} onClick={() => abrirCategoria('ferramenta')} >
+          FERRAMENTAS
+          <span className={styles.iconBtnTools}> 🛠️ </span>
+         </button>
+
+        {/* BOTÃO PEÇAS */}
+        <button className={styles.btnToolsBox} onClick={() => abrirCategoria('peca')}>
+          PEÇAS
+        </button>
+
+        {/* BOTÃO SOFTWARE */}
+        <button className={styles.btnToolsBox} onClick={() => abrirCategoria('software')}>
+          SOFTWARE
+        </button>
+
+        {isOpen && (
+
+          <div className={styles.toolsBox}>
+
+            <h3 className={styles.titleTools}>
+              {/*substitui o final da url para mostrar apenas imagens daquela categoria  */}
+              {tipoSelecionado === 'ferramenta' && 'Ferramentas'}
+              {tipoSelecionado === 'peca' && 'Peças'}
+              {tipoSelecionado === 'software' && 'Software'}
+            </h3>
+
+
+            <div className={styles.contentTools}>
+              {/*se a quantidade for 0, aparece carregando itens, se não mostra as 
+              imagens de acordo com o seu tipo apertado*/}
+              {itens.length === 0 ? (
+
+                <p>Carregando itens...</p>
+
+              ) : (
+                itens.map(item => (
+                  <div key={item.id_item} className={styles.item}>
+                    <img src={`http://localhost:3000${item.caminho_imagem}`} className={styles.imgItem} alt={item.nome}/>
+                  </div>
+                ))
+              )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-     
- )
+    </div>
+  );
 }
 
+
 export default Caso;
-
-// // const ferramentas = [{ id: 5, name: "Machado de Bronze", icon: "🪓" }];
-// // export default function workbench(){
-// //   const [tools, setTools] = useState(ferramentas);
-// //   return(
-// //         <div className={styles.grid}>
-// //       {tools.map((tool) => (
-// //         <div key={tool.id} className={styles.slot} title={tool.name}>
-// //           <span className={styles.icon}>{tool.icon}</span>
-// //         </div>
-// //       ))}
-// //     </div>
-// //   )
-// // }
-
-// const ferramentas = [
-//   { id: 1, name: "gabinete preto", image: "/assets/TesteDeAnim/gabinete_preto_ligado_1.png"}
-// ];
-
-// export default function Caso(){
-//   const [tools] = useState(ferramentas);
-//   const [selectedTools, setSelectedTools] = useState(null);
-//   return(
-//     <div>
-//       <div className={styles.grid}>
-//         {tools.map((tool)) => {
-//           const isSelected = selectedTool && selectedTool.id === tool.id;
-          
-//         }}
-
-//       </div>
-//     </div>
-//   )
-// }

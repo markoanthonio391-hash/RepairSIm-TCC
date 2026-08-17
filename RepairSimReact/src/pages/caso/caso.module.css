@@ -31,13 +31,13 @@ body{
     justify-content: center;
     display: table-column;
     display: flex;
-    left: 1200px;
+    /*left: 1200px;*/
     top: clamp(25px, 75px, 100px);
     width: clamp(75px, 125px, 150px);
     height: clamp(297px, 445px, 625px);
     background-color: transparent;
     z-index: 9999;
-    pointer-events: none;
+    /*pointer-events: none;*/
     font-family: Unispace, monospace;
 }
 
@@ -60,7 +60,7 @@ body{
     font-weight: bold;
     width: 140px;
     height: 30px;
-    position: absolute;
+    position: relative; /*não é mais absoluto*/
     left: 1px;
 }
 
@@ -75,4 +75,13 @@ body{
     position: absolute;
     left: 1px;
     padding-top: 10px;
+}
+
+/*teste, diminuindo as imagens e deixando elas com fundo branco*/
+.imgItem{
+    width: 60px;          
+    height: 60px;        
+    object-fit: contain;  
+    border-radius: 4px;
+    background-color: white;  
 }
