@@ -52,7 +52,7 @@ exports.verificarItem = (req, res) => {
     //Verifica se existe essa relação no banco
     const selecao = `
         Select *
-        FROM desafio_item
+        FROM desafio_itens
         WHERE id_desafio = ?
         AND id_item = ?
     `;
