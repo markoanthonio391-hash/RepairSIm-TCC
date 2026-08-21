@@ -72,8 +72,12 @@ function Caso() {
   //troca a categoria dos itens
   //------------------------
   function abrirCategoria(tipo) {
+    if (isOpen && tipoSelecionado === tipo){
+      setIsOpen(false);
+    } else{
     setTipoSelecionado(tipo);
     setIsOpen(true);
+    }
   }
 
   //------------------------
@@ -183,6 +187,7 @@ function Caso() {
   return (
 
     <div className={styles.mainContainer}>
+      <button className={styles.btnVoltar} onClick={() => navigate('/')}> Voltar </button>
       <div className={styles.pcContainer}>
         {estadoPc === 'ligado' && (
           <> {/*agrupa varios elementos html, guardando 
@@ -252,9 +257,7 @@ function Caso() {
 
         {estadoPc === 'concluido' && gabineteLimpo && (
 
-          <img src={`http://localhost:3000${gabineteLimpo.caminho_imagem}`}
-            className={styles.gabineteManutencao}
-            alt="Gabinete limpo" />
+          <img src={`http://localhost:3000${gabineteLimpo.caminho_imagem}`} className={styles.gabineteManutencao}alt="Gabinete limpo" />
 
         )}
       </div>
@@ -315,12 +318,7 @@ function Caso() {
 
               ) : (
                 itens.map(item => (
-                  <div key={item.id_item}
-                    className={`${styles.item} ${
-                      estadoPc === 'manutencao'
-                        ? styles.itemClicavel
-                        : ''
-                    }`} onClick={() => usarItem(item)}> {/*deixa os itens clicaveis */}
+                  <div key={item.id_item} className={`${styles.item} ${estadoPc === 'manutencao'? styles.itemClicavel: ''}`} onClick={() => usarItem(item)}> {/*deixa os itens clicaveis */}
                     <img src={`http://localhost:3000${item.caminho_imagem}`} 
                     className={styles.imgItem} alt={item.nome}/>
                   </div>
