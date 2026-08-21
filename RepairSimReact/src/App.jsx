@@ -10,6 +10,7 @@ import Login from './pages/Login/Login';
 import Cadastro from './pages/Login/cadastro/cadastro';
 import Cliente from './pages/cliente/cliente';
 import Conquistas from './pages/home/Conquistas/Conquistas';
+import Relatorio from './pages/relatorio/Relatorio';
 import Caso from './pages/caso/caso';
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
         <Route path='/cadastro' element={<Cadastro />} />      
         <Route path="/cliente" element={<Cliente />} />
         <Route path="/Conquistas" element={<Conquistas />} />
+        <Route path="/relatorio" element={<Relatorio />} />
         <Route path="/caso" element={<Caso />} />
         <Route path='*'element={<h1>Not Found</h1>} />
       </Routes>
