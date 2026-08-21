@@ -14,23 +14,14 @@ function Cliente() {
 
 
   useEffect(() => {
-    const carregarDadosCaso = () => {
-      const dadosMockados = {
-        id: "2026",
-        status: "Em Andamento", 
-        cliente: "Cliente001",
-        aparelho: "Notebook Dell Inspiron 15",
-        especificacoes: "Core i5, 8GB RAM, SSD 256GB",
-        relato: "Computador liga, mas a tela fica preta e emite 3 bipes.",
-        analise: "Mau contato nos módulos de memória RAM devido à oxidação.",
-        servico: "Limpeza química dos contatos e substituição de 1 pente de 4GB.",
-        valor: "R$ 250,00"
-      };
-      
-      setManutencao(dadosMockados);
-    };
-
-    carregarDadosCaso();
+        fetch('http://localhost:3000/desafios/1')
+        .then(resposta => resposta.json())
+        .then(dados => {
+            setManutencao(dados);
+        })
+        .catch(erro => {
+            console.error(erro);
+        });
   }, []);
 
   const responderOrcamento = (novoStatus) => {
@@ -46,7 +37,7 @@ function Cliente() {
   return (
     <div className={styles.container}>
       <h2>Área do Cliente</h2>
-      <p>Bem-vindo, {manutencao.cliente}!</p>
+      <p>Bem-vindo cliente id:{manutencao.id_desafio}!</p>
       
       {/* Botão para abrir o histórico do caso */}
       <button 
@@ -75,18 +66,10 @@ function Cliente() {
 
             <div className={styles.modalCorpo}>
               <div className={styles.secaoInfo}>
-                <h4> Equipamento</h4>
-                <p><strong>Aparelho:</strong> {manutencao.aparelho}</p>
-                <p><strong>Configuração:</strong> {manutencao.especificacoes}</p>
+                <h4>{manutencao.titulo}</h4>
+                <p><strong>Sintomas:</strong> {manutencao.descricao}</p>
               </div>
 
-              <div className={styles.secaoInfo}>
-                <h4> Situação e Diagnóstico</h4>
-                <p><strong>Sintomas:</strong> {manutencao.relato}</p>
-                <p><strong>Informações Adicionais:</strong> {manutencao.analise}</p>
-              </div>
-
-              {manutencao.status === "Em Andamento" && (
                 <div className={styles.acoes}>
                   <button 
                     className={styles.btnCancelar} 
@@ -97,11 +80,14 @@ function Cliente() {
                   </button>
                   <button 
                     className={styles.btnAceitar} 
+                    onClick={() => {
+                      responderOrcamento("Aprovado");
+                      navigate('/caso');
+                    }}
                   >
                     Aceitar Desafio
                   </button>
                 </div>
-              )}
             </div>
           </div>
         </div>
