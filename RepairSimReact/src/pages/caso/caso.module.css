@@ -29,22 +29,29 @@ body{
     
     position: relative;
     justify-content: center;
-    display: table-column;
+    flex-direction: table-column;
     display: flex;
-    /*left: 1200px;*/
-    top: clamp(25px, 75px, 100px);
-    width: clamp(75px, 125px, 150px);
-    height: clamp(297px, 445px, 625px);
-    background-color: transparent;
+    left: calc(100% + 2px);
+    top: clamp(10px, 20px, 50px);
+    width: calc(52% - 137px);
+    height: calc(100% - 100px);
+    background-color: white;
     z-index: 9999;
     /*pointer-events: none;*/
     font-family: Unispace, monospace;
+    box-sizing: border-box;
 }
 
 .textTools{
     font-size: clamp(6px, 12px, 16px);
     padding-left: clamp(12px, 18px, 30px);
     color:darkblue;
+}
+.titleTools{
+    font-size: 14px;
+    color: darkblue;
+    margin: 5px 0 10px 0;
+    text-align: center;
 }
 
 .btnToolsBox{
@@ -61,7 +68,6 @@ body{
     width: 140px;
     height: 30px;
     position: relative; /*não é mais absoluto*/
-    left: 1px;
 }
 
 .iconBtnTools{
@@ -72,10 +78,38 @@ body{
 .contentTools{
     margin-top: 1px;
     justify-content: center;
-    position: absolute;
+    position: relative;
     left: 1px;
+    top: calc(100% - 400px);
     padding-top: 10px;
+    scrollbar-width: auto;
+    flex-wrap: wrap;
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    margin-top: 5px;
 }
+.toolsBox{
+    width: 100%;
+    max-height: calc(100% - 130px);
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    scrollbar-width: thin ;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5px;
+    position: absolute;
+    top: 140px;
+    left: 0px;
+    width: 100%;
+    max-height: calc(100% - 150px);
+    padding: 0px 8px 15px 8px;
+    min-height: 0;
+    flex: 1;
+
+}
+
 
 /*teste, diminuindo as imagens e deixando elas com fundo branco*/
 .imgItem{
@@ -84,6 +118,7 @@ body{
     object-fit: contain;  
     border-radius: 4px;
     background-color: white;  
+    display:block;
 }
 
 /*===========================================================================*/
@@ -105,14 +140,14 @@ body{
 
 /*MONITOR*/
 .monitorImage {
-    width: 380px;
+    width: 180px;
     height: auto;
     object-fit: contain;
 }
 
 /*GABINETE*/
 .gabineteImage {
-    width: 190px;
+    width: 380px;
     height: auto;
     object-fit: contain;
 }
@@ -173,4 +208,19 @@ body{
 }
 .itemClicavel:hover { /*efeito quando o mouse passar*/
     transform: scale(1.08);
+}
+
+.btnVoltar{
+    position: absolute;
+    right: 60%;
+    bottom: 35px;
+    transform: translateX(-50%);
+    background-color: #8b0000;
+    border: 3px solid #ff4d4d;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 10000;
 }
