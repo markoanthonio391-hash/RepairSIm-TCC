@@ -282,18 +282,18 @@ function Caso() {
       )}
       <div className={styles.toolsContainer}>
         {/* botão ferramentas */}
-        <button className={styles.btnToolsBox} onClick={() => abrirCategoria('ferramenta')} >
+        <button className={`${styles.btnToolsBox} ${styles.btnColorTool} ${isOpen && tipoSelecionado === 'ferramenta' ? styles.active : ''}`}onClick={() => abrirCategoria('ferramenta')} >
           FERRAMENTAS
-          <span className={styles.iconBtnTools}> 🛠️ </span>
+          {/* <span className={styles.iconBtnTools}> 🛠️ </span> */}
          </button>
 
         {/* botão peças */}
-        <button className={styles.btnToolsBox} onClick={() => abrirCategoria('peca')}>
+        <button className={`${styles.btnToolsBox} ${styles.btnColorComp} ${isOpen && tipoSelecionado === 'ferramenta' ? styles.active : ''}`}onClick={() => abrirCategoria('peca')}>
           PEÇAS
         </button>
 
         {/* botão software */}
-        <button className={styles.btnToolsBox} onClick={() => abrirCategoria('software')}>
+        <button className={`${styles.btnToolsBox} ${styles.btnColorSoft} ${isOpen && tipoSelecionado === 'ferramenta' ? styles.active : ''}`} onClick={() => abrirCategoria('software')}>
           SOFTWARE
         </button>
 
