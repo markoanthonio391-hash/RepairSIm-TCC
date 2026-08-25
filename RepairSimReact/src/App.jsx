@@ -11,7 +11,8 @@ import Cadastro from './pages/Login/cadastro/cadastro';
 import Cliente from './pages/cliente/cliente';
 import Conquistas from './pages/home/Conquistas/Conquistas';
 import Caso from './pages/caso/caso';
-//import Relatorio from './pages/relatorio/Relatorio'; #Problemas na importação da página de relatórios
+import Relatorio from './pages/relatorio/relatorio'; 
+//#Problemas na importação da página de relatórios
 //  (Causador de fundo branco nas telas de caso e de cliente)
 
 function App() {
@@ -29,7 +30,7 @@ function App() {
         <Route path='/cadastro' element={<Cadastro />} />      
         <Route path="/cliente" element={<Cliente />} />
         <Route path="/Conquistas" element={<Conquistas />} />
-        {/* <Route path="/relatorio" element={<Relatorio />} />  */}
+         <Route path="/relatorio" element={<Relatorio />} />  
         <Route path="/caso" element={<Caso />} />
         <Route path='*'element={<h1>Not Found</h1>} />
       </Routes>
