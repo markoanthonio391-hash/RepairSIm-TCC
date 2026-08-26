@@ -37,7 +37,7 @@ function Cliente() {
   return (
     <div className={styles.container}>
       <h2>Área do Cliente</h2>
-      <p>Bem-vindo cliente id:{manutencao.id_desafio}!</p>
+      <p>Bem-vindo cliente {manutencao.cliente}!</p>
       
       {/* Botão para abrir o histórico do caso */}
       <button 
@@ -54,7 +54,7 @@ function Cliente() {
           
             
             <div className={styles.modalHeader}>
-              <h3>Ordem de Serviço #{manutencao.id}</h3>
+              <h3>Ordem de Serviço {manutencao.id_desafio}</h3>
               {/* Mudança dinâmica na classe do badge conforme o status muda */}
               <span className={`${styles.status} ${
                 manutencao.status === "Em Andamento" ? styles.emAndamento : 
