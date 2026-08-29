@@ -38,6 +38,7 @@ exports.buscarPorId = (req, res) => {
     });
 };
 
+
 //----------------------------------|FUNÇÂO PARA VERIFICAR A RESPOSTA (PINCEL)|-----------------------------np
 
 // Olha se o item que foi escolhido é o correto para o desafio
@@ -46,12 +47,12 @@ exports.verificarItem = (req, res) => {
     //id do desafio da URL no caso ele ta buscando
     const id_desafio = req.params.id;
 
-    //id do item  que é escolhido pelo jogador
-    const {id_item} = req.body;
+    //id do item que é escolhido pelo jogador
+    const { id_item } = req.body;
 
     //Verifica se existe essa relação no banco
     const selecao = `
-        Select *
+        SELECT *
         FROM desafio_itens
         WHERE id_desafio = ?
         AND id_item = ?
@@ -63,26 +64,36 @@ exports.verificarItem = (req, res) => {
         (erro, resultado) => {
 
             if (erro) {
-                return res.status(500).json({
-                    mensagem: "Erro ao verificar resposta."
-                });
-            }
+    console.log("Erro ao verificar resposta:", erro);
+
+    return res.status(500).json({
+        mensagem: "Erro ao verificar resposta.",
+        erro: erro.message
+    });
+}
 
             //caso não encontre a relação
             if (resultado.length === 0) {
+
+                //caso erre, perde 5 pontos
+                const pontos = -5;
+
                 return res.json({
                     correto: false,
-                    mensagem: "Item incorreto."
+                    pontos: pontos,
+                    mensagem: "Item incorreto. Você perdeu 5 pontos."
                 });
             }
 
-            //encontrou a relação
-            res.json({
+            //encontrou a relação, então o item está correto
+            //caso acerte, ganha 10 pontos
+            const pontos = 10;
+
+            return res.json({
                 correto: true,
-                mensagem: "Parabéns! Você encontrou a solução!"
+                pontos: pontos,
+                mensagem: "Parabéns! Você encontrou a solução e ganhou 10 pontos!"
             });
-
-            }
-        );
-
-    };
+        }
+    );
+};
