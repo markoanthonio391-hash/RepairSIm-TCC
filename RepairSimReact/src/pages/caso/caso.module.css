@@ -1,0 +1,438 @@
+.container{
+    font-family: Unispace, monospace;
+    color: snow;
+}
+
+body{
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    position: fixed;
+    display: flex;
+}
+
+.mainContainer{
+    width: 800px;
+    height: 625px;
+    font-family: Unispace, monospace;
+    color:aquamarine;
+    background-color: black;
+}
+
+/* .textContainer{
+
+}
+.componContainer{
+
+} */
+.toolsContainer{
+    
+    position: relative;
+    justify-content: center;
+    flex-direction: table-column;
+    display: flex;
+    left: calc(100% + 2px);
+    top: clamp(10px, 20px, 50px);
+    width: calc(52% - 137px);
+    height: calc(100% - 100px);
+    background-color: transparent;
+    z-index: 9999;
+    /*pointer-events: none;*/
+    font-family: Unispace, monospace;
+    box-sizing: border-box;
+    border-style: double;
+    border-radius: 0px;
+}
+
+.textTools{
+    font-size: clamp(6px, 12px, 16px);
+    padding-left: clamp(12px, 18px, 30px);
+    color: white;
+}
+.titleTools{
+    font-size: 14px;
+    color: white;
+    margin: 5px 0 10px 0;
+    text-align: center;
+}
+
+.btnToolsBox{
+    cursor: pointer;
+    border-radius: 6px;
+    pointer-events: auto; 
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+    font-weight: bold;
+    width: 140px;
+    height: 30px;
+    position: relative; /*não é mais absoluto*/
+}
+/* .btnColorTool{
+    border: 3px solid #ffd700;
+    color: #ffd700;
+    background-color: #4a3728;
+} */
+
+.iconBtnTools{
+    right:1px;
+    position: absolute;
+}
+
+.contentTools{
+    margin-top: 1px;
+    justify-content: center;
+    position: relative;
+    left: 1px;
+    top: calc(100% - 400px);
+    padding-top: 10px;
+    scrollbar-width: auto;
+    flex-wrap: wrap;
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    margin-top: 5px;
+}
+.toolsBox{
+    width: 100%;
+    max-height: calc(100% - 130px);
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    scrollbar-width: thin ;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5px;
+    position: absolute;
+    top: 60px;
+    left: 0px;
+    width: 100%;
+    max-height: calc(100% - 150px);
+    padding: 0px 8px 15px 8px;
+    min-height: 0;
+    flex: 1;
+
+}
+
+
+/*teste, diminuindo as imagens e deixando elas com fundo branco*/
+.imgItem{
+    width: 52.5px;          
+    height: 52.5px;        
+    object-fit: contain;  
+    border-radius: 4px;
+    border-style: double;
+    background-color: transparent;  
+    display:block;
+}
+
+/*===========================================================================*/
+/*TESTE DE ESTILO DOS PCS QUE FICAM NA BANCADA E BOTÕES, MUDAR SE NECESSARIO*/
+/*===========================================================================*/
+/*AREA DO PC*/
+.pcContainer {
+    position: absolute;
+    top: 50%;
+    left: 58%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 600px;
+    height: 450px;
+}
+
+/*MONITOR*/
+.monitorImage {
+    width: 180px;
+    height: auto;
+    object-fit: contain;
+}
+
+/*GABINETE*/
+.gabineteImage {
+    width: 380px;
+    height: auto;
+    object-fit: contain;
+}
+
+/*GABINETE DURANTE A MANUTENÇÃO*/
+.gabineteManutencao {
+    width: 420px;
+    height: auto;
+    object-fit: contain;
+}
+
+/*GABINETE CLICÁVEL*/
+.gabineteClicavel {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+.gabineteClicavel:hover {/*Efeito quando o mouse passar*/
+    transform: scale(1.03);
+}
+
+/*BOTÃO DESLIGAR*/
+.btnDesligar {
+    position: absolute;
+    left: 58%;
+    bottom: 35px;
+    transform: translateX(-50%);
+    background-color: #8b0000;
+    border: 3px solid #ff4d4d;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 10000;
+}
+
+/*MENSAGEM*/
+.mensagem {
+    position: absolute;
+    left: 58%;
+    bottom: 80px;
+    transform: translateX(-50%);
+    width: 400px;
+    padding: 10px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.85);
+    border: 2px solid #ffd700;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    z-index: 10000;
+}
+
+/*ITEM CLICÁVEL*/
+.itemClicavel {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+.itemClicavel:hover { /*efeito quando o mouse passar*/
+    transform: scale(1.08);
+}
+
+.btnVoltar{
+    position: absolute;
+    right: 60%;
+    bottom: 35px;
+    transform: translateX(-50%);
+    background-color: #8b0000;
+    border: 3px solid #ff4d4d;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 10000;
+}
+
+/*--- Animação de Pulsar para o Neon Ativo ---
+@keyframes pulsarNeon {
+  0% {
+    box-shadow: 0 0 10px var(--cor-neon), 0 0 25px var(--cor-neon), inset 0 0 10px var(--cor-neon);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--cor-neon), 0 0 45px var(--cor-neon), inset 0 0 15px var(--cor-neon);
+  }
+  100% {
+    box-shadow: 0 0 10px var(--cor-neon), 0 0 25px var(--cor-neon), inset 0 0 10px var(--cor-neon);
+  }
+}
+@keyframes pulsarNeonComp {
+  0% { box-shadow: 0 0 10px #ff1a1a, 0 0 25px #8b0000, inset 0 0 10px #8b0000; }
+  50% { box-shadow: 0 0 20px #ff1a1a, 0 0 45px #ff0000, inset 0 0 15px #8b0000; }
+  100% { box-shadow: 0 0 10px #ff1a1a, 0 0 25px #8b0000, inset 0 0 10px #8b0000; }
+}
+
+/* Animação Azul Ciano - Software 
+@keyframes pulsarNeonSoft {
+  0% { box-shadow: 0 0 10px #00f0ff, 0 0 25px #00f0ff, inset 0 0 10px #00f0ff; }
+  50% { box-shadow: 0 0 20px #00f0ff, 0 0 45px #00f0ff, inset 0 0 15px #00f0ff; }
+  100% { box-shadow: 0 0 10px #00f0ff, 0 0 25px #00f0ff, inset 0 0 10px #00f0ff; }
+}
+
+/* --- Estilo quando o botão de Ferramentas estiver ATIVO --- 
+.btnColorTool{
+  --cor-neon: #ffd700; /* Define a cor verde para a animação 
+  background-color: #ffd700;
+  color: #000;
+  border-color: #fff; /* Borda branca dá o efeito de filamento aceso 
+  text-shadow: none;
+  animation: pulsarNeon 1.5s infinite ease-in-out; /* Faz o brilho pulsar infinitamente 
+}
+
+/* --- Estilo quando o botão de Peças estiver ATIVO --- 
+.btnColorComp{
+  --cor-neon: #ff0055; /* Define a cor vermelha/rosa 
+  background-color: #ff0055;
+  color: #000;
+  border-color: #fff;
+  text-shadow: none;
+  animation: pulsarNeon 1.5s infinite ease-in-out;
+}
+
+/* --- Estilo quando o botão de Software estiver ATIVO --- 
+.btnColorSoft {
+  --cor-neon: #00f0ff; /* Define a cor azul 
+  background-color: #00f0ff;
+  color: #000;
+  border-color: #fff;
+  text-shadow: none;
+  animation: pulsarNeon 1.5s infinite ease-in-out;
+}
+
+.btnColorTool.active {
+    background-color: #0d0d0d;       /* Fundo quase preto para destacar o neon 
+    color: #fff;                     /* Texto branco para simular o filamento da lâmpada 
+    border: 2px solid #00ff88;       /* Borda com a cor base do neon 
+    border-radius: 8px;              /* Cantos levemente arredondados combinam com neon 
+    cursor: pointer;
+    transition: all 0.3s ease;       /* Efeito suave ao passar o mouse 
+
+    /* EFEITO NEON NA BORDA (box-shadow) e NO TEXTO (text-shadow) 
+    box-shadow: 
+        0 0 5px #00ff88,             /* Brilho interno/colado na borda 
+        0 0 15px #00ff88,            /* Brilho médio ao redor 
+        inset 0 0 3px #00ff88;       /* Brilho neon para dentro do botão 
+        
+    text-shadow: 0 0 5px #00ff88; 
+    
+}
+.btnColorSoft{
+    border: 3px solid #ffd700;
+    color: #ffd700;
+    background-color: #4a3728;
+}
+.btnColorComp{
+  /* --cor-neon: #ff0055; /* Define a cor vermelha/rosa 
+    background-color: #0d0d0d;       /* Fundo quase preto para destacar o neon 
+    color: #fff;                     /* Texto branco para simular o filamento da lâmpada 
+    border: 2px solid #00ff88;       /* Borda com a cor base do neon 
+    border-radius: 8px;              /* Cantos levemente arredondados combinam com neon 
+    cursor: pointer;
+    transition: all 0.3s ease;       /* Efeito suave ao passar o mouse 
+
+    /* EFEITO NEON NA BORDA (box-shadow) e NO TEXTO (text-shadow) 
+    box-shadow: 
+        0 0 5px #00ff88,             /* Brilho interno/colado na borda 
+        0 0 15px #00ff88,            /* Brilho médio ao redor 
+        inset 0 0 5px #00ff88;       /* Brilho neon para dentro do botão 
+        
+    text-shadow: 0 0 5px #00ff88; 
+}*/
+
+/* ==========================================================================
+   ANIMAÇÕES DE PULSAR PARA O ESTADO NORMAL (BOTÕES PARADOS)
+   ========================================================================== */
+
+/* Pulsar Verde - Ferramentas (Normal) */
+@keyframes pulsarNeonToolNormal {
+  0% { box-shadow: 0 0 12px #00ff88, 0 0 30px #00ff88, inset 0 0 8px #00ff88; }
+  50% { box-shadow: 0 0 25px #00ff88, 0 0 55px #00ff88, inset 0 0 15px #00ff88; }
+  100% { box-shadow: 0 0 12px #00ff88, 0 0 30px #00ff88, inset 0 0 8px #00ff88; }
+}
+
+/* Pulsar Vermelho - Peças (Normal) */
+@keyframes pulsarNeonCompNormal {
+  0% { box-shadow: 0 0 12px #ff1a1a, 0 0 30px #ff1a1a, inset 0 0 8px #8b0000; }
+  50% { box-shadow: 0 0 25px #ff1a1a, 0 0 55px #ff0000, inset 0 0 15px #8b0000; }
+  100% { box-shadow: 0 0 12px #ff1a1a, 0 0 30px #ff1a1a, inset 0 0 8px #8b0000; }
+}
+
+/* Pulsar Azul - Software (Normal) */
+@keyframes pulsarNeonSoftNormal {
+  0% { box-shadow: 0 0 12px #00f0ff, 0 0 30px #00f0ff, inset 0 0 8px #00f0ff; }
+  50% { box-shadow: 0 0 25px #00f0ff, 0 0 55px #00f0ff, inset 0 0 15px #00f0ff; }
+  100% { box-shadow: 0 0 12px #00f0ff, 0 0 30px #00f0ff, inset 0 0 8px #00f0ff; }
+}
+
+/* ==========================================================================
+   CLASSES DOS BOTÕES (NORMAL = VIVO/PULSANDO | ACTIVE = APAGADO)
+   ========================================================================== */
+
+/* --- 1. FERRAMENTAS --- */
+.btnColorTool.active {
+    background-color: #0d0d0d;       /* Fundo quase preto para destacar o neon */
+    color: #fff;                     /* Texto branco para simular o filamento da lâmpada */
+    border: 2px solid #ffd700;       /* Borda com a cor base do neon */
+    border-radius: 8px;              /* Cantos levemente arredondados combinam com neon */
+    cursor: pointer;
+    transition: all 0.3s ease;       /* Efeito suave ao passar o mouse */
+
+    /* EFEITO NEON NA BORDA (box-shadow) e NO TEXTO (text-shadow) */
+    box-shadow: 
+        0 0 5px #ffd700,             /* Brilho interno/colado na borda*/ 
+        0 0 15px #ffd700,            /* Brilho médio ao redor */
+        inset 0 0 3px #ffd700;       /* Brilho neon para dentro do botão*/
+        
+    text-shadow: 0 0 5px #ffd700; 
+}
+/* Estado ativo: Neon apaga/fica fosco */
+.btnColorTool {
+  --cor-neon: #ffd700;  
+  background-color: #ffd700;
+  color: #000;
+  border-color: #fff;
+  text-shadow: none;
+  animation: pulsarNeonToolNormal 1.5s infinite ease-in-out;
+}
+
+/* --- 2. PEÇAS --- #ff1a1a*/
+.btnColorComp.active {
+    background-color: #0d0d0d;       /* Fundo quase preto para destacar o neon */
+    color: #fff;                     /* Texto branco para simular o filamento da lâmpada */
+    border: 2px solid #ff1a1a;       /* Borda com a cor base do neon */
+    border-radius: 8px;              /* Cantos levemente arredondados combinam com neon */
+    cursor: pointer;
+    transition: all 0.3s ease;       /* Efeito suave ao passar o mouse */
+
+    /* EFEITO NEON NA BORDA (box-shadow) e NO TEXTO (text-shadow) */
+    box-shadow: 
+        0 0 5px #ff1a1a,             /* Brilho interno/colado na borda*/ 
+        0 0 15px #ff1a1a,            /* Brilho médio ao redor */
+        inset 0 0 3px #ff1a1a;       /* Brilho neon para dentro do botão*/
+        
+    text-shadow: 0 0 5px #ff1a1a; 
+}
+/* Estado ativo: Neon apaga/fica fosco */
+.btnColorComp {
+  --cor-neon: #ff1a1a;  
+  background-color: #ff1a1a;
+  color: #000;
+  border-color: #fff;
+  text-shadow: none;
+  animation: pulsarNeonToolNormal 1.5s infinite ease-in-out;
+}
+
+/* --- 3. SOFTWARE --- #00f0ff*/
+.btnColorSoft.active {
+    background-color: #0d0d0d;       /* Fundo quase preto para destacar o neon */
+    color: #fff;                     /* Texto branco para simular o filamento da lâmpada */
+    border: 2px solid #00f0ff;       /* Borda com a cor base do neon */
+    border-radius: 8px;              /* Cantos levemente arredondados combinam com neon */
+    cursor: pointer;
+    transition: all 0.3s ease;       /* Efeito suave ao passar o mouse */
+
+    /* EFEITO NEON NA BORDA (box-shadow) e NO TEXTO (text-shadow) */
+    box-shadow: 
+        0 0 5px #00f0ff,             /* Brilho interno/colado na borda*/ 
+        0 0 15px #00f0ff,            /* Brilho médio ao redor */
+        inset 0 0 3px #00f0ff;       /* Brilho neon para dentro do botão*/
+        
+    text-shadow: 0 0 5px #00f0ff; 
+}
+/* Estado ativo: Neon apaga/fica fosco */
+.btnColorSoft {
+  --cor-neon: #00f0ff;  
+  background-color: #00f0ff;
+  color: #000;
+  border-color: #fff;
+  text-shadow: none;
+  animation: pulsarNeonToolNormal 1.5s infinite ease-in-out;
+  box-shadow: 0 0 5px #00f0ff, 0 0 15px #00f0ff, inset 0 0 3px #00f0ff;
+  text-shadow: 0 0 3px #00f0ff; 
+}

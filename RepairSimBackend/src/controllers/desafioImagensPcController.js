@@ -15,3 +15,23 @@ exports.listar = (req, res) => { // sempre que for pedido a listar de desafio im
     });
 
 }
+
+exports.listarPorDesafio = (req, res) =>{//lista apenas as imagens que tem no desafio
+    const idDesafio = req.params.id; //pega pelo id da url
+
+    //busca as imagens e seus caminhos cruzando as tabelas e filtrando pelo id usando inner join.
+    const selecao = `select desafio_imagens_pc.id_desafio, imagens_pc.id_pc, imagens_pc.caminho_imagem
+    from desafio_imagens_pc
+    inner join imagens_pc
+    on desafio_imagens_pc.id_pc = imagens_pc.id_pc
+    where desafio_imagens_pc.id_desafio = ?`;
+
+    //executa a busca no banco passando o id do desafio e retorna o resultado ou erro
+    conexao.query(selecao, [idDesafio], (erro, resultado) =>{
+        if(erro){
+            return res.status(500).json({mensagem: "Erro ao buscar imagens do desafio."})
+        }
+        //retorna o que achou
+        res.json(resultado);
+    });
+};
