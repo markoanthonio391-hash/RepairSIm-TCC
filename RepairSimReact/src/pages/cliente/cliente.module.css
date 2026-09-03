@@ -221,10 +221,3 @@
   font-size: 14px !important;
   color: #495057 !important; /* Texto interno legível */
 }
-
-
-alert{
-  color: red;
-  font-size: 16px;
-  font-weight: bold;
-}

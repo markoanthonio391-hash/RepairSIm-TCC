@@ -1,7 +1,7 @@
-.title{
+/* .title{
     color : #F5F7FA; 
     font-family: Unispace, monospace;
-    /*font-style: Bold;*/
+    /*font-style: Bold;*
     text-align: center;
     justify-content: center;
     font-size: clamp(2rem, 5vw, 4rem);
@@ -58,7 +58,7 @@ body{
     flex-direction:column;
     align-items: center;
     justify-content: center;
-   /* margin-top: clamp(-35px, 3%, -100px); */
+   
     width: 100vw;
     min-height: 100vh;
     overflow: hidden;
@@ -174,5 +174,209 @@ body{
     font-size: 25px;
     color: white;
     border-radius: 150px;
-    width: 90px; /*editando a largura*/
+    width: 90px; /*editando a largura*
+} */
+
+.title{
+    color: #F5F7FA;
+    font-family: Unispace, monospace;
+    text-align: center;
+    font-size: clamp(2rem, 5vw, 4rem);
+    word-break: break-word;
+    line-height: 1.2;
+    margin: 0;
 }
+
+.subtitle{
+    color: #A8B3C7;
+    font-family: Unispace, monospace;
+    font-style: italic;
+    text-align: center;
+    font-size: clamp(1rem, 3vw, 2rem);
+    word-break: break-word;
+    line-height: 1.2;
+    margin: 0 0 clamp(1rem, 3vh, 2rem);
+}
+
+body{
+    margin: 0;
+    min-height: 100vh;
+    background-color: rgb(1, 0, 44);
+}
+
+.container{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100dvh;   /* dvh = respeita a barra do navegador mobile */
+    padding: clamp(1rem, 4vh, 3rem) 1rem;
+    box-sizing: border-box;
+    gap: clamp(0.5rem, 1.5vh, 1rem);
+    overflow-y: auto;     /* se não couber, rola em vez de cortar */
+}
+
+.bckground{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;    /* preenche sem distorcer, essencial pra <img> */
+    z-index: -1;
+}
+
+.tech-solve-logo{
+    position: fixed;
+    right: clamp(1rem, 3vw, 2rem);
+    bottom: clamp(1rem, 2vh, 2rem);
+    z-index: 1;
+}
+
+.logoTechSolve{
+    width: clamp(60px, 10vw, 150px);
+    height: auto;
+    border-radius: 150px;
+}
+
+@keyframes neonFlicker{
+    0%   { border-color: transparent; box-shadow: none; text-shadow: none; }
+    4%   { border-color: var(--neon-color); box-shadow: 0 0 10px var(--neon-color); text-shadow: 0 0 6px var(--neon-color); }
+    8%   { border-color: transparent; box-shadow: none; text-shadow: none; }
+    12%  { border-color: var(--neon-color); box-shadow: 0 0 4px var(--neon-color); text-shadow: 0 0 3px var(--neon-color); }
+    18%  { border-color: transparent; box-shadow: none; text-shadow: none; }
+    24%  { border-color: var(--neon-color); box-shadow: 0 0 14px var(--neon-color), 0 0 26px var(--neon-color); text-shadow: 0 0 8px var(--neon-color); }
+    30%  { border-color: transparent; box-shadow: none; text-shadow: none; }
+    38%  { border-color: var(--neon-color); box-shadow: 0 0 6px var(--neon-color); text-shadow: 0 0 4px var(--neon-color); }
+    45%  { border-color: transparent; box-shadow: none; text-shadow: none; }
+    55%  {
+        border-color: var(--neon-color);
+        box-shadow: 0 0 6px var(--neon-color), 0 0 16px var(--neon-color), 0 0 30px color-mix(in srgb, var(--neon-color) 55%, transparent);
+        text-shadow: 0 0 8px color-mix(in srgb, var(--neon-color) 80%, transparent);
+    }
+    60%  { border-color: transparent; box-shadow: none; text-shadow: none; }
+    68%  {
+        border-color: var(--neon-color);
+        box-shadow: 0 0 6px var(--neon-color), 0 0 16px var(--neon-color), 0 0 30px color-mix(in srgb, var(--neon-color) 55%, transparent);
+        text-shadow: 0 0 8px color-mix(in srgb, var(--neon-color) 80%, transparent);
+    }
+    100% {
+        border-color: var(--neon-color);
+        box-shadow: 0 0 6px var(--neon-color), 0 0 16px var(--neon-color), 0 0 30px color-mix(in srgb, var(--neon-color) 55%, transparent);
+        text-shadow: 0 0 8px color-mix(in srgb, var(--neon-color) 80%, transparent);
+    }
+}
+
+.menuButton{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(90vw, 24rem);        /* nunca passa de 90% da tela, nem de 24rem */
+    height: clamp(3.5rem, 8vh, 5rem);
+    margin: 6px 0;
+    cursor: pointer;
+    border-radius: 10px;
+    border: 3px solid transparent;
+    font-family: Unispace, monospace;
+    font-size: clamp(16px, 2.5vw, 25px);
+    color: black;
+    --neon-color: #ffffff;  /* cor do neon, pode ser alterada */
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-sizing: border-box;
+}
+
+.menuButton:hover{
+    transform: scale(1.05);
+    filter: brightness(1.1);
+    border-color: var(--neon-color);
+    box-shadow: 
+        0 0 8px var(--neon-color),
+        0 0 20px var(--neon-color),
+        0 0 40px color-mix(in srgb, var(--neon-color) 70%, transparent),
+        inset 0 0 14px color-mix(in srgb, var(--neon-color) 40%, transparent);
+    text-shadow: 0 0 10px color-mix(in srgb, var(--neon-color) 90%, transparent);
+}
+
+.menuButton:focus-visible{
+    outline: none;
+    transform: scale(1.03);
+    border-color: var(--neon-color);
+    box-shadow: 
+        0 0 8px var(--neon-color),
+        0 0 20px var(--neon-color),
+        0 0 40px color-mix(in srgb, var(--neon-color) 70%, transparent);
+}
+
+.jogar{ 
+    background-color: #009dff;
+    --neon-color: #00c3ff; }
+
+.config{
+    background-color: #36d8ff; 
+    --neon-color: #36d8ff; }
+
+.conquistas{
+    background-color: #5ef2ff;
+    --neon-color: #5ef2ff; }
+
+.sair{
+    background-color: #ff4d4d;
+    --neon-color: #ff4d4d; }
+
+.buttonLogin{ --neon-color: #ffffff; }
+
+.ligando{
+    animation: neonFlicker 4.5s ease-in-out forwards;
+}
+
+.ligado{
+    border-color: var(--neon-color);
+    box-shadow: 
+        0 0 6px var(--neon-color),
+        0 0 16px var(--neon-color),
+        0 0 30px color-mix(in srgb, var(--neon-color) 55%, transparent);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--neon-color) 80%, transparent);
+    transition: box-shadow 0.6s ease-in, border-color 0.6s ease-in, text-shadow 0.6s ease-in;
+}
+
+
+.iconWrap{
+    position: absolute;
+    left: clamp(1rem, 4vw, 1.75rem);   /* mesma distância da borda esquerda em todos */
+    top: 50%;
+    transform: translateY(-50%);        /* centraliza verticalmente sem afetar o texto */
+    width: clamp(28px, 5vh, 45px);
+    height: clamp(28px, 5vh, 45px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+.iconWrap img{
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* compensação medida da sobra transparente de cada PNG */
+.iconWrap.play img{ transform: scale(1.10); }
+
+.iconWrap.config img{ transform: scale(1.28); }
+
+.iconWrap.conquistas img{ transform: scale(1.08); }
+
+.iconWrap.sair img{ transform: scale(1.00); }
+
+.buttonLogin{
+    background-color: transparent;
+    color: white;
+    border-radius: 150px;
+    width: min(60vw, 200px);
+}
+
