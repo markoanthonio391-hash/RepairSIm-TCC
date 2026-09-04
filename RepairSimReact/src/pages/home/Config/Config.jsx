@@ -1,34 +1,42 @@
 import styles from './Config.module.css';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import bckgroundImage from '../../../assets/imgFundoBranco.jpeg'
+import backgroundImage from '../../../assets/imgFundo.jpeg'
 
-
-function Config()
- {
-
- // const [count, setCount] = useState(0)
-const navigate = useNavigate();
+function Config() {
+  const navigate = useNavigate();
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}> CONFIGURAÇÕES </h1>
-      <text className={styles.textTema}>Alteração de tema</text>
-      <button className={styles.buttonTema} onClick={() => alert('Trocando')} alt="Trocar tema"> Alterar Tema</button>
-      <text className={styles.textIdioma}>Alteração de idioma</text>
-      <button className={styles.buttonIdioma} onClick={() => alert('Trocando')} alt="Trocar idioma"> Alterar Idioma</button>
-      <text className={styles.textSom}>Alteração de som</text>
-      <button className={styles.buttonSom} onClick={() => alert('Trocando')} alt="Trocar som"> Alterar Som</button>
-      <text className={styles.textFonte}>Alteração de fonte</text>
-      <button className={styles.buttonFonte} onClick={() => alert('Trocando')} alt="Trocar fonte"> Alterar Fonte</button>
       <div className={styles.bckground}>
-        <img src={bckgroundImage} alt="Background" className={styles.bckground} />
+        <img src={backgroundImage} alt="Background" className={styles.bckgroundImg} />
       </div>
-      <button className={`${styles.menuButton} ${styles.config}`} onClick={() => navigate(-1)} alt="Voltar">
+
+      <h1 className={styles.title}>CONFIGURAÇÕES</h1>
+
+      <div className={styles.optionRow}>
+        <p className={styles.optionLabel}>Alteração de tema</p>
+        <button className={`${styles.optionButton} ${styles.tema}`} onClick={() => alert('Trocando')}>Alterar Tema</button>
+      </div>
+
+      <div className={styles.optionRow}>
+        <p className={styles.optionLabel}>Alteração de idioma</p>
+        <button className={`${styles.optionButton} ${styles.idioma}`} onClick={() => alert('Trocando')}>Alterar Idioma</button>
+      </div>
+
+      <div className={styles.optionRow}>
+        <p className={styles.optionLabel}>Alteração de som</p>
+        <button className={`${styles.optionButton} ${styles.som}`} onClick={() => alert('Trocando')}>Alterar Som</button>
+      </div>
+
+      <div className={styles.optionRow}>
+        <p className={styles.optionLabel}>Alteração de fonte</p>
+        <button className={`${styles.optionButton} ${styles.fonte}`} onClick={() => alert('Trocando')}>Alterar Fonte</button>
+      </div>
+
+      <button className={`${styles.voltarButton} ${styles.voltar}`} onClick={() => navigate(-1)}>
         Voltar
       </button>
     </div>
-
   );
 }
 export default Config;

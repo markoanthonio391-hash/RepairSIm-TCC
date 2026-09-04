@@ -25,11 +25,34 @@ function Dificuldade()
       </div>
       <h1 className={styles.title}>DIFICULDADES</h1>
       <h2 className={styles.subtitle}>Selecione uma dificuldade</h2>
-      <button className={`${styles.menuButton} ${styles.facil}`} onClick={() => alert('/fácil')}><img src={logoFacil} alt="Fácil" className={styles.logoFacil}/>Fácil</button>
+      {/* <button className={`${styles.menuButton} ${styles.facil}`} onClick={() => alert('/fácil')}><img src={logoFacil} alt="Fácil" className={styles.logoFacil}/>Fácil</button>
       <button className={`${styles.menuButton} ${styles.normal}`} onClick={() => navigate('/cliente')}><img src={logoNormal} alt="Normal" className={styles.logoNormal}/>Normal</button>
       <button className={`${styles.menuButton} ${styles.dificil}`} onClick={() => alert('/difícil')}><img src={logoDificil} alt="Difícil" className={styles.logoDificil}/>Difícil</button>
-      <button className={`${styles.voltarButton} ${styles.voltar}`} onClick={() => navigate('/')}><img src={logoVoltar} alt="Voltar" className={styles.logoVoltar}/>Voltar</button>
-
+      <button className={`${styles.voltarButton} ${styles.voltar}`} onClick={() => navigate('/')}><img src={logoVoltar} alt="Voltar" className={styles.logoVoltar}/>Voltar</button> */}
+      <button className={`${styles.menuButton} ${styles.facil}`} onClick={() => alert('/fácil')}>
+        <span className={styles.iconWrap}>
+          <img src={logoFacil} alt="Fácil" />
+        </span>
+        Fácil
+      </button>
+      <button className={`${styles.menuButton} ${styles.normal}`} onClick={() => navigate('/cliente')}>
+        <span className={styles.iconWrap}>
+          <img src={logoNormal} alt="Normal" />
+        </span>
+        Normal
+      </button>
+      <button className={`${styles.menuButton} ${styles.dificil}`} onClick={() => alert('/difícil')}>
+        <span className={styles.iconWrap}>
+          <img src={logoDificil} alt="Difícil" />
+        </span>
+        Difícil
+      </button>
+      <button className={`${styles.voltarButton} ${styles.voltar}`} onClick={() => navigate('/')}>
+        <span className={styles.iconWrap}>
+          <img src={logoVoltar} alt="Voltar" />
+        </span>
+        Voltar
+      </button> 
     </div>
   );
 }

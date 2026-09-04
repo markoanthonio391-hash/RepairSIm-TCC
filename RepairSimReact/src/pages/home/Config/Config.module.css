@@ -1,216 +1,141 @@
-.title{
-    color : #000000; 
-    font-family: Unispace, monospace;
-    font-style: italic;
-    /*font-style: Bold;*/
-    text-align: center;
-    justify-content: center;
-    font-size: clamp(20px, 3vw, 40px);
-    word-break: break-word;
-    line-height: 1.2;
-    font-display: flex;
-    display: flex;
-    position: relative;    
-    bottom: clamp(15rem, 2vh, 20rem);
-    width: 25vw;
-    height: 10vh;
-}
-
-
-.subtitle{
-    font-display: block;
-    display: flex;
-    position: relative;
-    color : #A8B3C7;
-    font-family: Unispace, monospace;
-    font-style: italic;
-    justify-content: center;
-    text-align: center;
-    font-size: clamp(1rem, 3vw, 2rem);
-    word-break: break-word;
-    line-height: 1.2;
-    bottom: clamp(1rem, 3vw, 4rem);
-}
-
-
-.teste{
-    border-radius: 100px;
-    width: auto;
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-
-body{
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
-}
-.bckground{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1;
-}
-
 .container{
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100vw;
-    min-height: 100vh;
-    overflow: hidden;
+    width: 100%;
+    min-height: 100dvh;
+    padding: clamp(1rem, 4vh, 3rem) 1rem;
+    box-sizing: border-box;
+    gap: clamp(0.75rem, 2vh, 1.25rem);
+    overflow-y: auto;
 }
 
+.bckground{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
 
+.bckgroundImg{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
-.buttonSom{
-    position: relative;
-    overflow: hidden;
-    display: inline-flex;
-    align-items:center;
-    justify-content: center;
-    width: clamp(8rem, 3vw, 16rem);
-    height: clamp(2rem, 3vh, 3rem);
-    margin: 0px;
-    cursor: pointer;
-    border-radius: 20px;
+.title{
+    color: #F5F7FA;
     font-family: Unispace, monospace;
-    border: 3px solid transparent; 
-    transition: all 0.15s ease-in-out;
-    background-color: #009dff;
-    flex-direction: inline-flex;
-}
-.textSom{
-    font-family: Unispace, monospace;
-    color:aquamarine;
-    color: #000000;
-    background-color: transparent;
-    justify-content: center;
-    text-align: left;
-    bottom: clamp(2rem, 2vw, 25rem);
-    font-size: clamp(15px, 2vw, 20px);
-    padding-right: 10px;
+    font-style: italic;
+    text-align: center;
+    font-size: clamp(1.75rem, 5vw, 3rem);
+    margin: 0 0 clamp(1rem, 3vh, 2rem);
 }
 
-
-.buttonFonte{
-    position: relative;
-    overflow: hidden;
+.optionRow{
     display: flex;
-    align-items:center;
-    justify-content: center;
-    width: clamp(8rem, 3vw, 16rem);
-    height: clamp(2rem, 3vh, 3rem);
-    margin: 0px;
-    cursor: pointer;
-    border-radius: 20px;
-    font-family: Unispace, monospace;
-    border: 3px solid transparent; 
-    transition: all 0.15s ease-in-out;
-    background-color: #009dff;
-}
-.textFonte{
-    font-family: Unispace, monospace;
-    color:aquamarine;
-    color: #000000;
-    background-color: transparent;
-    justify-content: center;
-    text-align: left;
-    bottom: clamp(2rem, 2vw, 25rem);
-    font-size: clamp(15px, 2vw, 20px);
-    padding-right: 10px;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
 }
 
+.optionLabel{
+    font-family: Unispace, monospace;
+    color: #A8B3C7;
+    text-align: center;
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    margin: 0;
+}
 
-.buttonIdioma{
+.optionButton{
     position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items:center;
-    justify-content: center;
-    width: clamp(8rem, 3vw, 16rem);
-    height: clamp(2rem, 3vh, 3rem);
-    margin: 0px;
-    cursor: pointer;
-    border-radius: 20px;
-    font-family: Unispace, monospace;
-    border: 3px solid transparent; 
-    transition: all 0.15s ease-in-out;
-    background-color: #009dff;
-}
-.textIdioma{
-    font-family: Unispace, monospace;
-    color:aquamarine;
-    color: #000000;
-    background-color: transparent;
-    justify-content: center;
-    text-align: left;
-    padding-right: 10px;
-    font-size: clamp(15px, 2vw, 20px);
-}
-
-
-.menuButton{
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items:center;
-    justify-content: center;
-    width: clamp(2.9rem, 2vw, 3rem);
-    height: clamp(4.5rem, 2vh, 8rem);
-    margin: 0px;
-    cursor: pointer;
-    border-radius: 10px;
-    padding: 0px 0px;
-    border: 3px solid transparent; 
-    transition: all 0.15s ease-in-out;
-}
-
-
-
-.buttonTema{
-    position: relative;
-    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: clamp(8rem, 3vw, 16rem);
-    height: clamp(2rem, 3vh, 3rem);
-    margin: 0px;
+    width: min(70vw, 16rem);
+    height: clamp(2.5rem, 6vh, 3.25rem);
+    font-family: Unispace, monospace;
+    font-size: clamp(14px, 2vw, 18px);
     cursor: pointer;
     border-radius: 20px;
-    font-family: Unispace, monospace;
-    border: 3px solid transparent; 
-    transition: all 0.15s ease-in-out;
-    background-color: #009dff;
-}
-.textTema{
-    font-family: Unispace, monospace;
-    color:aquamarine;
-    color: #000000;
-    background-color: transparent;
-    justify-content: center;
-    text-align: left;
-    font-size: clamp(15px, 2vw, 20px);
-    padding-right: 10px;
-}
-
-
-.config{
-    background-color: #36d8ff;
-    font-family: Unispace, monospace;
-    font-size: clamp(10px, 12px, 30px);
+    border: 3px solid transparent;
     color: black;
+    box-sizing: border-box;
+    box-shadow:
+        0 0 6px var(--neon-color),
+        0 0 16px var(--neon-color),
+        0 0 30px color-mix(in srgb, var(--neon-color) 55%, transparent);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--neon-color) 80%, transparent);
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.15s ease-in-out, filter 0.15s ease-in-out;
+}
+
+.optionButton:hover{
+    transform: scale(1.05);
+    filter: brightness(1.1);
+    border-color: var(--neon-color);
+    box-shadow:
+        0 0 8px var(--neon-color),
+        0 0 20px var(--neon-color),
+        0 0 40px color-mix(in srgb, var(--neon-color) 70%, transparent),
+        inset 0 0 14px color-mix(in srgb, var(--neon-color) 40%, transparent);
+    text-shadow: 0 0 10px color-mix(in srgb, var(--neon-color) 90%, transparent);
+}
+
+.optionButton:focus-visible{
+    outline: none;
+    transform: scale(1.03);
+    border-color: var(--neon-color);
+    box-shadow:
+        0 0 8px var(--neon-color),
+        0 0 20px var(--neon-color),
+        0 0 40px color-mix(in srgb, var(--neon-color) 70%, transparent);
+}
+
+.tema{ background-color: #009dff; --neon-color: #00c3ff; }
+.idioma{ background-color: #009dff; --neon-color: #00c3ff; }
+.som{ background-color: #009dff; --neon-color: #00c3ff; }
+.fonte{ background-color: #009dff; --neon-color: #00c3ff; }
+
+.voltarButton{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: clamp(2.5rem, 8vh, 4.5rem);
+    font-family: Unispace, monospace;
+    border: 3px solid transparent;
+    width: min(70vw, 16rem);
+    height: clamp(2.5rem, 6vh, 3.25rem);
+    font-size: clamp(14px, 2vw, 18px);
+    cursor: pointer;
+    border-radius: 20px;
+    color: white;
+    box-sizing: border-box;
+    box-shadow:
+        0 0 8px var(--neon-color),
+        0 0 22px var(--neon-color),
+        0 0 42px color-mix(in srgb, var(--neon-color) 65%, transparent);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--neon-color) 80%, transparent);
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.15s ease-in-out, filter 0.15s ease-in-out;
+}
+
+.voltarButton:hover{
+    transform: scale(1.05);
+    filter: brightness(1.1);
+    border-color: var(--neon-color);
+}
+
+.voltarButton:focus-visible{
+    outline: none;
+    transform: scale(1.03);
+    border-color: var(--neon-color);
+}
+
+.voltar{
+    background-color: #3a4a5c;
+    --neon-color: #7dd3fc;
 }
