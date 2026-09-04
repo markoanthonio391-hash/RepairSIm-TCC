@@ -31,7 +31,8 @@ const faseClasse = ligando ? styles.ligando : styles.ligado;
   return (
     <div className={styles.container}>
       <div className={styles.bckground}>
-        <img src={backgroundImage} alt="Background" className={styles.bckground} />
+        <img src={backgroundImage} alt="Background" className={styles.bckgroundImg} />
+        <div className={styles.circuitoGlow}></div>
       </div>
 
       <div className={styles['tech-solve-logo']}>
