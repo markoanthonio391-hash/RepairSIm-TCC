@@ -6,30 +6,41 @@ import logoSair from '../../assets/logoSair.png'
 import logoConfig from '../../assets/logoConfig.png'
 import logoConquistas from '../../assets/logoConq.png'
 import logoPlay from '../../assets/iconPlay.png'
-import backgroundImage from '../../assets/imgFundo.jpeg'
+import { useTheme } from '../../context/useTheme';
+import backgroundImageDark from '../../assets/imgFundo.jpeg'
+import backgroundImageLight from '../../assets/imgFundoBranco.jpeg'
+import { useLanguage } from '../../context/useLanguage';
 
 function Home() {
- const navigate = useNavigate()
- const [estaAberta, setEstaAberta] = useState(true)
- const [ligando, setLigando] = useState(true)
+  const navigate = useNavigate();
+  
+  const { tema } = useTheme();
+  const backgroundImage = tema === 'Claro' ? backgroundImageLight : backgroundImageDark;
+  
+  const claro = tema === 'Claro';
 
- useEffect(() => {
-  const timer = setTimeout(() => setLigando(false), 4500);
-  return () => clearTimeout(timer);
-  }, []);
+  const { t } = useLanguage(); // Adicione esta linha para obter a função de tradução
 
- const fecharJanela = () => {
-  setEstaAberta(false);
- };
+  const [estaAberta, setEstaAberta] = useState(true);
+  const [ligando, setLigando] = useState(true);
 
- if (!estaAberta) {
-  return null;
- }
+  useEffect(() => {
+    const timer = setTimeout(() => setLigando(false), 4500);
+    return () => clearTimeout(timer);
+    }, []);
 
-const faseClasse = ligando ? styles.ligando : styles.ligado;
+  const fecharJanela = () => {
+    setEstaAberta(false);
+  };
+
+  if (!estaAberta) {
+    return null;
+  }
+
+  const faseClasse = ligando ? styles.ligando : styles.ligado;
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${claro ? styles.temaClaro : ''}`}>
       <div className={styles.bckground}>
         <img src={backgroundImage} alt="Background" className={styles.bckgroundImg} />
         <div className={styles.circuitoGlow}></div>
@@ -39,17 +50,17 @@ const faseClasse = ligando ? styles.ligando : styles.ligado;
         <img src={TechSolveLogo} alt="TechSolve Logo" className={`${styles.logoTechSolve} ${styles['tech-solve-logo']}`} />
       </div>
 
-      <h1 className={styles.title}>RepairSim</h1>
-      <h2 className={styles.subtitle}>Aprenda. Repare. Evolua!</h2>
+      <h1 className={styles.title}>{t.homeTitle}</h1>
+      <h2 className={styles.subtitle}>{t.homeSubtitle}</h2>
 
       <button
         className={`${styles.menuButton} ${styles.jogar} ${faseClasse}`}
         onClick={() => navigate('/dificuldade')}
       >
         <span className={`${styles.iconWrap} ${styles.play}`}>
-          <img src={logoPlay} alt="Jogar" />
+          <img src={logoPlay} alt={t.jogar} />
         </span>
-        Jogar
+        {t.jogar}
       </button>
 
       <button
@@ -57,9 +68,9 @@ const faseClasse = ligando ? styles.ligando : styles.ligado;
         onClick={() => navigate('/Config')}
       >
         <span className={`${styles.iconWrap} ${styles.config}`}>
-          <img src={logoConfig} alt="Configurações" />
+          <img src={logoConfig} alt={t.configuracoes} />
         </span>
-        Configurações
+        {t.configuracoes}
       </button>
 
       <button
@@ -67,9 +78,9 @@ const faseClasse = ligando ? styles.ligando : styles.ligado;
         onClick={() => navigate('/Conquistas')}
       >
         <span className={`${styles.iconWrap} ${styles.conquistas}`}>
-          <img src={logoConquistas} alt="Conquistas" />
+          <img src={logoConquistas} alt={t.conquistas} />
         </span>
-        Conquistas
+        {t.conquistas}
       </button>
 
       <button
@@ -77,16 +88,16 @@ const faseClasse = ligando ? styles.ligando : styles.ligado;
         onClick={() => fecharJanela('Sair')}
       >
         <span className={`${styles.iconWrap} ${styles.sair}`}>
-          <img src={logoSair} alt="Sair" />
+          <img src={logoSair} alt={t.sair} />
         </span>
-        Sair
+        {t.sair}
       </button>
 
       <button
         className={`${styles.menuButton} ${styles.buttonLogin} ${faseClasse}`}
         onClick={() => navigate('/login')}
       >
-        Login
+        {t.login}
       </button>
     </div>
     

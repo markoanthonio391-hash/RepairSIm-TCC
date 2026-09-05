@@ -170,10 +170,10 @@ function Cadastro() {
                     </div>
                 </div>
 
-                <label className={styles.termsRow}>
-                    <input type="checkbox" className={styles.inputTerms} />
-                    <span className={styles.terms}>Li e aceito os termos de uso</span>
-                </label>
+                <div className={styles.termsRow}>
+                    <input type="checkbox" className={styles.inputTerms} id="termos" aria-label="Li e aceito os termos de uso" />
+                    <label htmlFor="termos" className={styles.terms}>Li e aceito os termos de uso</label>
+                </div>
 
                 {error && <p className={styles.error}>{error}</p>}
                 {loading && <p className={styles.loading}>Criando conta...</p>}

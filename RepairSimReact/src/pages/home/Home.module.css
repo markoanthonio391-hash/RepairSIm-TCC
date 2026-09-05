@@ -8,6 +8,8 @@
     word-break: break-word;
     line-height: 1.2;
     margin: 0;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .subtitle{
@@ -19,6 +21,8 @@
     word-break: break-word;
     line-height: 1.2;
     margin: 0 0 clamp(1rem, 3vh, 2rem);
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 body{
@@ -138,6 +142,8 @@ body{
     --neon-color: #ffffff;  /* cor do neon, pode ser alterada */
     transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     box-sizing: border-box;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .menuButton:hover{
@@ -233,3 +239,56 @@ body{
     width: min(60vw, 200px);
 }
 
+.temaClaro .title,
+.temaClaro .subtitle{
+    color: #0A192F;
+    text-shadow: none;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.temaClaro .menuButton{
+    color: #ffffff;
+    text-shadow: none;
+    box-shadow:
+        0 4px 14px color-mix(in srgb, var(--neon-color) 45%, transparent),
+        0 0 0 1px color-mix(in srgb, var(--neon-color) 25%, transparent);
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.temaClaro .menuButton:hover{
+    transform: scale(1.05);
+    box-shadow:
+        0 6px 22px color-mix(in srgb, var(--neon-color) 60%, transparent),
+        0 0 0 1px color-mix(in srgb, var(--neon-color) 40%, transparent);
+    filter: brightness(1.08);
+}
+
+/* cores mais vivas e distintas entre si */
+.temaClaro .jogar{
+    background: linear-gradient(135deg, #0ea5e9, #0077cc);
+    --neon-color: #0ea5e9;
+}
+.temaClaro .config{
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    --neon-color: #06b6d4;
+}
+.temaClaro .conquistas{
+    background: linear-gradient(135deg, #14b8a6, #0d9488);
+    --neon-color: #14b8a6;
+}
+.temaClaro .sair{
+    background: linear-gradient(135deg, #f87171, #dc2626);
+    --neon-color: #ef4444;
+}
+
+.temaClaro .buttonLogin{
+    color: #0A192F;
+    border-color: #0A192F;
+}
+
+img{
+    -webkit-user-drag: none;
+    user-select: none;
+}
