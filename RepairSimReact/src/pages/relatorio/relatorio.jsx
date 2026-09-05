@@ -1,6 +1,19 @@
 //Importa o useState do React e o arquivo do estilos
 import { useState } from "react";
-import "./Relatorio.css"
+import { useNavigate } from "react-router-dom";
+import "./Relatorio.css";
+
+//A seguir, adição do backend
+const idDesafio = 1;
+const idUsuario = 1; //temporario para testes
+
+const [dadosDesafio, setDadosDesafio] = useState(null);
+const [itens, setItens] = useState([]);
+const [itensSelecionados, setItensSelecionados] = useState([]);
+const [resultadoRelatorio, setResultadoRelatorio] = useState(null);
+const [carregando, setCarregando] = useState(true);
+//parei no 7.Buscar os dados do desafio
+
 
 //Cria um estado para armazenar os dados do formulário
 //form = valores atuais
