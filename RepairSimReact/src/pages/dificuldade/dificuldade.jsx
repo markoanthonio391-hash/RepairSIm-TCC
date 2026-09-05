@@ -5,15 +5,18 @@ import logoFacil from '../../assets/logoFacil.png'
 import logoNormal from '../../assets/logoNormal.png'
 import logoDificil from '../../assets/logoDificil.png'
 import logoVoltar from '../../assets/logoVoltar.png'
-import backgroundImage from '../../assets/imgFundo.jpeg'
 import { useNavigate } from 'react-router-dom';
-
+import { useTheme } from '../../context/useTheme';
+import backgroundImageDark from '../../assets/imgFundo.jpeg'
+import backgroundImageLight from '../../assets/imgFundoBranco.jpeg'
 
 function Dificuldade()
  {
 
  // const [count, setCount] = useState(0)
   const navigate = useNavigate();
+  const { tema } = useTheme();
+  const backgroundImage = tema === 'Escuro' ? backgroundImageDark : backgroundImageLight;
 
   return (
     <div className={styles.container}>

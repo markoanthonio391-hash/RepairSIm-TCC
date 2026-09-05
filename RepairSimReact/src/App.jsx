@@ -1,5 +1,7 @@
 import {lazy, Suspense} from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { ThemeProvider } from './context/ThemeProvider'
+import { LanguageProvider } from './context/LanguageProvider';
 const Home = lazy(() => import ('./pages/home/home'));
 const Dificuldade = lazy(() => import('./pages/dificuldade/dificuldade'));
 const Config = lazy(() => import('./pages/home/Config/Config'));
@@ -18,23 +20,27 @@ function App() {
  // const [count, setCount] = useState(0)
 
   return (
-     <BrowserRouter>
-      <Suspense fallback={<div style={{color: 'white'}}>Carregando...</div>}>
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/Dificuldade' element={<Dificuldade />} />
-          <Route path='/config' element={<Config />} />
-          <Route path="/teste" element={<TesteApi />} />
-          <Route path="/Login" element={<Login />} />
-          <Route path='/cadastro' element={<Cadastro />} />      
-          <Route path="/cliente" element={<Cliente />} />
-          <Route path="/Conquistas" element={<Conquistas />} />
-          <Route path="/relatorio" element={<Relatorio />} />  
-          <Route path="/caso" element={<Caso />} />
-          <Route path='*'element={<h1>Not Found</h1>} />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
+    <ThemeProvider>
+      <LanguageProvider>
+        <BrowserRouter>
+          <Suspense fallback={<div style={{color: 'white'}}>Carregando...</div>}>
+            <Routes>
+              <Route path='/' element={<Home />} />
+              <Route path='/Dificuldade' element={<Dificuldade />} />
+              <Route path='/config' element={<Config />} />
+              <Route path="/teste" element={<TesteApi />} />
+              <Route path="/Login" element={<Login />} />
+              <Route path='/cadastro' element={<Cadastro />} />      
+              <Route path="/cliente" element={<Cliente />} />
+              <Route path="/Conquistas" element={<Conquistas />} />
+              <Route path="/relatorio" element={<Relatorio />} />  
+              <Route path="/caso" element={<Caso />} />
+              <Route path='*'element={<h1>Not Found</h1>} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </LanguageProvider>
+    </ThemeProvider>
   );
 }
 export default App; 

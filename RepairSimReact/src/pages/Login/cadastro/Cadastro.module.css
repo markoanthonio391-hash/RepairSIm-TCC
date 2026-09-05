@@ -73,6 +73,8 @@
     padding: clamp(1rem, 4vh, 3rem) 1rem;
     box-sizing: border-box;
     overflow-y: auto;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .bckground{
@@ -192,9 +194,11 @@
 }
 
 .termsRow{
-    display: flex;
+    display: inline-flex;      /* não mais 'flex' sozinho */
     align-items: center;
     gap: 0.5rem;
+    width: fit-content;        /* encolhe pro tamanho do conteúdo, não estica */
+    align-self: flex-start;    /* não deixa o flexbox pai esticar esse item */
     margin-top: clamp(1rem, 3vh, 1.5rem);
     cursor: pointer;
 }
@@ -211,6 +215,7 @@
     font-family: Unispace, monospace;
     font-style: italic;
     font-size: clamp(11px, 2vw, 13px);
+    pointer-events: none;  /* não deixa o texto interferir no clique do checkbox */
 }
 
 .error{
