@@ -134,7 +134,7 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '../../../context/useTheme';
 import backgroundDark from '../../../assets/imgFundo.jpeg'
 import backgroundLight from '../../../assets/imgFundoBranco.jpeg'
-import { useLanguage } from '../../../context/useLanguage';
+// import { useLanguage } from '../../../context/useLanguage';
 
 const IDIOMAS = ['Português', 'English'];
 const VOLUMES = ['Alto', 'Médio', 'Baixo', 'Mudo'];
