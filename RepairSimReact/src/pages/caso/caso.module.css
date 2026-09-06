@@ -2,14 +2,14 @@
     font-family: Unispace, monospace;
     color: snow;
 }
-
+/* desabilitado temporariamente pois estava atrapalhando o relatorio
 body{
     width: 100vw;
     height: 100vh;
     z-index: -1;
     position: fixed;
     display: flex;
-}
+}*/
 
 .mainContainer{
     width: 800px;
@@ -435,4 +435,19 @@ body{
   animation: pulsarNeonToolNormal 1.5s infinite ease-in-out;
   box-shadow: 0 0 5px #00f0ff, 0 0 15px #00f0ff, inset 0 0 3px #00f0ff;
   text-shadow: 0 0 3px #00f0ff; 
+}
+
+/*Teste do botão relatorio*/
+.btnRelatorio {
+    position: absolute;
+    right: 30px;
+    bottom: 35px;
+    background-color: #4149c9;
+    border: 3px solid #7077ff;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 10000;
 }

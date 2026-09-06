@@ -271,6 +271,10 @@ function Caso() {
           onClick={desligarPc}>
           DESLIGAR </button>
         )}
+        {/*teste para levar para relatorio */}
+        <button className={styles.btnRelatorio} onClick={() => navigate(`/relatorio/${idDesafio}`)}>
+          IR PARA RELATÓRIO
+        </button>
 
 
       {/*mensagem*/}
