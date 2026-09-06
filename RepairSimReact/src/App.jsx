@@ -33,7 +33,7 @@ function App() {
               <Route path='/cadastro' element={<Cadastro />} />      
               <Route path="/cliente" element={<Cliente />} />
               <Route path="/Conquistas" element={<Conquistas />} />
-              <Route path="/relatorio" element={<Relatorio />} />  
+              <Route path="/relatorio/:id" element={<Relatorio />} />
               <Route path="/caso" element={<Caso />} />
               <Route path='*'element={<h1>Not Found</h1>} />
             </Routes>
