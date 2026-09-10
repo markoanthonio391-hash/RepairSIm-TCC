@@ -1,5 +1,8 @@
 const conexao = require("../config/db");
 
+//Pra guardar os pontos atuais de cada desafio enquanto o servidor estiver ligado
+let pontuacaoDesafios = {};
+
 // Lista todos os desafios
 exports.listar = (req, res) => {
     const sql = "SELECT * FROM desafios";
@@ -50,6 +53,12 @@ exports.verificarItem = (req, res) => {
     //id do item que é escolhido pelo jogador
     const { id_item } = req.body;
 
+    //Caso seja a primeira vez que esse desafio está sendo feito,
+    //começa a pontuação  em 0
+    if (pontuacaoDesafios[id_desafio] === undefined) {
+        pontuacaoDesafios[id_desafio] = 0;
+    }
+
     //Verifica se existe essa relação no banco
     const selecao = `
         SELECT *
@@ -78,6 +87,9 @@ exports.verificarItem = (req, res) => {
                 //caso erre, perde 5 pontos
                 const pontos = -5;
 
+                //Aqui vai descontar os pontos do total atual
+                pontuacaoDesafios[id_desafio] += pontos;
+
                 return res.json({
                     correto: false,
                     pontos: pontos,
@@ -88,6 +100,9 @@ exports.verificarItem = (req, res) => {
             //encontrou a relação, então o item está correto
             //caso acerte, ganha 10 pontos
             const pontos = 10;
+
+            //Atualiza o total de pontos do desafio
+            pontuacaoDesafios[id_desafio] += pontos;
 
             return res.json({
                 correto: true,
