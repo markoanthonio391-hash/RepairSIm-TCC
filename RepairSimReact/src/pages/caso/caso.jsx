@@ -1,6 +1,7 @@
 import styles from './caso.module.css'
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import bancada from '../../assets/bancada.jpeg';
 
 function Caso() {
 
@@ -185,152 +186,156 @@ function Caso() {
 
   //transformando tudo em tela
   return (
-
-    <div className={styles.mainContainer}>
-      <button className={styles.btnVoltar} onClick={() => navigate('/')}> Voltar </button>
-      <div className={styles.pcContainer}>
-        {estadoPc === 'ligado' && (
-          <> {/*agrupa varios elementos html, guardando 
-          eles para não gera poluição e mostrando quando necessario*/}
-
-          {/*pc ligado */}
-            {monitorLigado && (
-
-              <img src={`http://localhost:3000${monitorLigado.caminho_imagem}`}
-                className={styles.monitorImage}
-                alt="Monitor ligado"/>
-            )}
-
-
-            {gabineteLigado && (
-
-              <img src={`http://localhost:3000${gabineteLigado.caminho_imagem}`}
-                className={styles.gabineteImage}
-                alt="Gabinete ligado"/>
-
-            )}
-
-          </>
-
-        )}
-
-        {/* pc desligado */}
-
-        {estadoPc === 'desligado' && (
-
-          <>
-
-            {monitorDesligado && (
-
-              <img src={`http://localhost:3000${monitorDesligado.caminho_imagem}`}
-                className={styles.monitorImage}
-                alt="Monitor desligado"/>
-
-            )}
-
-
-            {gabineteDesligado && (
-
-              <img src={`http://localhost:3000${gabineteDesligado.caminho_imagem}`}
-                className={`${styles.gabineteImage} ${styles.gabineteClicavel}`}
-                alt="Gabinete desligado"
-                onClick={abrirGabinete}/>
-
-            )}
-
-          </>
-
-        )}
-
-        {/* gabinete empoeirado */}
-
-        {estadoPc === 'manutencao' && gabineteEmpoeirado && (
-
-          <img src={`http://localhost:3000${gabineteEmpoeirado.caminho_imagem}`}
-            className={styles.gabineteManutencao}
-            alt="Gabinete empoeirado"/>
-
-        )}
-
-
-        {/* gabinete limpo */}
-
-        {estadoPc === 'concluido' && gabineteLimpo && (
-
-          <img src={`http://localhost:3000${gabineteLimpo.caminho_imagem}`} className={styles.gabineteManutencao}alt="Gabinete limpo" />
-
-        )}
-      </div>
-
-
-      {/* botão de desligar pc */}
-
-      {estadoPc === 'ligado' && (
-
-        <button className={styles.btnDesligar}
-          onClick={desligarPc}>
-          DESLIGAR </button>
-        )}
-        {/*teste para levar para relatorio */}
-        <button className={styles.btnRelatorio} onClick={() => navigate(`/relatorio/${idDesafio}`)}>
-          IR PARA RELATÓRIO
+    <div className={styles.screenWrapper}>
+      <div className={styles.mainContainer}>
+        <img src={bancada} alt="Bancada" className={styles.bancada} />
+        <button className={styles.btnVoltar} onClick={() => navigate('/')}>
+           Voltar 
         </button>
+        <div className={styles.pcContainer}>
+          {estadoPc === 'ligado' && (
+            <> {/*agrupa varios elementos html, guardando 
+            eles para não gera poluição e mostrando quando necessario*/}
 
+            {/*pc ligado */}
+              {monitorLigado && (
 
-      {/*mensagem*/}
-
-      {mensagem && (
-        <div className={styles.mensagem}>
-          {mensagem}
-        </div>
-      )}
-      <div className={styles.toolsContainer}>
-        {/* botão ferramentas */}
-        <button className={`${styles.btnToolsBox} ${styles.btnColorTool} ${isOpen && tipoSelecionado === 'ferramenta' ? styles.active : ''}`}onClick={() => abrirCategoria('ferramenta')} >
-          FERRAMENTAS
-          {/* <span className={styles.iconBtnTools}> 🛠️ </span> */}
-         </button>
-
-        {/* botão peças */}
-        <button className={`${styles.btnToolsBox} ${styles.btnColorComp} ${isOpen && tipoSelecionado === 'ferramenta' ? styles.active : ''}`}onClick={() => abrirCategoria('peca')}>
-          PEÇAS
-        </button>
-
-        {/* botão software */}
-        <button className={`${styles.btnToolsBox} ${styles.btnColorSoft} ${isOpen && tipoSelecionado === 'ferramenta' ? styles.active : ''}`} onClick={() => abrirCategoria('software')}>
-          SOFTWARE
-        </button>
-
-        {isOpen && (
-
-          <div className={styles.toolsBox}>
-
-            <h3 className={styles.titleTools}>
-              {/*substitui o final da url para mostrar apenas imagens daquela categoria  */}
-              {tipoSelecionado === 'ferramenta' && 'Ferramentas'}
-              {tipoSelecionado === 'peca' && 'Peças'}
-              {tipoSelecionado === 'software' && 'Software'}
-            </h3>
-
-
-            <div className={styles.contentTools}>
-              {/*se a quantidade for 0, aparece carregando itens, se não mostra as 
-              imagens de acordo com o seu tipo apertado*/}
-              {itens.length === 0 ? (
-
-                <p>Carregando itens...</p>
-
-              ) : (
-                itens.map(item => (
-                  <div key={item.id_item} className={`${styles.item} ${estadoPc === 'manutencao'? styles.itemClicavel: ''}`} onClick={() => usarItem(item)}> {/*deixa os itens clicaveis */}
-                    <img src={`http://localhost:3000${item.caminho_imagem}`} 
-                    className={styles.imgItem} alt={item.nome}/>
-                  </div>
-                ))
+                <img src={`http://localhost:3000${monitorLigado.caminho_imagem}`}
+                  className={styles.monitorImage}
+                  alt="Monitor ligado"/>
               )}
-            </div>
+
+
+              {gabineteLigado && (
+
+                <img src={`http://localhost:3000${gabineteLigado.caminho_imagem}`}
+                  className={styles.gabineteImage}
+                  alt="Gabinete ligado"/>
+
+              )}
+
+            </>
+
+          )}
+
+          {/* pc desligado */}
+
+          {estadoPc === 'desligado' && (
+
+            <>
+
+              {monitorDesligado && (
+
+                <img src={`http://localhost:3000${monitorDesligado.caminho_imagem}`}
+                  className={styles.monitorImage}
+                  alt="Monitor desligado"/>
+
+              )}
+
+
+              {gabineteDesligado && (
+
+                <img src={`http://localhost:3000${gabineteDesligado.caminho_imagem}`}
+                  className={`${styles.gabineteImage} ${styles.gabineteClicavel}`}
+                  alt="Gabinete desligado"
+                  onClick={abrirGabinete}/>
+
+              )}
+
+            </>
+
+          )}
+
+          {/* gabinete empoeirado */}
+
+          {estadoPc === 'manutencao' && gabineteEmpoeirado && (
+
+            <img src={`http://localhost:3000${gabineteEmpoeirado.caminho_imagem}`}
+              className={styles.gabineteManutencao}
+              alt="Gabinete empoeirado"/>
+
+          )}
+
+
+          {/* gabinete limpo */}
+
+          {estadoPc === 'concluido' && gabineteLimpo && (
+
+            <img src={`http://localhost:3000${gabineteLimpo.caminho_imagem}`} className={styles.gabineteManutencao}alt="Gabinete limpo" />
+
+          )}
+        </div>
+
+
+        {/* botão de desligar pc */}
+
+        {estadoPc === 'ligado' && (
+
+          <button className={styles.btnDesligar}
+            onClick={desligarPc}>
+            DESLIGAR </button>
+          )}
+          {/*teste para levar para relatorio */}
+          <button className={styles.btnRelatorio} onClick={() => navigate(`/relatorio/${idDesafio}`)}>
+            IR PARA RELATÓRIO
+          </button>
+
+
+        {/*mensagem*/}
+
+        {mensagem && (
+          <div className={styles.mensagem}>
+            {mensagem}
           </div>
         )}
+        <div className={styles.toolsContainer}>
+          {/* botão ferramentas */}
+          <button className={`${styles.btnToolsBox} ${styles.btnColorTool} ${isOpen && tipoSelecionado === 'ferramenta' ? styles.active : ''}`}onClick={() => abrirCategoria('ferramenta')} >
+            FERRAMENTAS
+            {/* <span className={styles.iconBtnTools}> 🛠️ </span> */}
+          </button>
+
+          {/* botão peças */}
+          <button className={`${styles.btnToolsBox} ${styles.btnColorComp} ${isOpen && tipoSelecionado === 'ferramenta' ? styles.active : ''}`}onClick={() => abrirCategoria('peca')}>
+            PEÇAS
+          </button>
+
+          {/* botão software */}
+          <button className={`${styles.btnToolsBox} ${styles.btnColorSoft} ${isOpen && tipoSelecionado === 'ferramenta' ? styles.active : ''}`} onClick={() => abrirCategoria('software')}>
+            SOFTWARE
+          </button>
+
+          {isOpen && (
+
+            <div className={styles.toolsBox}>
+
+              <h3 className={styles.titleTools}>
+                {/*substitui o final da url para mostrar apenas imagens daquela categoria  */}
+                {tipoSelecionado === 'ferramenta' && 'Ferramentas'}
+                {tipoSelecionado === 'peca' && 'Peças'}
+                {tipoSelecionado === 'software' && 'Software'}
+              </h3>
+
+
+              <div className={styles.contentTools}>
+                {/*se a quantidade for 0, aparece carregando itens, se não mostra as 
+                imagens de acordo com o seu tipo apertado*/}
+                {itens.length === 0 ? (
+
+                  <p>Carregando itens...</p>
+
+                ) : (
+                  itens.map(item => (
+                    <div key={item.id_item} className={`${styles.item} ${estadoPc === 'manutencao'? styles.itemClicavel: ''}`} onClick={() => usarItem(item)}> {/*deixa os itens clicaveis */}
+                      <img src={`http://localhost:3000${item.caminho_imagem}`} 
+                      className={styles.imgItem} alt={item.nome}/>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
