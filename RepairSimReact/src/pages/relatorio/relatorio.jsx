@@ -9,10 +9,7 @@ import "./Relatorio.css";
 
 
 function Relatorio() {
-
   const navigate = useNavigate();
-
-
   // =====================================================
   // DADOS DO DESAFIO
   // =====================================================
