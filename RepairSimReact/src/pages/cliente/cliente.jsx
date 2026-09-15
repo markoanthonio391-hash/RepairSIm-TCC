@@ -8,7 +8,7 @@ function Cliente() {
    const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+  const [aviso, setAviso] = useState(null); // <-- ESSA LINHA ESTAVA FALTANDO
 
   const [manutencao, setManutencao] = useState(null);
 
@@ -26,7 +26,13 @@ function Cliente() {
 
   const responderOrcamento = (novoStatus) => {
     setManutencao((prev) => ({ ...prev, status: novoStatus }));
-    alert(`Orçamento ${novoStatus === "Aprovado" ? "aceito" : "cancelado"} com sucesso!`);
+    
+    setAviso({
+      texto: `Orçamento ${novoStatus === "Aprovado" ? "aceito" : "cancelado"} com sucesso!`,
+      tipo: novoStatus ===  "Aprovado" ? "sucesso" : "erro"
+    });
+
+    setTimeout(() => setAviso(null), 2500);
   };
 
 
@@ -73,15 +79,18 @@ function Cliente() {
                 <div className={styles.acoes}>
                   <button 
                     className={styles.btnCancelar} 
-                    onClick={() => navigate('/dificuldade')}
-                    
+                    onClick={() => {
+                      responderOrcamento("Reprovado");
+                      navigate('/dificuldade');
+                    }}
                   >
                     Cancelar Orçamento
                   </button>
                   <button 
                     className={styles.btnAceitar} 
-                    onClick={() => {
+                    onClick={async () => {
                       responderOrcamento("Aprovado");
+                      await import('../caso/caso');
                       navigate('/caso');
                     }}
                   >
@@ -90,6 +99,10 @@ function Cliente() {
                 </div>
             </div>
           </div>
+        </div>
+      )}
+      {aviso && (
+        <div className={`${styles.avisoFlutuante} ${aviso.tipo === 'sucesso' ? styles.avisoSucesso : styles.avisoErro}`}>{aviso.texto}
         </div>
       )}
     </div>

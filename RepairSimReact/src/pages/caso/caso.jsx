@@ -296,12 +296,12 @@ function Caso() {
           </button>
 
           {/* botão peças */}
-          <button className={`${styles.btnToolsBox} ${styles.btnColorComp} ${isOpen && tipoSelecionado === 'ferramenta' ? styles.active : ''}`}onClick={() => abrirCategoria('peca')}>
+          <button className={`${styles.btnToolsBox} ${styles.btnColorComp} ${isOpen && tipoSelecionado === 'peca' ? styles.active : ''}`}onClick={() => abrirCategoria('peca')}>
             PEÇAS
           </button>
 
           {/* botão software */}
-          <button className={`${styles.btnToolsBox} ${styles.btnColorSoft} ${isOpen && tipoSelecionado === 'ferramenta' ? styles.active : ''}`} onClick={() => abrirCategoria('software')}>
+          <button className={`${styles.btnToolsBox} ${styles.btnColorSoft} ${isOpen && tipoSelecionado === 'software' ? styles.active : ''}`} onClick={() => abrirCategoria('software')}>
             SOFTWARE
           </button>
 
