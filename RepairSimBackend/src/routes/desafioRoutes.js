@@ -9,6 +9,8 @@ router.get('/', desafioController.listar);
 
 router.get('/:id', desafioController.buscarPorId);
 
+// router.get('/dificuldade/:dificuldade/aleatorios', desafioController.listarAleatoriosPorDificuldade);
+
 router.post('/:id/verificar', desafioController.verificarItem);
 
 module.exports = router;

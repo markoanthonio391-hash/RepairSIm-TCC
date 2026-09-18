@@ -33,7 +33,7 @@ function Resultado() {
 
           <strong>{resultado.pontuacaoFinal}</strong>
 
-          <small>/ 100</small>
+        
         </section>
 
         <section className="resultado-cards">
@@ -103,11 +103,11 @@ function Resultado() {
         <footer className="resultado-footer">
 
           <button className="btn-secundario" onclick={() => Navigate("/detalhes")}>
-            Ver detalhes
+            Compartilhar
           </button>
 
-          <button className="btn-principal" onClick={() => Navigate("/simulacao")}>
-            Nova simulação
+               <button className="btn-principal" onClick={() => Navigate("/simulacao")}>
+            Continuar
           </button>
 
         </footer>
