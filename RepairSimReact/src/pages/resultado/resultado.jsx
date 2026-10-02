@@ -121,7 +121,7 @@ function Resultado() {
 
         <footer className="resultado-footer">
 
-          <button className="btn-secundario" onclick={() => navigate("/Dificuldade")}>
+          <button className="btn-secundario" onClick={() => navigate("/Dificuldade")}>
             Compartilhar
           </button>
                <button className="btn-principal" onClick={() => navigate("/")}>
