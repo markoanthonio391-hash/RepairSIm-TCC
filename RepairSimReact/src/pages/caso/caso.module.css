@@ -15,11 +15,12 @@ html, body {
     aspect-ratio: 3/2; /* 1536x1024 da bancada.jpeg, mantem um tamanho fixo com base na propoção*/
     margin: 0 auto;
     /*fim da adição*/
-    min-height: 480px;
+    min-height: 630px;
     font-family: Unispace, monospace;
     color: aquamarine;
     background-color: black;
-
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 /* .textContainer{
@@ -33,7 +34,7 @@ html, body {
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;   /* preenche sem distorcer */
+    object-fit: cover;   /*preenche sem distorcer */
     z-index: 0;
     -webkit-user-drag: none;
     user-select: none;
@@ -122,7 +123,7 @@ html, body {
     border-style: double;
     background-color: transparent;
     display: block;
-
+    -webkit-user-drag: none;
 }
 
 /*===========================================================================*/
@@ -141,6 +142,7 @@ html, body {
     width: 75%;
     height: 42%;
     z-index: 5;
+    
 }
 
 /*MONITOR*/
@@ -148,6 +150,7 @@ html, body {
     width: 50%;
     height: auto;
     object-fit: contain;
+    -webkit-user-drag: none;
 }
 
 /*GABINETE*/
@@ -155,6 +158,7 @@ html, body {
     width: 32%;
     height: auto;
     object-fit: contain;
+    -webkit-user-drag: none;
 }
 
 /*GABINETE DURANTE A MANUTENÇÃO*/
@@ -162,6 +166,7 @@ html, body {
     width: 40%;
     height: auto;
     object-fit: contain;
+    -webkit-user-drag: none;
 }
 
 /*GABINETE CLICÁVEL*/
@@ -410,6 +415,7 @@ html, body {
     /* padding: 20px; */
     box-sizing: border-box;
     background-color: black;
-    overflow-y: auto; 
+    overflow-y: auto;
+    
 }
 

@@ -128,7 +128,7 @@ exports.listarAleatoriosPorDificuldade = (req, res) => {
     if (!dificuldadesPermitidas.includes(dificuldade)) {
 
         return res.status(400).json({
-            mensage: 'Dificuldade inválida.'
+            mensagem: 'Dificuldade inválida.'
     });
 }
 

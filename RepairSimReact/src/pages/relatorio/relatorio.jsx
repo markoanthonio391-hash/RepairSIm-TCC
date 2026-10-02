@@ -7,11 +7,12 @@ import { useNavigate, useParams } from "react-router-dom";
 // Importa os estilos
 import "./Relatorio.css";
 
-import { useJogo } from "../context/JogoContext";
+import { useJogo } from "../../context/JogoContext";
 
 
 function Relatorio() {
   const navigate = useNavigate();
+
   // =====================================================
   // DADOS DO DESAFIO
   // =====================================================
@@ -22,7 +23,7 @@ function Relatorio() {
   // Usuário temporário
   const idUsuario = 1;
 
-  const {registrarErrosRelatorio, proximoDesafio, ehUltimoDesafio, finalizarJogatina} = useJogo();
+  const { registrarErrosRelatorio, proximoDesafio, ehUltimoDesafio, finalizarJogatina } = useJogo();
 
 
   // =====================================================
@@ -42,7 +43,6 @@ function Relatorio() {
 
   // =====================================================
   // ESTADO DO FORMULÁRIO
-  // Mantemos a estrutura antiga
   // =====================================================
 
   const [form, setForm] = useState({
@@ -95,7 +95,7 @@ function Relatorio() {
 
       });
 
-  }, []);
+  }, [idDesafio]);
 
 
   // =====================================================
@@ -208,10 +208,7 @@ function Relatorio() {
           resultado
         );
 
-        registrarErroRelatorio(
-          resultado.erros
-        );
-
+        // Os erros são contabilizados somente em continuar()
         setResultadoRelatorio(resultado);
 
       })
@@ -229,41 +226,42 @@ function Relatorio() {
 
 
   // =====================================================
-  // PRÓXIMO CASO
+  // CONTINUAR
+  // Se não for o último caso, vai para o próximo cliente.
+  // Se for o último, salva o resultado e vai para a tela final.
   // =====================================================
 
-  function proximoCaso() {
-
-    console.log("Próximo caso");
-
-  }
-
-  //logica de continuação, se n for o ultimo caso ele vai continuar até chegar no ultimo
   async function continuar() {
-    if (!resultadoRelatorio){
+
+    if (!resultadoRelatorio) {
       return;
     }
 
     const quantidadeErros = resultadoRelatorio.erros || 0;
 
-    registrarErrosRelatorio(
-      quantidadeErros
-    );
+    // Último desafio: os erros vão direto para finalizarJogatina,
+    // pois o estado do React ainda não estaria atualizado.
+    if (ehUltimoDesafio()) {
 
-    if (ehUltimoDesafio()){
-      try{
-        await finalizarJogatina(
-          quantidadeErros
-        );
-        navigate("/resultado")
+      try {
+
+        await finalizarJogatina(quantidadeErros);
+
+        navigate("/resultado");
+
+      } catch (erro) {
+
+        console.error("Erro ao finalizar jogatina:", erro);
+
       }
-      catch (erro) {
-        console.error(
-          "Erro ao finalizar jogatina:", erro);
-      }
+
       return;
     }
+
+    registrarErrosRelatorio(quantidadeErros);
+
     proximoDesafio();
+
     navigate("/cliente");
   }
 
@@ -638,7 +636,7 @@ function Relatorio() {
 
             <button
               type="button"
-              onClick={() => navigate("/resultado")}
+              onClick={continuar}
             >
               CONTINUAR
             </button>
@@ -673,16 +671,6 @@ function Relatorio() {
         )}
 
 
-        <button
-          className="btn-proximo"
-          onClick={continuar}
-        >
-
-          CONTINUAR
-
-        </button>
-
-
       </footer>
 
 
@@ -691,5 +679,6 @@ function Relatorio() {
   );
 
 }
+
 
 export default Relatorio;

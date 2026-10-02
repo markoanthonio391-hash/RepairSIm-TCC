@@ -78,7 +78,7 @@
 //     };
 //     export default Cadastro;
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Cadastro.module.css'
 import backgroundImage from '../../../assets/imgFundo.jpeg'
@@ -123,6 +123,8 @@ function Cadastro() {
             setLoading(false);
         }
     };
+
+
 
     return (
         <div className={styles.page}>

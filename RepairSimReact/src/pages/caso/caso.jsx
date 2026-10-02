@@ -71,7 +71,7 @@ function Caso() {
         console.error('Erro ao buscar imagens do PC:', erro);
       });
 
-  }, []);
+  }, [idDesafio]);
 
 
   //------------------------
@@ -89,10 +89,10 @@ function Caso() {
   //------------------------
   //pega uma imagem especifica pelo id
   //------------------------
-  function pegarImagemPc(idPc) {
-    return imagensPc.find( //.find pecorre o array ate atender a condição
-      imagem => Number(imagem.id_pc) === idPc);
-  }
+  // function pegarImagemPc(idPc) {
+  //   return imagensPc.find( //.find pecorre o array ate atender a condição
+  //     imagem => Number(imagem.id_pc) === idPc);
+  // }
 
   //------------------------
   //botão desligar
@@ -209,7 +209,7 @@ function Caso() {
   return (
     <div className={styles.screenWrapper}>
       <div className={styles.mainContainer}>
-        <div> className={styles.statusJogo}
+        <div className={styles.statusJogo}>
           <span>Caso {jogatina.indiceAtual + 1} {" "} / {jogatina.quantidadeCasos}</span>
           <span>Pontos: {jogatina.pontos}</span>
         </div>
