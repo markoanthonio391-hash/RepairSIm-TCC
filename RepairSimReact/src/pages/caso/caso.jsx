@@ -2,11 +2,16 @@ import styles from './caso.module.css'
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import bancada from '../../assets/bancada.jpeg';
+import { useJogo } from "../../context/JogoContext";
 
 function Caso() {
 
   const navigate = useNavigate();
-  const idDesafio = 1; //por enquanto é permanente esse id, dps podemos alterar para ser variavel(talvez)
+  const { jogatina,getDesafioAtual,adicionarPontos,registrarErroDesafio } = useJogo();
+  const desafioAtual = getDesafioAtual();
+  const idDesafio = desafioAtual?.id_desafio;
+
+  const [respostaFinalizada, setRespostaFinalizada] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [itens, setItens] = useState([]);
   const [tipoSelecionado, setTipoSelecionado] = useState('ferramenta');
@@ -112,6 +117,10 @@ function Caso() {
   }
   function usarItem(item) {
 
+    if (respostaFinalizada){
+      return;
+    }
+
       //------------------------
       //clicar em um item
       //------------------------
@@ -147,6 +156,8 @@ function Caso() {
 
         console.log('Resultado da verificação:', resultado);
 
+        //POntos sempre que entram no contexto
+        adicionarPontos(resultado.pontos);
 
         //item correto
         if (resultado.correto) {
@@ -156,9 +167,12 @@ function Caso() {
 
         //item errado
         else {
+          registrarErroDesafio();
           setMensagem('❌ ' + resultado.mensagem);
         }
 
+        //Bloqueia novas escolhas
+        setRespostaFinalizada(true);
       })
 
       .catch(erro => {
@@ -172,22 +186,33 @@ function Caso() {
       });
 
   }
-
+  //caso n tenha nenhuma imagem...
+  if (!imagensPc.length) {
+    return (<p>Imagens deste caso ainda não disponíveis.</p>);
+  }
   //------------------------
-  //imagem especifica de cada estado do pc
+  //imagem especifica de cada funcao do pc
   //------------------------
-  const monitorLigado = pegarImagemPc(2);
-  const monitorDesligado = pegarImagemPc(1);
-  const gabineteLigado = pegarImagemPc(3);
-  const gabineteDesligado = pegarImagemPc(4);
-  const gabineteEmpoeirado = pegarImagemPc(6);
-  const gabineteLimpo = pegarImagemPc(5);
+  function pegarImagemPorFuncao(funcao) {
+    return imagensPc.find(imagem => imagem.funcao === funcao);
+  }
 
+  const monitorLigado = pegarImagemPorFuncao("monitor_ligado");
+  const monitorDesligado = pegarImagemPorFuncao("monitor_desligado");
+  const gabineteLigado = pegarImagemPorFuncao("gabinete_ligado");
+  const gabineteDesligado = pegarImagemPorFuncao("gabinete_desligado");
+  const gabineteEmpoeirado = pegarImagemPorFuncao("gabinete_empoeirado");
+  const gabineteLimpo = pegarImagemPorFuncao("gabinete_limpo");
 
+  
   //transformando tudo em tela
   return (
     <div className={styles.screenWrapper}>
       <div className={styles.mainContainer}>
+        <div> className={styles.statusJogo}
+          <span>Caso {jogatina.indiceAtual + 1} {" "} / {jogatina.quantidadeCasos}</span>
+          <span>Pontos: {jogatina.pontos}</span>
+        </div>
         <img src={bancada} alt="Bancada" className={styles.bancada} />
         <button className={styles.btnVoltar} onClick={() => navigate('/')}>
            Voltar 
@@ -275,10 +300,12 @@ function Caso() {
             onClick={desligarPc}>
             DESLIGAR </button>
           )}
-          {/*teste para levar para relatorio */}
+          
+          {respostaFinalizada && (
           <button className={styles.btnRelatorio} onClick={() => navigate(`/relatorio/${idDesafio}`)}>
             IR PARA RELATÓRIO
           </button>
+          )}
 
 
         {/*mensagem*/}

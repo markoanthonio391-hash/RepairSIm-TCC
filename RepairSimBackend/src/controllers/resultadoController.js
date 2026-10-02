@@ -18,17 +18,17 @@ exports.listar = (req, res) => {
 };
 
 exports.criar = (req, res) => {
-    const {id_usuario, erros_desafio, erros_relatorio, pontos, tempo_segundos} = req.body;
+    const {id_usuario, dificuldade, quantidade_casos, erros_desafio, erros_relatorio, pontos, tempo_segundos} = req.body;
 
-    if (!id_usuario) {
+    if (!id_usuario || !dificuldade || quantidade_casos === undefined) {
         return res.status(400).json({
-            mensagem: 'Usuário não informado.'
+            mensagem: 'Dados do resultado incompletos.'
         });
     }
 
-    const sql = `insert into resultado (id_usuario, erros_desafio, erros_relatorio, pontos, tempo_segundos) values (?, ?, ?, ?, ?)`;
+    const sql = `insert into resultado (id_usuario, dificuldade, quantidade_casos, erros_desafio, erros_relatorio, pontos, tempo_segundos) values (?, ?, ?, ?, ?, ?, ?)`;
 
-    conexao.query(sql, [id_usuario, erros_desafio, erros_relatorio, pontos, tempo_segundos], (erro, resultado) => {
+    conexao.query(sql, [id_usuario, dificuldade, quantidade_casos, erros_desafio, erros_relatorio, pontos, tempo_segundos], (erro, resultado) => {
         if (erro) {
             console.error('Erro ao salvar resultado:', erro);
             return res.status(500).json({

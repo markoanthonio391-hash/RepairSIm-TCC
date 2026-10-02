@@ -150,7 +150,7 @@ exports.avaliar = (req, res) =>{
         function enviarResposta(){
             if (acertouTudo){
                 return res.json({
-                    correto: true, tipo: 'completo', 
+                    correto: true, erros: 0,tipo: 'completo', 
                     mensagem: 'Parabéns! Você registrou corretamente todos os itens utilizados.', 
                     itensCorretos: acertosDetalhes, itensIncorretos: [], itensEsquecidos: []
                 });
@@ -158,7 +158,7 @@ exports.avaliar = (req, res) =>{
 
             if (errouTudo) {
                 return res.json({
-                    correto: false, tipo: 'totalmente_incorreto',
+                    correto: false, erros: erros.length,tipo: 'totalmente_incorreto',
                     mensagem: 'Você não selecionou nenhum dos itens corretos.',
                     itensCorretos: itensCorretos, itensIncorretos: idsSelecionados, itensEsquecidos: esquecidosDetalhes
                 });
@@ -166,7 +166,7 @@ exports.avaliar = (req, res) =>{
 
             if (acertouParte) {
                 return res.json({
-                    correto: false, tipo: 'parcial',
+                    correto: false, erros: erros.length,tipo: 'parcial',
                     mensagem: 'Você acertou parte do relatório, mas selecionou itens incorretos ou deixou itens corretos de fora.',
                     itensCorretos: acertosDetalhes, itensIncorretos: erroDetalhes, itensEsquecidos: esquecidosDetalhes
                 });

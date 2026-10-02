@@ -115,106 +115,106 @@ exports.verificarItem = (req, res) => {
 
 ////////////////////////////////DIEGO PART4///////////////////////////////////
 
-// exports.listarAleatoriosPorDIficuldade = (req, res) => {
+exports.listarAleatoriosPorDificuldade = (req, res) => {
 
-//     const dificuldade = req.params.dificuldade;
+    const dificuldade = req.params.dificuldade;
 
-//     const dificuldadesPermitidas =[
-//         'Facil',
-//         'Medio',
-//         'Dificil'
-//     ];
+    const dificuldadesPermitidas =[
+        'Facil',
+        'Medio',
+        'Dificil'
+    ];
 
-//     if (!dificuldadesPermitidas.includes(dificuldade)) {
+    if (!dificuldadesPermitidas.includes(dificuldade)) {
 
-//         return res.status(400).json({
-//             mensage: 'Dificuldade inválida.'
-//     });
-// }
+        return res.status(400).json({
+            mensage: 'Dificuldade inválida.'
+    });
+}
 
-// const sql =`
-//     select *
-//     from desafios
-//     where dificuldade = ?
-//     order by rand()
-// `;
+const sql =`
+    select *
+    from desafios
+    where dificuldade = ?
+    order by rand()
+`;
 
 
-// conexao.query(
-//     sql,
-//     [dificuldade],
-//     (erro, resultados) => {
-//         if (erro) {
+conexao.query(
+    sql,
+    [dificuldade],
+    (erro, resultados) => {
+        if (erro) {
 
-//             console.error(
-//                 'Erro ao buscar desafios:',
-//                 erro
-//             );
+            console.error(
+                'Erro ao buscar desafios:',
+                erro
+            );
 
-//             return res.status(500).json({
-//                 mensagem:
-//                        'Erro ao buscar desafios.'
-//     });
+            return res.status(500).json({
+                mensagem:
+                       'Erro ao buscar desafios.'
+    });
 
-// }
+}
 
-// const quantidadeDesejada = 10;
+const quantidadeDesejada = 10;
 
-// let desafiosSelecionados = [];
+let desafiosSelecionados = [];
 
-// //Caso normal: Tem 10 ou Mais
-// if (resultados.length >= quantidadeDesejada) {
+//Caso normal: Tem 10 ou Mais
+if (resultados.length >= quantidadeDesejada) {
 
-//     desafiosSelecionados =
-//         resultados.slice(
-//             0,
-//             quantidadeDesejada
-//         );
-// }
+    desafiosSelecionados =
+        resultados.slice(
+            0,
+            quantidadeDesejada
+        );
+}
 
-// //TESTE: Ainda não tem 10
+//TESTE: Ainda não tem 10
 
-// else {
+else {
 
-//     desafiosSelecionados =
-//         [...resultados];
+    desafiosSelecionados =
+        [...resultados];
 
-//         const permitirRepeticaoTeste = true;
+        const permitirRepeticaoTeste = true;
 
-//         if (
-//             permitirRepeticaoTeste &&
-//             resultados.length > 0
-//         ) {
+        if (
+            permitirRepeticaoTeste &&
+            resultados.length > 0
+        ) {
 
-//             while (
-//                 desafiosSelecionados.length <
-//                 quantidadeDesejada
-//             ) {
+            while (
+                desafiosSelecionados.length <
+                quantidadeDesejada
+            ) {
 
-//                 const indiceAleatorio =
-//                     Math.floor(
-//                         Math.random() *
-//                         resultados.length
-//                     );
+                const indiceAleatorio =
+                    Math.floor(
+                        Math.random() *
+                        resultados.length
+                    );
 
-//                     desafiosSelecionados.push(
-//                         resultados[indiceAleatorio]
-//                     );
-//             }
-//         }
-// }
+                    desafiosSelecionados.push(
+                        resultados[indiceAleatorio]
+                    );
+            }
+        }
+}
 
-// //EMBARALHAMENTO NOVAMENTE
+//EMBARALHAMENTO NOVAMENTE
 
-// desafiosSelecionados.sort(
-//     () => Math.random() - 0.5
-// );
+desafiosSelecionados.sort(
+    () => Math.random() - 0.5
+);
 
-// res.json({
-//     quantidade: desafiosSelecionados.length,
-//     desafios: desafiosSelecionados
-// });
+res.json({
+    quantidade: desafiosSelecionados.length,
+    desafios: desafiosSelecionados
+});
 
-//     }
-// );
-// };
+    }
+);
+};
