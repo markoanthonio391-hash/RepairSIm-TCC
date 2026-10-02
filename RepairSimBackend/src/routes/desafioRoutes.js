@@ -7,9 +7,9 @@ const desafioController = require('../controllers/desafioController');
 
 router.get('/', desafioController.listar);
 
-router.get('/:id', desafioController.buscarPorId);
+router.get('/dificuldade/:dificuldade/aleatorios', desafioController.listarAleatoriosPorDificuldade);
 
-// router.get('/dificuldade/:dificuldade/aleatorios', desafioController.listarAleatoriosPorDificuldade);
+router.get('/:id', desafioController.buscarPorId);
 
 router.post('/:id/verificar', desafioController.verificarItem);
 

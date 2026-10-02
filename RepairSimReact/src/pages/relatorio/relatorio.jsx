@@ -2,10 +2,12 @@
 import { useState, useEffect } from "react";
 
 // Importa o useNavigate para trocar de página
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 // Importa os estilos
 import "./Relatorio.css";
+
+import { useJogo } from "../context/JogoContext";
 
 
 function Relatorio() {
@@ -14,11 +16,13 @@ function Relatorio() {
   // DADOS DO DESAFIO
   // =====================================================
 
-  // Por enquanto o desafio é fixo para teste
-  const idDesafio = 1;
+  const { id } = useParams();
+  const idDesafio = Number(id);
 
   // Usuário temporário
   const idUsuario = 1;
+
+  const {registrarErrosRelatorio, proximoDesafio, ehUltimoDesafio, finalizarJogatina} = useJogo();
 
 
   // =====================================================
@@ -204,6 +208,10 @@ function Relatorio() {
           resultado
         );
 
+        registrarErroRelatorio(
+          resultado.erros
+        );
+
         setResultadoRelatorio(resultado);
 
       })
@@ -221,17 +229,6 @@ function Relatorio() {
 
 
   // =====================================================
-  // VOLTAR
-  // =====================================================
-
-  function voltar() {
-
-    navigate("/caso");
-
-  }
-
-
-  // =====================================================
   // PRÓXIMO CASO
   // =====================================================
 
@@ -239,6 +236,35 @@ function Relatorio() {
 
     console.log("Próximo caso");
 
+  }
+
+  //logica de continuação, se n for o ultimo caso ele vai continuar até chegar no ultimo
+  async function continuar() {
+    if (!resultadoRelatorio){
+      return;
+    }
+
+    const quantidadeErros = resultadoRelatorio.erros || 0;
+
+    registrarErrosRelatorio(
+      quantidadeErros
+    );
+
+    if (ehUltimoDesafio()){
+      try{
+        await finalizarJogatina(
+          quantidadeErros
+        );
+        navigate("/resultado")
+      }
+      catch (erro) {
+        console.error(
+          "Erro ao finalizar jogatina:", erro);
+      }
+      return;
+    }
+    proximoDesafio();
+    navigate("/cliente");
   }
 
 
@@ -423,6 +449,7 @@ function Relatorio() {
               <button
                 key={item.id_item}
                 type="button"
+                disabled={!!resultadoRelatorio}
                 className={
                   itensSelecionados.includes(item.id_item)
                     ? "item-relatorio selecionado"
@@ -451,6 +478,7 @@ function Relatorio() {
               <button
                 key={item.id_item}
                 type="button"
+                disabled={!!resultadoRelatorio}
                 className={
                   itensSelecionados.includes(item.id_item)
                     ? "item-relatorio selecionado"
@@ -479,6 +507,7 @@ function Relatorio() {
               <button
                 key={item.id_item}
                 type="button"
+                disabled={!!resultadoRelatorio}
                 className={
                   itensSelecionados.includes(item.id_item)
                     ? "item-relatorio selecionado"
@@ -630,20 +659,6 @@ function Relatorio() {
       <footer className="relatorio-footer">
 
 
-        <button
-          className="btn-voltar"
-          onClick={voltar}
-        >
-
-          <span className="seta">
-            ←
-          </span>
-
-          VOLTAR
-
-        </button>
-
-
         {!resultadoRelatorio && (
 
           <button
@@ -660,10 +675,10 @@ function Relatorio() {
 
         <button
           className="btn-proximo"
-          onClick={proximoCaso}
+          onClick={continuar}
         >
 
-          PRÓXIMO CASO
+          CONTINUAR
 
         </button>
 
