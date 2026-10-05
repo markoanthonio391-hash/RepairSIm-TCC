@@ -122,7 +122,7 @@ function Resultado() {
         <footer className="resultado-footer">
 
           <button className="btn-secundario" onClick={() => navigate("/Dificuldade")}>
-            Compartilhar
+            NOVO JOGO
           </button>
                <button className="btn-principal" onClick={() => navigate("/")}>
             INÍCIO

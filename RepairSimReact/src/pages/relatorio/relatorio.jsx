@@ -52,7 +52,14 @@ function Relatorio() {
     problema: "",
     diagnostico: ""
   });
-
+  useEffect(() => {
+    // Coloca uma classe especial no body
+    document.body.classList.add("tela-relatorio");
+    // Quando sair da tela,
+    // remove a classe novamente.
+    return () => {document.body.classList.remove("tela-relatorio");
+    };
+}, []);
 
   // =====================================================
   // BUSCAR DADOS DO DESAFIO
@@ -534,6 +541,10 @@ function Relatorio() {
 
           <section className="resultado-relatorio">
 
+            <p>
+              <strong>Erros cometidos no relatório:</strong>
+              {" "} {resultadoRelatorio.erros}
+            </p>
 
             {resultadoRelatorio.tipo === "completo" && (
 
@@ -615,7 +626,7 @@ function Relatorio() {
                   id => {
 
                     const item = itens.find(
-                      item => item.id_item === id
+                      item => Number(item.id_item) === Number(id)
                     );
 
                     return (

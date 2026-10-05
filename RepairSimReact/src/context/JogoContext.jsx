@@ -180,43 +180,74 @@ export function JogoProvider({ children }) {
     }
 
     // recebe os erros do último relatório, porque o estado ainda não foi atualizado
-    async function finalizarJogatina(errosRelatorioExtras = 0) {
-        const tempoTotal = jogatina.tempoInicio
-            ? Math.floor((Date.now() - jogatina.tempoInicio) / 1000)
-            : 0;
+    async function finalizarJogatina(errosRelatorioExtras = 0, quantidadeCasosOverride = null) {
+    // -----------------------------------------------------
+    // Calcula quanto tempo passou desde o início da jogatina
+    // -----------------------------------------------------
+    const tempoTotal = jogatina.tempoInicio ? Math.floor((Date.now() - jogatina.tempoInicio) / 1000): 0;
+    // -----------------------------------------------------
+    // Soma os erros do último relatório, caso existam
+    // -----------------------------------------------------
+    const errosRelatorioFinais = jogatina.errosRelatorio + Number(errosRelatorioExtras || 0);
+    // -----------------------------------------------------
+    // Quantidade de casos concluídos
+    //
+    // Normal:
+    //   usa jogatina.quantidadeCasos = 10
+    //
+    // Recusou:
+    //   recebe uma quantidade específica, por exemplo 2
+    // -----------------------------------------------------
 
-        const errosRelatorioFinais =
-            jogatina.errosRelatorio + Number(errosRelatorioExtras || 0);
+    const quantidadeCasosFinal = quantidadeCasosOverride !== null ? quantidadeCasosOverride : jogatina.quantidadeCasos;
 
-        const resposta = await fetch("http://localhost:3000/resultados", {
+    // -----------------------------------------------------
+    // Dados enviados para o backend
+    // -----------------------------------------------------
+
+    const resposta = await fetch("http://localhost:3000/resultados",
+        {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
-                id_usuario: jogatina.idUsuario,
-                dificuldade: jogatina.dificuldade,
-                quantidade_casos: jogatina.quantidadeCasos,
-                erros_desafio: jogatina.errosDesafio,
-                erros_relatorio: errosRelatorioFinais,
-                pontos: jogatina.pontos,
-                tempo_segundos: tempoTotal
+            id_usuario: jogatina.idUsuario,
+            dificuldade: jogatina.dificuldade,
+            quantidade_casos: quantidadeCasosFinal,
+            erros_desafio: jogatina.errosDesafio,
+            erros_relatorio: errosRelatorioFinais,
+            pontos: jogatina.pontos,
+            tempo_segundos: tempoTotal
             })
-        });
-
-        if (!resposta.ok) {
-            throw new Error("Erro ao salvar o resultado.");
         }
+    );
 
-        const dados = await resposta.json();
 
-        setJogatina(prev => ({
-            ...prev,
-            errosRelatorio: errosRelatorioFinais,
-            tempoSegundos: tempoTotal,
-            dataFinalizacao: new Date().toISOString(),
-            finalizada: true
-        }));
+    // -----------------------------------------------------
+    // Verifica se o backend aceitou o resultado
+    // -----------------------------------------------------
+    if (!resposta.ok) {
+        throw new Error("Erro ao salvar o resultado.");
+    }
 
-        return dados;
+
+    // -----------------------------------------------------
+    // Recebe o ID criado no banco
+    // -----------------------------------------------------
+    const dados = await resposta.json();
+
+    // -----------------------------------------------------
+    // Atualiza o contexto
+    // -----------------------------------------------------
+
+    setJogatina(prev => ({...prev,
+        quantidadeCasos: quantidadeCasosFinal,
+        errosRelatorio: errosRelatorioFinais,
+        tempoSegundos: tempoTotal,
+        dataFinalizacao: new Date().toISOString(),
+        finalizada: true,
+        idResultado: dados.id_resultado
+    }));
+    return dados;
     }
 
     return (
