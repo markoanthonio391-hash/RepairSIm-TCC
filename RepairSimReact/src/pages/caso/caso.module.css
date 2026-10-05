@@ -1,22 +1,26 @@
-.container{
-    font-family: Unispace, monospace;
-    color: snow;
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
 }
-
-body{
-    width: 100vw;
-    height: 100vh;
-    z-index: -1;
-    position: fixed;
-    display: flex;
-}
-
 .mainContainer{
-    width: 800px;
-    height: 625px;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    /* height: 100dvh; desabilitando por causa da sugestão do claude*/
+    /*Adição do claude*/
+    height: auto;
+    max-height: 100dvh;
+    aspect-ratio: 3/2; /* 1536x1024 da bancada.jpeg, mantem um tamanho fixo com base na propoção*/
+    margin: 0 auto;
+    /*fim da adição*/
+    min-height: 630px;
     font-family: Unispace, monospace;
-    color:aquamarine;
+    color: aquamarine;
     background-color: black;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 /* .textContainer{
@@ -25,23 +29,30 @@ body{
 .componContainer{
 
 } */
+.bancada{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;   /*preenche sem distorcer */
+    z-index: 0;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+
 .toolsContainer{
-    
-    position: relative;
-    justify-content: center;
-    flex-direction: table-column;
+    position: static;           /* antes: relative + left calc — removido */
     display: flex;
-    left: calc(100% + 2px);
-    top: clamp(10px, 20px, 50px);
-    width: calc(52% - 137px);
-    height: calc(100% - 100px);
+    flex-direction: column;
+    width: 100%;
+    max-width: 280px;
+    flex: 1 1 240px;
     background-color: transparent;
-    z-index: 9999;
-    /*pointer-events: none;*/
     font-family: Unispace, monospace;
     box-sizing: border-box;
-    border-style: double;
-    border-radius: 0px;
+    padding: 10px;
+    z-index: 1;
 }
 
 .textTools{
@@ -50,29 +61,27 @@ body{
     color: white;
 }
 .titleTools{
-    font-size: 14px;
+    font-size: clamp(12px, 1.5vw, 16px);
     color: white;
-    margin: 5px 0 10px 0;
+    margin: 8px 0;
     text-align: center;
 }
 
 .btnToolsBox{
     cursor: pointer;
     border-radius: 6px;
-    pointer-events: auto; 
     display: flex;
     align-items: center;
-    gap: 8px; 
+    justify-content: center;
+    gap: 8px;
     font-weight: bold;
-    width: 140px;
-    height: 30px;
-    position: relative; /*não é mais absoluto*/
+    width: 100%;
+    padding: clamp(6px, 1vw, 10px) 0;
+    font-size: clamp(10px, 1.3vw, 14px);
+    margin-bottom: 6px;
+    position: relative;
 }
-/* .btnColorTool{
-    border: 3px solid #ffd700;
-    color: #ffd700;
-    background-color: #4a3728;
-} */
+
 
 .iconBtnTools{
     right:1px;
@@ -80,50 +89,41 @@ body{
 }
 
 .contentTools{
-    margin-top: 1px;
-    justify-content: center;
     position: relative;
-    left: 1px;
-    top: calc(100% - 400px);
-    padding-top: 10px;
-    scrollbar-width: auto;
-    flex-wrap: wrap;
-    width: 100%;
     display: flex;
-    gap: 12px;
-    margin-top: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding-top: 10px;
 }
 .toolsBox{
-    width: 100%;
-    max-height: calc(100% - 130px);
-    overflow-y: auto !important;
-    overflow-x: hidden;
-    scrollbar-width: thin ;
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 5px;
-    position: absolute;
-    top: 60px;
-    left: 0px;
     width: 100%;
-    max-height: calc(100% - 150px);
-    padding: 0px 8px 15px 8px;
-    min-height: 0;
-    flex: 1;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    padding: 8px;
+    box-sizing: border-box;
+    margin-top: 5px;
 
 }
 
 
 /*teste, diminuindo as imagens e deixando elas com fundo branco*/
 .imgItem{
-    width: 52.5px;          
-    height: 52.5px;        
-    object-fit: contain;  
+    width: clamp(38px, 6vw, 52px);
+    height: clamp(38px, 6vw, 52px);
+    object-fit: contain;
     border-radius: 4px;
     border-style: double;
-    background-color: transparent;  
-    display:block;
+    background-color: transparent;
+    display: block;
+    -webkit-user-drag: none;
 }
 
 /*===========================================================================*/
@@ -132,198 +132,119 @@ body{
 /*AREA DO PC*/
 .pcContainer {
     position: absolute;
-    top: 50%;
+    bottom: 5%; /*antes tava 15%, abaixei para fica em cima da bancada*/
     left: 58%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    gap: 20px;
-    width: 600px;
-    height: 450px;
+    gap: 3%;
+    width: 75%;
+    height: 42%;
+    z-index: 5;
+    
 }
 
 /*MONITOR*/
 .monitorImage {
-    width: 180px;
+    width: 50%;
     height: auto;
     object-fit: contain;
+    -webkit-user-drag: none;
 }
 
 /*GABINETE*/
 .gabineteImage {
-    width: 380px;
+    width: 32%;
     height: auto;
     object-fit: contain;
+    -webkit-user-drag: none;
 }
 
 /*GABINETE DURANTE A MANUTENÇÃO*/
 .gabineteManutencao {
-    width: 420px;
+    width: 40%;
     height: auto;
     object-fit: contain;
+    -webkit-user-drag: none;
 }
 
 /*GABINETE CLICÁVEL*/
-.gabineteClicavel {
+/* .gabineteClicavel {
     cursor: pointer;
     transition: transform 0.2s ease;
 }
-.gabineteClicavel:hover {/*Efeito quando o mouse passar*/
+.gabineteClicavel:hover {/*Efeito quando o mouse passar*
     transform: scale(1.03);
-}
+} */
+
+.gabineteClicavel { cursor: pointer; transition: transform 0.2s ease; }
+.gabineteClicavel:hover { transform: scale(1.03); }
 
 /*BOTÃO DESLIGAR*/
 .btnDesligar {
     position: absolute;
     left: 58%;
-    bottom: 35px;
+    bottom: 5%;
     transform: translateX(-50%);
     background-color: #8b0000;
     border: 3px solid #ff4d4d;
     color: white;
     font-weight: bold;
-    padding: 10px 20px;
+    padding: clamp(6px, 1.2vw, 10px) clamp(10px, 2vw, 20px);
+    font-size: clamp(10px, 1.4vw, 14px);
     border-radius: 6px;
     cursor: pointer;
     z-index: 10000;
+
 }
 
 /*MENSAGEM*/
 .mensagem {
     position: absolute;
     left: 58%;
-    bottom: 80px;
+    bottom: 13%;
     transform: translateX(-50%);
-    width: 400px;
-    padding: 10px;
+    width: 55%;
+    padding: 1.5%;
     text-align: center;
     background-color: rgba(0, 0, 0, 0.85);
     border: 2px solid #ffd700;
     border-radius: 6px;
     color: white;
     font-weight: bold;
+    font-size: clamp(10px, 1.4vw, 14px);
     z-index: 10000;
 }
 
 /*ITEM CLICÁVEL*/
-.itemClicavel {
+/* .itemClicavel {
     cursor: pointer;
     transition: transform 0.2s ease;
 }
-.itemClicavel:hover { /*efeito quando o mouse passar*/
+.itemClicavel:hover { /*efeito quando o mouse passar
     transform: scale(1.08);
-}
+} */
+
+.itemClicavel { cursor: pointer; transition: transform 0.2s ease; }
+.itemClicavel:hover { transform: scale(1.08); }
 
 .btnVoltar{
     position: absolute;
-    right: 60%;
-    bottom: 35px;
-    transform: translateX(-50%);
+    left: 3%;
+    bottom: 5%;
     background-color: #8b0000;
     border: 3px solid #ff4d4d;
     color: white;
     font-weight: bold;
-    padding: 10px 20px;
+    padding: clamp(6px, 1.2vw, 10px) clamp(10px, 2vw, 20px);
+    font-size: clamp(10px, 1.4vw, 14px);
     border-radius: 6px;
     cursor: pointer;
     z-index: 10000;
 }
 
-/*--- Animação de Pulsar para o Neon Ativo ---
-@keyframes pulsarNeon {
-  0% {
-    box-shadow: 0 0 10px var(--cor-neon), 0 0 25px var(--cor-neon), inset 0 0 10px var(--cor-neon);
-  }
-  50% {
-    box-shadow: 0 0 20px var(--cor-neon), 0 0 45px var(--cor-neon), inset 0 0 15px var(--cor-neon);
-  }
-  100% {
-    box-shadow: 0 0 10px var(--cor-neon), 0 0 25px var(--cor-neon), inset 0 0 10px var(--cor-neon);
-  }
-}
-@keyframes pulsarNeonComp {
-  0% { box-shadow: 0 0 10px #ff1a1a, 0 0 25px #8b0000, inset 0 0 10px #8b0000; }
-  50% { box-shadow: 0 0 20px #ff1a1a, 0 0 45px #ff0000, inset 0 0 15px #8b0000; }
-  100% { box-shadow: 0 0 10px #ff1a1a, 0 0 25px #8b0000, inset 0 0 10px #8b0000; }
-}
 
-/* Animação Azul Ciano - Software 
-@keyframes pulsarNeonSoft {
-  0% { box-shadow: 0 0 10px #00f0ff, 0 0 25px #00f0ff, inset 0 0 10px #00f0ff; }
-  50% { box-shadow: 0 0 20px #00f0ff, 0 0 45px #00f0ff, inset 0 0 15px #00f0ff; }
-  100% { box-shadow: 0 0 10px #00f0ff, 0 0 25px #00f0ff, inset 0 0 10px #00f0ff; }
-}
-
-/* --- Estilo quando o botão de Ferramentas estiver ATIVO --- 
-.btnColorTool{
-  --cor-neon: #ffd700; /* Define a cor verde para a animação 
-  background-color: #ffd700;
-  color: #000;
-  border-color: #fff; /* Borda branca dá o efeito de filamento aceso 
-  text-shadow: none;
-  animation: pulsarNeon 1.5s infinite ease-in-out; /* Faz o brilho pulsar infinitamente 
-}
-
-/* --- Estilo quando o botão de Peças estiver ATIVO --- 
-.btnColorComp{
-  --cor-neon: #ff0055; /* Define a cor vermelha/rosa 
-  background-color: #ff0055;
-  color: #000;
-  border-color: #fff;
-  text-shadow: none;
-  animation: pulsarNeon 1.5s infinite ease-in-out;
-}
-
-/* --- Estilo quando o botão de Software estiver ATIVO --- 
-.btnColorSoft {
-  --cor-neon: #00f0ff; /* Define a cor azul 
-  background-color: #00f0ff;
-  color: #000;
-  border-color: #fff;
-  text-shadow: none;
-  animation: pulsarNeon 1.5s infinite ease-in-out;
-}
-
-.btnColorTool.active {
-    background-color: #0d0d0d;       /* Fundo quase preto para destacar o neon 
-    color: #fff;                     /* Texto branco para simular o filamento da lâmpada 
-    border: 2px solid #00ff88;       /* Borda com a cor base do neon 
-    border-radius: 8px;              /* Cantos levemente arredondados combinam com neon 
-    cursor: pointer;
-    transition: all 0.3s ease;       /* Efeito suave ao passar o mouse 
-
-    /* EFEITO NEON NA BORDA (box-shadow) e NO TEXTO (text-shadow) 
-    box-shadow: 
-        0 0 5px #00ff88,             /* Brilho interno/colado na borda 
-        0 0 15px #00ff88,            /* Brilho médio ao redor 
-        inset 0 0 3px #00ff88;       /* Brilho neon para dentro do botão 
-        
-    text-shadow: 0 0 5px #00ff88; 
-    
-}
-.btnColorSoft{
-    border: 3px solid #ffd700;
-    color: #ffd700;
-    background-color: #4a3728;
-}
-.btnColorComp{
-  /* --cor-neon: #ff0055; /* Define a cor vermelha/rosa 
-    background-color: #0d0d0d;       /* Fundo quase preto para destacar o neon 
-    color: #fff;                     /* Texto branco para simular o filamento da lâmpada 
-    border: 2px solid #00ff88;       /* Borda com a cor base do neon 
-    border-radius: 8px;              /* Cantos levemente arredondados combinam com neon 
-    cursor: pointer;
-    transition: all 0.3s ease;       /* Efeito suave ao passar o mouse 
-
-    /* EFEITO NEON NA BORDA (box-shadow) e NO TEXTO (text-shadow) 
-    box-shadow: 
-        0 0 5px #00ff88,             /* Brilho interno/colado na borda 
-        0 0 15px #00ff88,            /* Brilho médio ao redor 
-        inset 0 0 5px #00ff88;       /* Brilho neon para dentro do botão 
-        
-    text-shadow: 0 0 5px #00ff88; 
-}*/
 
 /* ==========================================================================
    ANIMAÇÕES DE PULSAR PARA O ESTADO NORMAL (BOTÕES PARADOS)
@@ -349,6 +270,34 @@ body{
   50% { box-shadow: 0 0 25px #00f0ff, 0 0 55px #00f0ff, inset 0 0 15px #00f0ff; }
   100% { box-shadow: 0 0 12px #00f0ff, 0 0 30px #00f0ff, inset 0 0 8px #00f0ff; }
 }
+
+/* ===================== RESPONSIVIDADE ===================== */
+
+@media (max-width: 700px) {
+    .screenWrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+    .mainContainer {
+        max-width: 100%;
+    }
+    .toolsContainer {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+@media (max-width: 420px) {
+    .btnVoltar, .btnDesligar, .btnRelatorio {
+        font-size: 9px;
+        padding: 5px 8px;
+    }
+    .mensagem {
+        width: 80%;
+        font-size: 10px;
+    }
+}
+
 
 /* ==========================================================================
    CLASSES DOS BOTÕES (NORMAL = VIVO/PULSANDO | ACTIVE = APAGADO)
@@ -436,3 +385,37 @@ body{
   box-shadow: 0 0 5px #00f0ff, 0 0 15px #00f0ff, inset 0 0 3px #00f0ff;
   text-shadow: 0 0 3px #00f0ff; 
 }
+
+/*Teste do botão relatorio*/
+.btnRelatorio {
+    position: absolute;
+    right: 3%;
+    bottom: 5%;
+    background-color: #4149c9;
+    border: 3px solid #7077ff;
+    color: white;
+    font-weight: bold;
+    padding: clamp(6px, 1.2vw, 10px) clamp(10px, 2vw, 20px);
+    font-size: clamp(10px, 1.4vw, 14px);
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 10000;
+}
+
+/* Wrapper geral: ocupa a tela toda, centraliza o conteúdo */
+.screenWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items:flex-start;
+    /* gap: 20px; */
+    width: 100%;
+    min-height: 100dvh;
+    margin: 0;
+    /* padding: 20px; */
+    box-sizing: border-box;
+    background-color: black;
+    overflow-y: auto;
+    
+}
+

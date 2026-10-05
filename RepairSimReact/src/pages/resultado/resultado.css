@@ -1,0 +1,209 @@
+:root{
+    --cor-fundo: #0d1117;
+    --cor-superficie: #161b22;
+    --cor-superficie-2: #1c2333;
+    --cor-borda: #2a3142;
+    --cor-azul: #3b82f6;
+    --cor-azul-claro: #60a5fa;
+    --cor-azul-escuro: #1d4ed8;
+    --cor-texto: #e6e9ef;
+    --cor-texto-suave: #9aa4b2;
+    --cor-sucesso: #22c55e;
+    --sombra: 0 8px 24px rgba (0, 0, 0, 0.35);
+    --raio: 14px
+}
+body {
+    margin: 0;
+    background: #0f172a;
+    color: white;
+}
+* {
+    box-sizing: border-box;
+}
+
+.resultado{
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at top, #131a2a 0%, var (--cor-fundo) 60%);
+    padding: 32px 16px;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; 
+    color: var(--cor-texto);
+}
+
+.resultado-container { 
+    width: 100%;
+    max-width: 640px;
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.resultado-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.resultado-icon{
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cor-azul), var(--cor-azul-escuro));
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.12);
+    margin-bottom: 8px ;
+}
+
+.resultado-header h1{
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--cor-texto)
+}
+
+.resultado-header p {
+    margin: 0;
+    color:var(--cor-texto-suave);
+    font-size: 0.95rem;
+}
+
+.pontuacao{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--cor-superficie-2);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    padding: 28px 16px;
+    gap: 4px;
+}
+
+.pontuacao span{
+    font-size: 0.85rem;
+    color:var(--cor-texto-suave);
+    text-transform:uppercase;
+    letter-spacing: 0.05em;
+}
+
+.resultado-cards{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.resultado-card{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    background: var(--cor-superficie-2);
+    border-radius: 12px;
+    padding: 16px;
+    transition: border-color 0.2 ease, transform 0.2s ease;
+}
+
+.resultado-card:hover {
+  border-color: var(--cor-azul);
+  transform: translateY(-2px);
+}
+ 
+.resultado-card span {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(59, 130, 246, 0.15);
+  margin-bottom: 4px;
+}
+ 
+.resultado-card p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+}
+ 
+.resultado-card strong {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--cor-texto);
+}
+ 
+/* Footer / ações */
+.resultado-footer {
+  display: flex;
+  gap: 12px;
+}
+ 
+.resultado-footer button {
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+}
+ 
+.resultado-footer button:active {
+  transform: scale(0.98);
+}
+ 
+.btn-principal {
+  background: linear-gradient(135deg, var(--cor-azul), var(--cor-azul-escuro));
+  color: #fff;
+}
+ 
+.btn-principal:hover {
+  filter: brightness(1.1);
+}
+ 
+.btn-secundario {
+  background: transparent;
+  border-color: var(--cor-borda);
+  color: var(--cor-texto);
+}
+ 
+.btn-secundario:hover {
+  border-color: var(--cor-azul);
+  color: var(--cor-azul-claro);
+}
+ 
+/* ==========================================================================
+   Responsivo
+   ========================================================================== */
+ 
+@media (max-width: 640px) {
+  .resultado-container {
+    padding: 28px 20px;
+    gap: 24px;
+  }
+ 
+  .resultado-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+ 
+  .pontuacao strong {
+    font-size: 2.5rem;
+  }
+ 
+  .resultado-footer {
+    flex-direction: column;
+  }
+}
+ 
+@media (max-width: 380px) {
+  .resultado-cards {
+    grid-template-columns: 1fr;
+  }
+}
+ 

@@ -1,4 +1,4 @@
-.container{
+/* .container{
     background-color: #0A192F;
     
     align-items: center;
@@ -61,4 +61,220 @@
 .cancelarButton{
     background-color: #ff0000;
     color: black;
+} */
+
+.page{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100dvh;
+    padding: clamp(1rem, 4vh, 3rem) 1rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+    -webkit-user-drag: none;
+    user-select: none;
 }
+
+.bckground{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.bckgroundImg{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(92vw, 42rem);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: 20px;
+    background: rgba(10, 25, 47, 0.55);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(0, 195, 255, 0.25);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(0, 195, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    box-sizing: border-box;
+    margin: auto;
+}
+
+.iconBadge{
+    width: clamp(2.5rem, 6vw, 3.25rem);
+    height: clamp(2.5rem, 6vw, 3.25rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.25rem, 3vw, 1.6rem);
+    background: linear-gradient(135deg, #009dff, #36d8ff);
+    border-radius: 12px;
+    margin: 0 auto clamp(1rem, 3vh, 1.5rem);
+    box-shadow: 0 0 20px rgba(0, 157, 255, 0.5);
+}
+
+.cardTitle{
+    font-family: Unispace, monospace;
+    color: #F5F7FA;
+    text-align: center;
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    margin: 0 0 0.35rem;
+}
+
+.cardSubtitle{
+    font-family: Unispace, monospace;
+    color: #A8B3C7;
+    text-align: center;
+    font-size: clamp(0.75rem, 2vw, 0.9rem);
+    margin: 0 0 clamp(1.25rem, 4vh, 1.75rem);
+}
+
+.grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.9rem 1rem;
+}
+
+@media (max-width: 32rem){
+    .grid{
+        grid-template-columns: 1fr;
+    }
+}
+
+.field{
+    display: flex;
+    flex-direction: column;
+}
+
+.fieldLabel{
+    font-family: Unispace, monospace;
+    color: #A8B3C7;
+    font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+    margin-bottom: 0.3rem;
+}
+
+.input{
+    width: 100%;
+    height: clamp(2.5rem, 6vh, 2.9rem);
+    padding: 0 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 195, 255, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+    color: #F5F7FA;
+    font-family: Unispace, monospace;
+    font-size: clamp(13px, 2vw, 15px);
+    box-sizing: border-box;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.input::placeholder{
+    color: #6b7d94;
+}
+
+.input:focus{
+    outline: none;
+    border-color: #00c3ff;
+    box-shadow: 0 0 12px rgba(0, 195, 255, 0.35);
+}
+
+/* input[type=date] no tema escuro: forçar o ícone do calendário a ficar visível */
+.input::-webkit-calendar-picker-indicator{
+    filter: invert(0.8);
+    cursor: pointer;
+}
+
+.termsRow{
+    display: inline-flex;      /* não mais 'flex' sozinho */
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;        /* encolhe pro tamanho do conteúdo, não estica */
+    align-self: flex-start;    /* não deixa o flexbox pai esticar esse item */
+    margin-top: clamp(1rem, 3vh, 1.5rem);
+    cursor: pointer;
+}
+
+.inputTerms{
+    width: 16px;
+    height: 16px;
+    accent-color: #00c3ff;
+    cursor: pointer;
+}
+
+.terms{
+    color: #A8B3C7;
+    font-family: Unispace, monospace;
+    font-style: italic;
+    font-size: clamp(11px, 2vw, 13px);
+    pointer-events: none;  /* não deixa o texto interferir no clique do checkbox */
+}
+
+.error{
+    color: #ff6b6b;
+    font-family: Unispace, monospace;
+    font-size: clamp(12px, 2vw, 14px);
+    text-align: center;
+    margin: 0.75rem 0 0;
+}
+
+.loading{
+    color: #A8B3C7;
+    font-family: Unispace, monospace;
+    font-size: clamp(12px, 2vw, 14px);
+    text-align: center;
+    margin: 0.75rem 0 0;
+}
+
+.confirmarButton{
+    width: 100%;
+    height: clamp(2.75rem, 6vh, 3.1rem);
+    margin-top: clamp(1rem, 3vh, 1.5rem);
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #009dff, #36d8ff);
+    color: #001018;
+    font-family: Unispace, monospace;
+    font-size: clamp(15px, 2vw, 17px);
+    cursor: pointer;
+    box-shadow: 0 0 18px rgba(0, 157, 255, 0.4);
+    transition: transform 0.15s ease-in-out, box-shadow 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.confirmarButton:hover:not(:disabled){
+    transform: scale(1.02);
+    box-shadow: 0 0 28px rgba(0, 157, 255, 0.6);
+}
+
+.confirmarButton:disabled{
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.cancelarButton{
+    width: 100%;
+    height: clamp(2.5rem, 5.5vh, 3rem);
+    margin-top: 0.6rem;
+    border: 1px solid rgba(255, 107, 107, 0.4);
+    border-radius: 10px;
+    background: transparent;
+    color: #ff9b9b;
+    font-family: Unispace, monospace;
+    font-size: clamp(13px, 2vw, 15px);
+    cursor: pointer;
+    transition: background 0.2s ease-in-out, transform 0.15s ease-in-out;
+}
+
+.cancelarButton:hover{
+    background: rgba(255, 107, 107, 0.1);
+    transform: scale(1.02);
+}
+

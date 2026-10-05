@@ -112,3 +112,109 @@ exports.verificarItem = (req, res) => {
         }
     );
 };
+
+////////////////////////////////DIEGO PART4///////////////////////////////////
+
+exports.listarAleatoriosPorDificuldade = (req, res) => {
+
+    const dificuldade = req.params.dificuldade;
+
+    const dificuldadesPermitidas =[
+        'Facil',
+        'Medio',
+        'Dificil'
+    ];
+
+    if (!dificuldadesPermitidas.includes(dificuldade)) {
+
+        return res.status(400).json({
+            mensagem: 'Dificuldade inválida.'
+    });
+}
+
+const sql =`
+    select *
+    from desafios
+    where dificuldade = ?
+    order by rand()
+`;
+
+
+conexao.query(
+    sql,
+    [dificuldade],
+    (erro, resultados) => {
+        if (erro) {
+
+            console.error(
+                'Erro ao buscar desafios:',
+                erro
+            );
+
+            return res.status(500).json({
+                mensagem:
+                       'Erro ao buscar desafios.'
+    });
+
+}
+
+const quantidadeDesejada = 10;
+
+let desafiosSelecionados = [];
+
+//Caso normal: Tem 10 ou Mais
+if (resultados.length >= quantidadeDesejada) {
+
+    desafiosSelecionados =
+        resultados.slice(
+            0,
+            quantidadeDesejada
+        );
+}
+
+//TESTE: Ainda não tem 10
+
+else {
+
+    desafiosSelecionados =
+        [...resultados];
+
+        const permitirRepeticaoTeste = true;
+
+        if (
+            permitirRepeticaoTeste &&
+            resultados.length > 0
+        ) {
+
+            while (
+                desafiosSelecionados.length <
+                quantidadeDesejada
+            ) {
+
+                const indiceAleatorio =
+                    Math.floor(
+                        Math.random() *
+                        resultados.length
+                    );
+
+                    desafiosSelecionados.push(
+                        resultados[indiceAleatorio]
+                    );
+            }
+        }
+}
+
+//EMBARALHAMENTO NOVAMENTE
+
+desafiosSelecionados.sort(
+    () => Math.random() - 0.5
+);
+
+res.json({
+    quantidade: desafiosSelecionados.length,
+    desafios: desafiosSelecionados
+});
+
+    }
+);
+};

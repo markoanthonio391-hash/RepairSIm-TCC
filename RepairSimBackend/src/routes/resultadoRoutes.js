@@ -6,4 +6,6 @@ const resultadoController = require('../controllers/resultadoController');
 
 router.get('/', resultadoController.listar);
 
+router.post('/', resultadoController.criar);
+
 module.exports = router;

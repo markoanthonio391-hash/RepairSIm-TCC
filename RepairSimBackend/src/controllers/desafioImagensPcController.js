@@ -20,7 +20,11 @@ exports.listarPorDesafio = (req, res) =>{//lista apenas as imagens que tem no de
     const idDesafio = req.params.id; //pega pelo id da url
 
     //busca as imagens e seus caminhos cruzando as tabelas e filtrando pelo id usando inner join.
-    const selecao = `select desafio_imagens_pc.id_desafio, imagens_pc.id_pc, imagens_pc.caminho_imagem
+    const selecao = `select desafio_imagens_pc.id_desafio,
+    desafio_imagens_pc.funcao,
+    imagens_pc.id_pc,
+    imagens_pc.nome,
+    imagens_pc.caminho_imagem
     from desafio_imagens_pc
     inner join imagens_pc
     on desafio_imagens_pc.id_pc = imagens_pc.id_pc

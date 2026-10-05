@@ -1,4 +1,4 @@
-
+/* 
 .subtitle{
     font-display: block;
     display: flex;
@@ -20,7 +20,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-   /* margin-top: clamp(-35px, 3%, -100px); */
+    margin-top: clamp(-35px, 3%, -100px); 
     width: 100vw;
     min-height: 100vh;
     overflow: hidden;
@@ -90,9 +90,343 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-   /* margin-top: clamp(-35px, 3%, -100px); */
+    margin-top: clamp(-35px, 3%, -100px); 
     width: 100vw;
     max-height: 10vh;
     overflow: hidden;
     box-shadow: #009dff;
+} */
+
+.page{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100dvh;
+    padding: clamp(1rem, 4vh, 3rem) 1rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.bckground{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.bckgroundImg{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Card com efeito vidro (glassmorphism) */
+.card{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(90vw, 26rem);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: 20px;
+    background: rgba(10, 25, 47, 0.55);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(0, 195, 255, 0.25);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(0, 195, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    box-sizing: border-box;
+}
+
+.iconBadge{
+    width: clamp(2.5rem, 6vw, 3.25rem);
+    height: clamp(2.5rem, 6vw, 3.25rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.25rem, 3vw, 1.6rem);
+    background: linear-gradient(135deg, #009dff, #36d8ff);
+    border-radius: 12px;
+    margin: 0 auto clamp(1rem, 3vh, 1.5rem);
+    box-shadow: 0 0 20px rgba(0, 157, 255, 0.5);
+}
+
+.cardTitle{
+    font-family: Unispace, monospace;
+    color: #F5F7FA;
+    text-align: center;
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    margin: 0 0 0.35rem;
+}
+
+.cardSubtitle{
+    font-family: Unispace, monospace;
+    color: #A8B3C7;
+    text-align: center;
+    font-size: clamp(0.75rem, 2vw, 0.9rem);
+    margin: 0 0 clamp(1.25rem, 4vh, 1.75rem);
+}
+
+.fieldLabel{
+    font-family: Unispace, monospace;
+    color: #A8B3C7;
+    font-size: clamp(0.75rem, 2vw, 0.85rem);
+    margin-bottom: 0.35rem;
+}
+
+.input{
+    width: 100%;
+    height: clamp(2.75rem, 6vh, 3.25rem);
+    margin-bottom: clamp(0.9rem, 2.5vh, 1.25rem);
+    padding: 0 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 195, 255, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+    color: #F5F7FA;
+    font-family: Unispace, monospace;
+    font-size: clamp(14px, 2vw, 16px);
+    box-sizing: border-box;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.input::placeholder{
+    color: #6b7d94;
+}
+
+.input:focus{
+    outline: none;
+    border-color: #00c3ff;
+    box-shadow: 0 0 12px rgba(0, 195, 255, 0.35);
+}
+
+.error{
+    color: #ff6b6b;
+    font-family: Unispace, monospace;
+    font-size: clamp(12px, 2vw, 14px);
+    text-align: center;
+    margin: 0 0 0.75rem;
+}
+
+.loading{
+    color: #A8B3C7;
+    font-family: Unispace, monospace;
+    font-size: clamp(12px, 2vw, 14px);
+    text-align: center;
+    margin: 0 0 0.75rem;
+}
+
+.loginButton{
+    width: 100%;
+    height: clamp(2.75rem, 6vh, 3.25rem);
+    margin-top: 0.25rem;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #009dff, #36d8ff);
+    color: #001018;
+    font-family: Unispace, monospace;
+    font-size: clamp(15px, 2vw, 17px);
+    cursor: pointer;
+    box-shadow: 0 0 18px rgba(0, 157, 255, 0.4);
+    transition: transform 0.15s ease-in-out, box-shadow 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.loginButton:hover:not(:disabled){
+    transform: scale(1.02);
+    box-shadow: 0 0 28px rgba(0, 157, 255, 0.6);
+}
+
+.loginButton:disabled{
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.cancelarButton{
+    width: 100%;
+    height: clamp(2.5rem, 5.5vh, 3rem);
+    margin-top: 0.6rem;
+    border: 1px solid rgba(255, 107, 107, 0.4);
+    border-radius: 10px;
+    background: transparent;
+    color: #ff9b9b;
+    font-family: Unispace, monospace;
+    font-size: clamp(13px, 2vw, 15px);
+    cursor: pointer;
+    transition: background 0.2s ease-in-out, transform 0.15s ease-in-out;
+}
+
+.cancelarButton:hover{
+    background: rgba(255, 107, 107, 0.1);
+    transform: scale(1.02);
+}
+
+.cadButton{
+    background: transparent;
+    border: none;
+    font-family: Unispace, monospace;
+    color: #A8B3C7;
+    font-size: clamp(12px, 2vw, 14px);
+    margin-top: clamp(1rem, 3vh, 1.5rem);
+    cursor: pointer;
+    text-align: center;
+}
+
+.cadLink{
+    color: #36d8ff;
+    text-decoration: underline;
+}
+
+
+.stage {
+  --bg-deep: #020611;
+  --bg-mid: #040d21;
+  --glow: #2f7bff;
+  --glow-soft: #1a4fb8;
+  --line: #1e5aa8;
+  --line-bright: #5fb0ff;
+  --dot: #7fc4ff;
+
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: 
+    radial-gradient(ellipse 60% 55% at 50% 50%, rgba(47,123,255,0.35) 0%, rgba(20,60,140,0.12) 40%, rgba(2,6,17,0) 70%),
+    linear-gradient(180deg, #040a1a 0%, #020611 100%);
+  animation: breathe 6s ease-in-out infinite;
+  overflow: hidden;
+  z-index: -1; /* Mantém o fundo atrás dos botões */
+}
+
+@keyframes breathe {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.18); }
+}
+
+/* Grid tecnológico ao fundo */
+.grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(80,140,255,0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80,140,255,0.09) 1px, transparent 1px);
+  background-size: 34px 34px;
+  -webkit-mask-image: radial-gradient(ellipse 55% 60% at 50% 50%, #000 0%, rgba(0,0,0,0.5) 45%, transparent 75%);
+  mask-image: radial-gradient(ellipse 55% 60% at 50% 50%, #000 0%, rgba(0,0,0,0.5) 45%, transparent 75%);
+  animation: gridPulse 6s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* Padrões hexagonais */
+.hex {
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  background-image:
+    repeating-linear-gradient(60deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px),
+    repeating-linear-gradient(-60deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px),
+    repeating-linear-gradient(0deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px);
+  opacity: 0.5;
+  animation: hexFade 8s ease-in-out infinite;
+}
+
+.bl { 
+  left: -120px; 
+  bottom: -160px; 
+  -webkit-mask-image: radial-gradient(circle at 0% 100%, #000 55%, transparent 80%); 
+  mask-image: radial-gradient(circle at 0% 100%, #000 55%, transparent 80%); 
+}
+
+.tr { 
+  right: -160px; 
+  top: -180px; 
+  -webkit-mask-image: radial-gradient(circle at 100% 0%, #000 55%, transparent 80%); 
+  mask-image: radial-gradient(circle at 100% 0%, #000 55%, transparent 80%); 
+  animation-delay: 2s;
+}
+
+@keyframes hexFade {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* Linhas e Conexões do SVG */
+.circuits {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.circuit-line {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.4;
+  opacity: 0.55;
+}
+
+.circuit-line.bright {
+  stroke: var(--line-bright);
+  opacity: 0.35;
+  stroke-width: 1.2;
+  filter: drop-shadow(0 0 2px rgba(120,180,255,0.6));
+}
+
+.node {
+  fill: var(--dot);
+  filter: drop-shadow(0 0 4px rgba(120,190,255,0.9));
+}
+
+.node.pulse {
+  animation: nodePulse 2.6s ease-in-out infinite;
+}
+
+@keyframes nodePulse {
+  0%, 100% { opacity: 0.4; r: 2.4px; }
+  50% { opacity: 1; r: 4.2px; }
+}
+
+/* Os pulsos de energia que correm as trilhas */
+.traveler {
+  fill: #bfe3ff;
+  filter: drop-shadow(0 0 6px #6fbaff) drop-shadow(0 0 12px rgba(80,150,255,0.8));
+}
+
+/* Partículas piscantes espalhadas */
+.particlesContainer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--dot);
+  box-shadow: 0 0 6px 1px rgba(120,190,255,0.8);
+  animation-name: twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+.particlesContainer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* Deixa passar qualquer clique do mouse para os botões */
+  width: 100%;
+  height: 100%;
 }
