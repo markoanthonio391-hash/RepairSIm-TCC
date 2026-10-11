@@ -163,6 +163,7 @@ function Caso() {
         if (resultado.correto) {
           setEstadoPc('concluido');
           setMensagem('✅ ' + resultado.mensagem);
+          setRespostaFinalizada(true);
         }
 
         //item errado
@@ -170,9 +171,6 @@ function Caso() {
           registrarErroDesafio();
           setMensagem('❌ ' + resultado.mensagem);
         }
-
-        //Bloqueia novas escolhas
-        setRespostaFinalizada(true);
       })
 
       .catch(erro => {

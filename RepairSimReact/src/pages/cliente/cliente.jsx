@@ -10,7 +10,7 @@ function Cliente() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [aviso, setAviso] = useState(null);
   const [statusOrcamento, setStatusOrcamento] = useState("Em Andamento");
-  const { getDesafioAtual, aceitarDesafio } = useJogo();
+  const { getDesafioAtual, aceitarDesafio, finalizarJogatina, jogatina } = useJogo();
   const desafioAtual = getDesafioAtual();
 
   const responderOrcamento = (novoStatus) => {
@@ -27,6 +27,35 @@ function Cliente() {
   if (!desafioAtual) {
     return <div className={styles.carregando}>Nenhum desafio disponível.</div>;
   }
+
+  // =====================================================
+  // RECUSAR DESAFIO
+  // =====================================================
+
+  async function recusarDesafio() {
+
+      try {
+
+          /*
+          * jogatina.indiceAtual representa quantos
+          * desafios anteriores já foram concluídos.
+          *
+          * Exemplo:
+          *
+          * índice 0 = ainda não completou nenhum
+          * índice 1 = completou o primeiro
+          * índice 2 = completou dois
+          */
+
+          await finalizarJogatina(0, jogatina.indiceAtual );
+          // Depois que o resultado foi salvo,
+          // vai para a tela final.
+          navigate("/resultado");
+      } catch (erro) {console.error(
+              "Erro ao finalizar jogatina:",
+              erro);
+      }
+}
 
   return (
     <div className={styles.container}>
@@ -63,21 +92,14 @@ function Cliente() {
                 <div className={styles.acoes}>
                   <button 
                     className={styles.btnCancelar} 
-                    onClick={() => {
+                    onClick={async() => {
                       //primeiro agente avisa o estado do sistema que orçamento foi recusado
                       responderOrcamento("Reprovado");
 
                       //Importante, em vez de ir para os desafios ira para tela de resultado
                       //o state é como uma mochila ele vai carregar esses dados para la no caso para o resultado
                       //ai a tela de resultado uca vai quebrar por falta de dados
-                      navigate('/resultado', {
-                        state: {
-                          pontuacao: 0,
-                          tempo: "00:00",
-                          erros: 0,
-                          motivo: "O cliente recusou o orçamento logo de cara"
-                        }
-                      });
+                      await recusarDesafio();
                     }}
                   >
                     Cancelar Orçamento
@@ -86,6 +108,7 @@ function Cliente() {
                     className={styles.btnAceitar} 
                     onClick={() => {
                       responderOrcamento("Aprovado");
+                      aceitarDesafio();
                       navigate('/caso');
                     }}
                   >
