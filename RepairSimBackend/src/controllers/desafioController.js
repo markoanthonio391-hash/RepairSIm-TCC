@@ -1,8 +1,5 @@
 const conexao = require("../config/db");
 
-//Pra guardar os pontos atuais de cada desafio enquanto o servidor estiver ligado
-let pontuacaoDesafios = {};
-
 // Lista todos os desafios
 exports.listar = (req, res) => {
     const sql = "SELECT * FROM desafios";
@@ -42,75 +39,65 @@ exports.buscarPorId = (req, res) => {
 };
 
 
-//----------------------------------|FUNÇÂO PARA VERIFICAR A RESPOSTA (PINCEL)|-----------------------------np
+//----------------------------------|FUNÇÂO PARA VERIFICAR A ORDEM E O INTEM|-----------------------------np
 
 // Olha se o item que foi escolhido é o correto para o desafio
 exports.verificarItem = (req, res) => {
 
     //id do desafio da URL no caso ele ta buscando
-    const id_desafio = req.params.id;
+    const idDesafio = Number(req.params.id);
 
     //id do item que é escolhido pelo jogador
-    const { id_item } = req.body;
+    const idItem = Number(req.body.id_item);
 
-    //Caso seja a primeira vez que esse desafio está sendo feito,
-    //começa a pontuação  em 0
-    if (pontuacaoDesafios[id_desafio] === undefined) {
-        pontuacaoDesafios[id_desafio] = 0;
+    /*Ordem de ação atual
+    nos desafios antigos, o frontend pode n enviar "ordem".
+    nesse caso, consideramos a ordem 1 para manter a compatibilidade com os casos de uma unica ação.*/
+    const ordem =  req.body.ordem === undefined ? 1 : Number(req.body.ordem);
+
+    //validando os dados recebidos
+    if (!Number.isInteger(idDesafio) || idDesafio <= 0 || !Number.isInteger(idItem) || idItem <= 0 || !Number.isInteger(ordem) || ordem <= 0){
+        return res.status(400).json({
+            correto: false,
+            mensagem: "Dados inválidos para verificar o item."
+        });
     }
 
-    //Verifica se existe essa relação no banco
-    const selecao = `
-        SELECT *
-        FROM desafio_itens
-        WHERE id_desafio = ?
-        AND id_item = ?
-    `;
+    //consulta a respota do banco
+    /*O item só sera correto se estiver relacionado:
+    ao desafio informado, 
+    ao intem que o jogador clicou, 
+    a ordem que esta sendo executada 
+    como  no caso 8, que a ordem é saude hd, backup e HD, qualquer um fora dessa ordem n sera aceito*/
 
-    conexao.query(
-        selecao,
-        [id_desafio, id_item],
-        (erro, resultado) => {
+    const sql = `select id_desafio_item from desafio_itens where id_desafio = ?
+    and id_item = ?
+    and ordem = ?
+    limit 1`;
 
-            if (erro) {
-    console.log("Erro ao verificar resposta:", erro);
+    conexao.query(sql, [idDesafio, idItem, ordem],(erro, resultados) => {
+        //erro de acesso ao banco
+        if (erro) {
+            console.error("Erro ao verificar item:", erro);
 
-    return res.status(500).json({
-        mensagem: "Erro ao verificar resposta.",
-        erro: erro.message
-    });
-}
-
-            //caso não encontre a relação
-            if (resultado.length === 0) {
-
-                //caso erre, perde 5 pontos
-                const pontos = -5;
-
-                //Aqui vai descontar os pontos do total atual
-                pontuacaoDesafios[id_desafio] += pontos;
-
-                return res.json({
-                    correto: false,
-                    pontos: pontos,
-                    mensagem: "Item incorreto. Você perdeu 5 pontos."
-                });
-            }
-
-            //encontrou a relação, então o item está correto
-            //caso acerte, ganha 10 pontos
-            const pontos = 10;
-
-            //Atualiza o total de pontos do desafio
-            pontuacaoDesafios[id_desafio] += pontos;
-
+            return res.status(500).json({correto: false, mensagem: "Erro ao verificar o item."});
+        }
+        //item incorreto para a ordem atual
+        if (resultados.length === 0) {
             return res.json({
-                correto: true,
-                pontos: pontos,
-                mensagem: "Parabéns! Você encontrou a solução e ganhou 10 pontos!"
+                correto: false,
+                pontos: -5,
+                mensagem: "Item incorreto para esta etapa. Você perdeu 5 pontos"
             });
         }
-    );
+        //item correto para a ordem atual
+        return res.json({
+            correto: true,
+            pontos: 10,
+            mensagem: "Parabéns! Você concluiu corretamente está ação e ganhou 10 pontos."
+        });
+
+    });
 };
 
 ////////////////////////////////DIEGO PART4///////////////////////////////////
