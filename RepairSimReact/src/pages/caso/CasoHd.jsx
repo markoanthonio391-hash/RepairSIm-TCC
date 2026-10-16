@@ -1,1334 +1,618 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./caso.module.css";
-import bancada from "../../assents/bancada.jpeg";
+import styles from "./caso.module.css";        // estilos que o grupo já usa nos outros casos
+import hd from "./casoHd.module.css";          // estilos exclusivos do Caso 8
+import bancada from "../../assets/bancada.jpeg";
 import { useJogo } from "../../context/JogoContext";
 import VisualizadorImagem from "../../components/VisualizadorImagem";
-//endereço do servidor do projeto.
+
+// Endereço do servidor (o mesmo usado no restante do projeto).
 const API = "http://localhost:3000";
 
-//converte uma imagem recebida do banco em uma url acessivel.
-function urlImagem(imagem){
-    if (!imagem?.caminho_imagem){
+// O backup mostra 5 imagens (0%, 25%, 50%, 75% e 100%), cada uma por 5 segundos.
+const PORCENTAGENS_BACKUP = [0, 25, 50, 75, 100];
+const ULTIMO_INDICE_BACKUP = PORCENTAGENS_BACKUP.length - 1;
+const MS_POR_IMAGEM_BACKUP = 5000;
+
+// Monta a URL completa de uma imagem que veio do banco.
+function urlImagem(imagem) {
+    if (!imagem?.caminho_imagem) {
         return "";
     }
 
     return `${API}${imagem.caminho_imagem}`;
 }
 
-function CasoHd(){
+function CasoHd() {
     const navigate = useNavigate();
-
-    const{jogatina, getDesafioAtual, adicionarPontos, registrarErroDesafio} = useJogo();
+    const { jogatina, getDesafioAtual, adicionarPontos, registrarErroDesafio } = useJogo();
 
     const desafioAtual = getDesafioAtual();
-
     const idDesafio = desafioAtual?.id_desafio;
 
-    //estado do cenario
-    const [imagensPc, setImagensPc] = useStates([]);
-    const [itens, setItens] = useState([]);
-    const [tipoSelecionado, setTipoSelecionado] = useState("software");
-    const [categoriaAberta, setCategoriaAberta] = useStates(true);
+    // ----------------------- ESTADOS -----------------------
 
-    //etapas: verificar saude HD, realizar backup e trocar o HD
+    // Dados vindos do backend
+    const [imagensPc, setImagensPc] = useState([]);
+    const [carregandoImagens, setCarregandoImagens] = useState(true);
+    const [itens, setItens] = useState([]);
+
+    // Menu de itens
+    const [tipoSelecionado, setTipoSelecionado] = useState("software");
+    const [categoriaAberta, setCategoriaAberta] = useState(true);
+
+    // 1 = verificar saúde do HD | 2 = fazer backup | 3 = trocar o HD | 4 = concluído
+    // O número da etapa é enviado ao backend como "ordem".
     const [etapa, setEtapa] = useState(1);
 
-    //energia do computador.
+    // Estado do computador (energia e gabinete são independentes)
     const [pcLigado, setPcLigado] = useState(true);
-
-     //indica se o gabinete está aberto.
     const [gabineteAberto, setGabineteAberto] = useState(false);
 
-    //progresso das ações.
+    // Progresso das ações
     const [saudeVerificada, setSaudeVerificada] = useState(false);
     const [backupEmAndamento, setBackupEmAndamento] = useState(false);
     const [backupConcluido, setBackupConcluido] = useState(false);
     const [backupIndice, setBackupIndice] = useState(0);
 
-    //COntroles da interface.
+    // Controles da interface
     const [verificandoItem, setVerificandoItem] = useState(false);
     const [respostaFinalizada, setRespostaFinalizada] = useState(false);
     const [mensagem, setMensagem] = useState("");
     const [popup, setPopup] = useState(null);
-    const [imagemApliada, setImagemAmpliada] = useState(null);
+    const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
-    //buscar imagens do caso 8 
+    // ----------------------- BUSCAS NO BACKEND -----------------------
+
+    // Imagens do computador neste desafio
     useEffect(() => {
         if (!idDesafio) {
             setCarregandoImagens(false);
             return;
         }
 
-        let cancelado = false;
+        let cancelado = false; // evita atualizar o estado se a tela já foi fechada
         setCarregandoImagens(true);
 
         fetch(`${API}/desafio-imagens-pc/desafio/${idDesafio}`)
-        .then(resposta => {
-            if(!resposta.ok){
-                throw new Error(
-                    "Erro ao buscar as imagens do caso 8."
-                );
-            }
+            .then(resposta => {
+                if (!resposta.ok) {
+                    throw new Error("Erro ao buscar as imagens do computador.");
+                }
+                return resposta.json();
+            })
+            .then(dados => {
+                if (!cancelado) {
+                    setImagensPc(Array.isArray(dados) ? dados : []);
+                }
+            })
+            .catch(erro => {
+                console.error("Erro ao carregar imagens do Caso 8:", erro);
+                if (!cancelado) {
+                    setMensagem("Não foi possível carregar as imagens do computador.");
+                }
+            })
+            .finally(() => {
+                if (!cancelado) {
+                    setCarregandoImagens(false);
+                }
+            });
 
-            return resposta.json();
-
-        })
-        .then(dados => {
-            if(!cancelado) {
-                setImagensPc(
-                    Array.isArray(dados) ? dados : []
-                );
-            }
-        })
-        .catch(erro => {
-            console.error(
-                "Erro ao carregar imagens do Caso 8:", erro
-            );
-            if(!cancelado) {
-                setMensagem(
-                    "Não foi possivel carregar as imagens do computador."
-                );
-            }
-        })
-        .finally(() => {
-            if (!cancelado) {
-                setCarregandoImagens(false);
-            }
-        });
-        //evitando atualizar o componente se ele for desmontado.
-        return() => {
+        return () => {
             cancelado = true;
         };
     }, [idDesafio]);
 
-    //buscar itens da categoria selecionada
+    // Itens da categoria aberta (ferramenta, peça ou software)
     useEffect(() => {
         let cancelado = false;
 
         fetch(`${API}/itens/tipo/${tipoSelecionado}`)
+            .then(resposta => {
+                if (!resposta.ok) {
+                    throw new Error("Erro ao buscar os itens.");
+                }
+                return resposta.json();
+            })
+            .then(dados => {
+                if (!cancelado) {
+                    setItens(Array.isArray(dados) ? dados : []);
+                }
+            })
+            .catch(erro => {
+                console.error("Erro ao carregar os itens:", erro);
+                if (!cancelado) {
+                    setItens([]);
+                    setMensagem("Não foi possível carregar os itens.");
+                }
+            });
 
-        .then(respota => {
-            if (!respota.ok) {
-                throw new Error("Erro ao buscar os itens.");
-            }
-            return respota.json();
-        })
-        .then(dados => {
-            if (!cancelado){
-                setItens(
-                    Array.isArray(dados) ? dados : []
-                );
-            }
-        })
-        .catch(erro => {
-            console.error(
-                "Erro ao carregar os itens:", erro
-            );
-
-            if(!cancelado){
-                setItens([]);
-                setMensagem("Não foi possível carregar os itens.");
-            }
-        });
-        return() => {cancelado = true;};
+        return () => {
+            cancelado = true;
+        };
     }, [tipoSelecionado]);
-    
-    //NOTA: ANALISAR O QUE VEM LOGO ABAIXO, EU COPIEI DO CHAT ENT É BOM DA UMA ANALISADA E ENTENDER O QUE ELE FEZ ALÉM DE DEIXAR A MIHA CARA
 
+    // ----------------------- ANIMAÇÃO DO BACKUP -----------------------
+
+    // A cada 5 segundos avança uma imagem (0% -> 25% -> ... -> 100%).
+    // Quando a imagem de 100% já ficou 5 segundos, o backup termina.
     useEffect(() => {
-
-        // Não há animação se o backup não foi iniciado.
         if (!backupEmAndamento) {
             return;
         }
 
-
-        /*
-         * Cada imagem permanece na tela por 5 segundos.
-         *
-         * Índice 0: 0%
-         * Índice 1: 25%
-         * Índice 2: 50%
-         * Índice 3: 75%
-         * Índice 4: 100%
-         *
-         * Quando o índice já é 4, aguardamos os últimos
-         * 5 segundos antes de encerrar a animação.
-         */
-
         const temporizador = window.setTimeout(() => {
-
-            if (backupIndice < 4) {
-
-                setBackupIndice(
-                    indiceAtual => indiceAtual + 1
-                );
-
+            if (backupIndice < ULTIMO_INDICE_BACKUP) {
+                setBackupIndice(indice => indice + 1);
                 return;
             }
 
-
-            // A imagem de 100% já permaneceu 5 segundos.
-            // Agora o backup pode ser considerado concluído.
-
             setBackupEmAndamento(false);
-
             setBackupConcluido(true);
-
             setEtapa(3);
-
-
-            // Na terceira etapa, a categoria Peças
-            // é aberta automaticamente.
-
-            setTipoSelecionado("peca");
-
+            setTipoSelecionado("peca"); // a troca do HD usa a categoria Peças
             setCategoriaAberta(true);
-
             setMensagem("");
-
-
             setPopup({
-
                 titulo: "Backup concluído!",
-
-                texto:
-                    "O backup foi finalizado com sucesso. Agora desligue o computador, abra o gabinete e faça a troca do HD."
-
+                texto: "O backup foi finalizado com sucesso. Agora desligue o computador, abra o gabinete e faça a troca do HD."
             });
+        }, MS_POR_IMAGEM_BACKUP);
 
-        }, 5000);
+        // Cancela o temporizador se a tela for fechada no meio do backup.
+        return () => window.clearTimeout(temporizador);
+    }, [backupEmAndamento, backupIndice]);
 
+    // ----------------------- IMAGENS DO PC -----------------------
 
-        // Limpa o temporizador se o componente sair da tela.
-        return () => {
-            window.clearTimeout(temporizador);
-        };
-
-    }, [
-        backupEmAndamento,
-        backupIndice
-    ]);
-
-
-    // ========================================================
-    // LOCALIZAR UMA IMAGEM PELA FUNÇÃO CADASTRADA NO BANCO
-    // ========================================================
-
+    // Procura uma imagem pela "funcao" cadastrada em desafio_imagens_pc.
+    // Os nomes são testados NA ORDEM em que foram passados (o primeiro que existir vence).
     function buscarImagem(...funcoes) {
-
-        return imagensPc.find(imagem =>
-            funcoes.includes(imagem.funcao)
-        );
-
-    }
-
-
-    // Imagens gerais: já utilizadas em outros desafios.
-
-    const monitorLigado =
-        buscarImagem("monitor_ligado");
-
-    const monitorDesligado =
-        buscarImagem("monitor_desligado");
-
-    const gabineteLigado =
-        buscarImagem("gabinete_ligado");
-
-    const gabineteDesligado =
-        buscarImagem("gabinete_desligado");
-
-
-    // Imagens próprias do Caso 8.
-    // Os nomes alternativos mantêm compatibilidade
-    // com as funções antigas do banco.
-
-    const monitorErroHd =
-        buscarImagem(
-            "monitor_erro_hd",
-            "gabinete_erro_hd"
-        );
-
-    const monitorSaudeHd =
-        buscarImagem(
-            "monitor_saude_hd",
-            "monitor_informacao_hd"
-        );
-
-
-    const gabineteAbertoHd =
-        buscarImagem(
-            "gabinete_aberto_hd",
-            "gabinete_limpo",
-            "gabinete_empoeirado"
-        );
-
-
-    const gabineteBackup =
-        buscarImagem(
-            "gabinete_backup"
-        );
-
-
-    // Cinco imagens usadas durante a animação.
-
-    const imagensBackup = [
-
-        buscarImagem(
-            "monitor_backup_0",
-            "monitor_backup_0%"
-        ),
-
-        buscarImagem(
-            "monitor_backup_25",
-            "monitor_backup_25%"
-        ),
-
-        buscarImagem(
-            "monitor_backup_50",
-            "monitor_backup_50%"
-        ),
-
-        buscarImagem(
-            "monitor_backup_75",
-            "monitor_backup_75%"
-        ),
-
-        buscarImagem(
-            "monitor_backup_100",
-            "monitor_backup_100%"
-        )
-
-    ];
-
-
-    const porcentagensBackup = [
-        0,
-        25,
-        50,
-        75,
-        100
-    ];
-
-
-    // ========================================================
-    // DEFINIR A IMAGEM ATUAL DO MONITOR
-    // ========================================================
-
-    let imagemMonitorAtual = null;
-
-
-    if (!pcLigado) {
-
-        // Um monitor desligado sempre exibe a tela apagada.
-        imagemMonitorAtual = monitorDesligado;
-
-    }
-
-    else if (backupEmAndamento) {
-
-        // Durante o backup, mostrar a imagem da porcentagem.
-        imagemMonitorAtual =
-            imagensBackup[backupIndice];
-
-    }
-
-    else if (backupConcluido) {
-
-        // Após o backup, voltar ao monitor normal.
-        imagemMonitorAtual = monitorLigado;
-
-    }
-
-    else if (saudeVerificada) {
-
-        // Saúde verificada, mas backup ainda não concluído.
-        imagemMonitorAtual = monitorSaudeHd;
-
-    }
-
-    else {
-
-        // Estado inicial do Caso 8.
-        imagemMonitorAtual = monitorErroHd;
-
-    }
-
-
-    // ========================================================
-    // DEFINIR A IMAGEM ATUAL DO GABINETE
-    // ========================================================
-
-    let imagemGabineteAtual = null;
-
-
-    if (backupEmAndamento) {
-
-        // Gabinete com o HD externo durante o backup.
-        imagemGabineteAtual = gabineteBackup;
-
-    }
-
-    else if (gabineteAberto) {
-
-        // Vista interna para a etapa de troca do HD.
-        imagemGabineteAtual = gabineteAbertoHd;
-
-    }
-
-    else if (pcLigado) {
-
-        imagemGabineteAtual = gabineteLigado;
-
-    }
-
-    else {
-
-        imagemGabineteAtual = gabineteDesligado;
-
-    }
-
-
-    // ========================================================
-    // TEXTO DA ETAPA ATUAL
-    // ========================================================
-
-    let textoEtapa = "";
-
-
-    if (etapa === 1) {
-
-        textoEtapa =
-            "Etapa 1 de 3 — Verificar a saúde do HD";
-
-    }
-
-    else if (etapa === 2 && backupEmAndamento) {
-
-        textoEtapa =
-            "Etapa 2 de 3 — Backup em andamento";
-
-    }
-
-    else if (etapa === 2) {
-
-        textoEtapa =
-            "Etapa 2 de 3 — Fazer backup dos arquivos";
-
-    }
-
-    else if (etapa === 3) {
-
-        textoEtapa =
-            "Etapa 3 de 3 — Trocar o HD";
-
-    }
-
-    else {
-
-        textoEtapa =
-            "Desafio concluído";
-
-    }
-
-
-    // ========================================================
-    // LIGAR E DESLIGAR O COMPUTADOR
-    // ========================================================
-
-    function alternarEnergia() {
-
-        if (backupEmAndamento) {
-
-            setMensagem(
-                "Aguarde o backup terminar antes de desligar o computador."
-            );
-
-            return;
-
+        for (const funcao of funcoes) {
+            const imagem = imagensPc.find(item => item.funcao === funcao);
+
+            if (imagem) {
+                return imagem;
+            }
         }
 
+        return undefined;
+    }
+
+    const monitorLigado = buscarImagem("monitor_ligado");
+    const monitorDesligado = buscarImagem("monitor_desligado");
+    const gabineteLigado = buscarImagem("gabinete_ligado");
+    const gabineteDesligado = buscarImagem("gabinete_desligado");
+
+    // Imagens próprias do Caso 8
+    const monitorErroHd = buscarImagem("monitor_erro_hd");
+    const monitorSaudeHd = buscarImagem("monitor_saude_hd");
+    const gabineteAbertoHd = buscarImagem("gabinete_aberto_hd");
+    const gabineteBackup = buscarImagem("gabinete_backup");
+
+    // No banco os nomes são "monitor_backup_0%", "monitor_backup_25%"...
+    // (o nome sem o "%" também é aceito, caso o grupo padronize depois).
+    const imagensBackup = PORCENTAGENS_BACKUP.map(porcentagem =>
+        buscarImagem(`monitor_backup_${porcentagem}%`, `monitor_backup_${porcentagem}`)
+    );
+
+    // Qual imagem do MONITOR aparece agora?
+    // O "??" garante uma imagem reserva se alguma do caso não estiver cadastrada.
+    let imagemMonitorAtual;
+
+    if (!pcLigado) {
+        imagemMonitorAtual = monitorDesligado;
+    }
+    else if (backupEmAndamento) {
+        imagemMonitorAtual = imagensBackup[backupIndice] ?? monitorLigado;
+    }
+    else if (backupConcluido) {
+        imagemMonitorAtual = monitorLigado;
+    }
+    else if (saudeVerificada) {
+        imagemMonitorAtual = monitorSaudeHd ?? monitorLigado;
+    }
+    else {
+        imagemMonitorAtual = monitorErroHd ?? monitorLigado;
+    }
+
+    // Qual imagem do GABINETE aparece agora?
+    let imagemGabineteAtual;
+
+    if (backupEmAndamento) {
+        imagemGabineteAtual = gabineteBackup ?? gabineteLigado;
+    }
+    else if (gabineteAberto) {
+        imagemGabineteAtual = gabineteAbertoHd ?? gabineteDesligado;
+    }
+    else if (pcLigado) {
+        imagemGabineteAtual = gabineteLigado;
+    }
+    else {
+        imagemGabineteAtual = gabineteDesligado;
+    }
+
+    // Texto do painel de etapas
+    let textoEtapa;
+
+    if (etapa === 1) {
+        textoEtapa = "Etapa 1 de 3 — Verificar a saúde do HD";
+    }
+    else if (etapa === 2 && backupEmAndamento) {
+        textoEtapa = "Etapa 2 de 3 — Backup em andamento";
+    }
+    else if (etapa === 2) {
+        textoEtapa = "Etapa 2 de 3 — Fazer backup dos arquivos";
+    }
+    else if (etapa === 3) {
+        textoEtapa = "Etapa 3 de 3 — Trocar o HD";
+    }
+    else {
+        textoEtapa = "Desafio concluído";
+    }
+
+    // ----------------------- AÇÕES DO JOGADOR -----------------------
+
+    // Botão LIGAR / DESLIGAR
+    function alternarEnergia() {
+        if (backupEmAndamento) {
+            setMensagem("Aguarde o backup terminar antes de desligar o computador.");
+            return;
+        }
 
         if (respostaFinalizada) {
             return;
         }
 
-
         if (gabineteAberto) {
-
-            setMensagem(
-                "Feche o gabinete antes de ligar o computador."
-            );
-
+            setMensagem("Feche o gabinete antes de ligar o computador.");
             return;
-
         }
 
-
-        if (pcLigado) {
-
-            setPcLigado(false);
-
-            setMensagem(
-                "Computador desligado."
-            );
-
-        }
-
-        else {
-
-            setPcLigado(true);
-
-            setMensagem(
-                "Computador ligado."
-            );
-
-        }
-
+        setPcLigado(!pcLigado);
+        setMensagem(pcLigado ? "Computador desligado." : "Computador ligado.");
     }
 
-
-    // ========================================================
-    // ABRIR OU AMPLIAR O GABINETE
-    // ========================================================
-
+    // Clicar no gabinete: só abre com o PC desligado
     function abrirOuAmpliarGabinete() {
-
         if (backupEmAndamento || respostaFinalizada) {
             return;
         }
 
-
         if (pcLigado) {
-
-            setMensagem(
-                "Desligue o computador antes de abrir o gabinete."
-            );
-
+            setMensagem("Desligue o computador antes de abrir o gabinete.");
             return;
-
         }
 
-
-        // Marca o gabinete como aberto.
-        // Essa condição permanece mesmo após fechar o zoom.
-
+        // Continua aberto mesmo depois de fechar o zoom.
         setGabineteAberto(true);
-
         setMensagem("Gabinete aberto.");
 
-
-        // Abre a imagem interna ampliada.
         if (gabineteAbertoHd) {
-
             setImagemAmpliada({
-
                 src: urlImagem(gabineteAbertoHd),
-
                 alt: "Interior do gabinete para a troca do HD"
-
             });
-
         }
-
     }
-
-
-    // ========================================================
-    // FECHAR O GABINETE
-    // ========================================================
 
     function fecharGabinete() {
-
         setGabineteAberto(false);
-
-        setMensagem(
-            "Gabinete fechado. Você pode ligar o computador novamente."
-        );
-
+        setMensagem("Gabinete fechado. Você pode ligar o computador novamente.");
     }
 
-
-    // ========================================================
-    // ABRIR UMA IMAGEM AMPLIADA
-    // ========================================================
-
+    // Clicar no monitor: abre a imagem ampliada
     function ampliarImagem(imagem, alt) {
-
         if (!imagem || backupEmAndamento) {
             return;
         }
 
-
-        setImagemAmpliada({
-
-            src: urlImagem(imagem),
-
-            alt
-
-        });
-
+        setImagemAmpliada({ src: urlImagem(imagem), alt });
     }
-
-
-    // ========================================================
-    // ABRIR / FECHAR CATEGORIAS
-    // ========================================================
 
     function abrirCategoria(tipo) {
-
-        if (
-            backupEmAndamento ||
-            respostaFinalizada ||
-            verificandoItem
-        ) {
+        if (backupEmAndamento || respostaFinalizada || verificandoItem) {
             return;
         }
 
-
-        if (
-            categoriaAberta &&
-            tipoSelecionado === tipo
-        ) {
-
+        if (categoriaAberta && tipoSelecionado === tipo) {
             setCategoriaAberta(false);
-
         }
-
         else {
-
             setTipoSelecionado(tipo);
-
             setCategoriaAberta(true);
-
         }
-
     }
 
-
-    // ========================================================
-    // USAR UM ITEM PARA EXECUTAR A ETAPA ATUAL
-    // ========================================================
-
+    // Clicar em um item: confere se o computador está no estado certo
+    // e depois pergunta ao backend se o item está certo PARA ESTA ETAPA.
     async function usarItem(item) {
-
-        // Não aceita cliques durante verificações,
-        // animação ou depois do término do desafio.
-
-        if (
-            verificandoItem ||
-            backupEmAndamento ||
-            respostaFinalizada ||
-            etapa === 4
-        ) {
+        if (verificandoItem || backupEmAndamento || respostaFinalizada) {
             return;
         }
 
-
-        // ----------------------------------------------------
-        // ETAPAS 1 E 2: PC LIGADO, GABINETE FECHADO
-        // ----------------------------------------------------
-
+        // Etapas 1 e 2 (software): PC ligado e gabinete fechado
         if (etapa === 1 || etapa === 2) {
-
             if (!pcLigado) {
-
-                setMensagem(
-                    "Ligue o computador para executar esta ação."
-                );
-
+                setMensagem("Ligue o computador para executar esta ação.");
                 return;
-
             }
-
 
             if (gabineteAberto) {
-
-                setMensagem(
-                    "Feche o gabinete antes de utilizar o software."
-                );
-
+                setMensagem("Feche o gabinete antes de utilizar o software.");
                 return;
-
             }
-
         }
 
-
-        // ----------------------------------------------------
-        // ETAPA 3: PC DESLIGADO, GABINETE ABERTO
-        // ----------------------------------------------------
-
+        // Etapa 3 (troca do HD): PC desligado e gabinete aberto
         if (etapa === 3) {
-
             if (pcLigado) {
-
-                setMensagem(
-                    "Desligue o computador antes de trocar o HD."
-                );
-
+                setMensagem("Desligue o computador antes de trocar o HD.");
                 return;
-
             }
-
 
             if (!gabineteAberto) {
-
-                setMensagem(
-                    "Desligue o PC e abra o gabinete antes de trocar o HD."
-                );
-
+                setMensagem("Abra o gabinete antes de trocar o HD.");
                 return;
-
             }
-
         }
-
 
         setVerificandoItem(true);
-
         setMensagem("Verificando item...");
 
-
         try {
+            const resposta = await fetch(`${API}/desafios/${idDesafio}/verificar`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                // "ordem" é a etapa atual: o backend só aceita o item se ele
+                // estiver cadastrado em desafio_itens com essa ordem.
+                body: JSON.stringify({ id_item: item.id_item, ordem: etapa })
+            });
 
-            // -----------------------------------------------
-            // CONSULTA AO BACKEND
-            // -----------------------------------------------
-
-            const resposta = await fetch(
-                `${API}/desafios/${idDesafio}/verificar`,
-                {
-
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-
-                    body: JSON.stringify({
-
-                        id_item: item.id_item,
-
-                        // O backend consulta a relação
-                        // entre item, desafio e ordem.
-
-                        ordem: etapa
-
-                    })
-
-                }
-            );
-
-
-            const resultado = await resposta.json();
-
+            const resultado = await resposta.json().catch(() => ({}));
 
             if (!resposta.ok) {
-
-                throw new Error(
-                    resultado.mensagem ||
-                    "Erro ao verificar o item."
-                );
-
+                throw new Error(resultado.mensagem || "Erro ao verificar o item.");
             }
 
+            // +10 se acertou, -5 se errou
+            adicionarPontos(Number(resultado.pontos || 0));
 
-            console.log(
-                "Resultado da verificação do Caso 8:",
-                resultado
-            );
-
-
-            // -----------------------------------------------
-            // APLICAR A PONTUAÇÃO
-            // -----------------------------------------------
-
-            adicionarPontos(
-                Number(resultado.pontos || 0)
-            );
-
-
-            // -----------------------------------------------
-            // ITEM INCORRETO
-            // -----------------------------------------------
-
+            // Item errado: continua na mesma etapa para tentar de novo
             if (!resultado.correto) {
-
                 registrarErroDesafio();
-
-                setMensagem(
-                    "❌ " + resultado.mensagem
-                );
-
-                // Não altera a etapa.
-                // O jogador poderá tentar novamente.
-
+                setMensagem("❌ " + resultado.mensagem);
                 return;
-
             }
 
-
-            // -----------------------------------------------
-            // ETAPA 1 — SAÚDE DO HD
-            // -----------------------------------------------
-
+            // Etapa 1: saúde do HD
             if (etapa === 1) {
-
                 setSaudeVerificada(true);
-
                 setEtapa(2);
-
                 setMensagem("");
-
-
                 setPopup({
-
                     titulo: "Saúde do HD verificada!",
-
-                    texto:
-                        "A ferramenta identificou o estado do disco. Agora faça o backup antes de substituir o HD."
-
+                    texto: "A ferramenta identificou o estado do disco. Agora faça o backup antes de substituir o HD."
                 });
-
                 return;
-
             }
 
-
-            // -----------------------------------------------
-            // ETAPA 2 — BACKUP
-            // -----------------------------------------------
-
+            // Etapa 2: backup (a etapa 3 só abre quando a animação terminar)
             if (etapa === 2) {
-
-                /*
-                 * Não libera a etapa 3 imediatamente.
-                 * Primeiro executa toda a animação.
-                 */
-
                 setBackupIndice(0);
-
                 setBackupEmAndamento(true);
-
-                setMensagem(
-                    "Backup iniciado. Aguarde a conclusão."
-                );
-
+                setMensagem("Backup iniciado. Aguarde a conclusão.");
                 return;
-
             }
 
-
-            // -----------------------------------------------
-            // ETAPA 3 — TROCA DO HD
-            // -----------------------------------------------
-
+            // Etapa 3: troca do HD (fim do desafio)
             if (etapa === 3) {
-
                 setEtapa(4);
-
                 setRespostaFinalizada(true);
-
                 setGabineteAberto(false);
-
                 setPcLigado(false);
-
-                setMensagem(
-                    "✅ HD substituído com sucesso. As três ações foram concluídas."
-                );
-
-                return;
-
+                setMensagem("✅ HD substituído com sucesso. As três ações foram concluídas.");
             }
-
         }
-
         catch (erro) {
-
-            console.error(
-                "Erro ao executar ação do Caso 8:",
-                erro
-            );
-
-            setMensagem(
-                erro.message ||
-                "Não foi possível verificar o item."
-            );
-
+            console.error("Erro ao executar ação do Caso 8:", erro);
+            setMensagem(erro.message || "Não foi possível verificar o item.");
         }
-
         finally {
-
             setVerificandoItem(false);
-
         }
-
     }
 
+    // ----------------------- TELA -----------------------
 
-    // ========================================================
-    // TRATAMENTO DE CARREGAMENTO / DESAFIO INEXISTENTE
-    // ========================================================
-
+    // Todos os hooks ficam ACIMA deste return (regra dos hooks do React).
     if (!desafioAtual) {
-
         return (
             <div className={styles.screenWrapper}>
                 <p>Não há desafio selecionado.</p>
             </div>
         );
-
     }
 
-
-    if (Number(idDesafio) !== 8) {
-
-        return (
-            <div className={styles.screenWrapper}>
-                <p>Este componente é exclusivo do Caso 8.</p>
-            </div>
-        );
-
-    }
-
-
-    // ========================================================
-    // INTERFACE
-    // ========================================================
+    const menuBloqueado = backupEmAndamento || respostaFinalizada || verificandoItem;
 
     return (
-
         <div className={styles.screenWrapper}>
-
             <div className={styles.mainContainer}>
 
-
-                {/* -------------------------------------------
-                    STATUS DA JOGATINA
-                ------------------------------------------- */}
-
+                {/* Status da jogatina */}
                 <div className={styles.statusJogo}>
-
-                    <span>
-                        Caso {jogatina.indiceAtual + 1}
-                        {" / "}
-                        {jogatina.quantidadeCasos}
-                    </span>
-
-                    <span>
-                        Pontos: {jogatina.pontos}
-                    </span>
-
+                    <span>Caso {jogatina.indiceAtual + 1} / {jogatina.quantidadeCasos}</span>
+                    <span>Pontos: {jogatina.pontos}</span>
                 </div>
 
+                <img src={bancada} alt="Bancada de manutenção" className={styles.bancada} />
 
-                <img
-                    src={bancada}
-                    alt="Bancada de manutenção"
-                    className={styles.bancada}
-                />
-
-
-                <button
-                    type="button"
-                    className={styles.btnVoltar}
-                    onClick={() => navigate("/")}
-                >
+                <button type="button" className={styles.btnVoltar} onClick={() => navigate("/")}>
                     VOLTAR
                 </button>
 
-
-                {/* -------------------------------------------
-                    PAINEL DE ETAPAS
-                ------------------------------------------- */}
-
-                <div className={styles.painelEtapasHd}>
-
-                    <h3>Caso 8 — HD danificado</h3>
-
+                {/* Painel de etapas */}
+                <div className={hd.painelEtapasHd}>
+                    <h3>HD danificado</h3>
                     <p>{textoEtapa}</p>
-
-                    {!pcLigado && (
-                        <p>
-                            Computador desligado
-                        </p>
-                    )}
-
-                    {gabineteAberto && (
-                        <p>
-                            Gabinete aberto
-                        </p>
-                    )}
-
-                    {backupEmAndamento && (
-                        <p>
-                            Backup:{" "}
-                            {porcentagensBackup[backupIndice]}%
-                        </p>
-                    )}
-
+                    {!pcLigado && <p>Computador desligado</p>}
+                    {gabineteAberto && <p>Gabinete aberto</p>}
+                    {backupEmAndamento && <p>Backup: {PORCENTAGENS_BACKUP[backupIndice]}%</p>}
                 </div>
 
-
-                {/* -------------------------------------------
-                    COMPUTADOR NA BANCADA
-                ------------------------------------------- */}
-
+                {/* Computador na bancada */}
                 <div className={styles.pcContainer}>
-
-
-                    {/* MONITOR */}
-
                     {imagemMonitorAtual ? (
-
                         <img
                             src={urlImagem(imagemMonitorAtual)}
-                            alt="Monitor do Caso 8"
-                            className={`${styles.monitorImage} ${styles.imagemZoomClicavel}`}
-                            onClick={() => {
-
-                                ampliarImagem(
-                                    imagemMonitorAtual,
-                                    "Monitor do Caso 8 ampliado"
-                                );
-
-                            }}
+                            alt="Monitor"
+                            className={`${styles.monitorImage} ${hd.imagemZoomClicavel}`}
+                            onClick={() => ampliarImagem(imagemMonitorAtual, "Monitor ampliado")}
                         />
-
                     ) : (
-
                         !carregandoImagens && (
-
-                            <p className={styles.placeholderPcImage}>
-                                Imagem do monitor não cadastrada.
-                            </p>
-
+                            <p className={hd.placeholderPcImage}>Imagem do monitor não cadastrada.</p>
                         )
-
                     )}
-
-
-                    {/* GABINETE */}
 
                     {imagemGabineteAtual ? (
-
                         <img
                             src={urlImagem(imagemGabineteAtual)}
-                            alt={
-                                gabineteAberto
-                                    ? "Gabinete aberto"
-                                    : backupEmAndamento
-                                        ? "Gabinete realizando backup"
-                                        : "Gabinete do computador"
-                            }
-                            className={`${styles.gabineteImage} ${styles.imagemZoomClicavel}`}
+                            alt="Gabinete do computador"
+                            className={`${styles.gabineteImage} ${hd.imagemZoomClicavel}`}
                             onClick={abrirOuAmpliarGabinete}
                         />
-
                     ) : (
-
                         !carregandoImagens && (
-
-                            <p className={styles.placeholderPcImage}>
-                                Imagem do gabinete não cadastrada.
-                            </p>
-
+                            <p className={hd.placeholderPcImage}>Imagem do gabinete não cadastrada.</p>
                         )
-
                     )}
-
                 </div>
 
-
-                {/* -------------------------------------------
-                    LIGAR / DESLIGAR
-                ------------------------------------------- */}
-
-                {!gabineteAberto &&
-                    !backupEmAndamento &&
-                    !respostaFinalizada && (
-
-                        <button
-                            type="button"
-                            className={
-                                pcLigado
-                                    ? styles.btnDesligar
-                                    : styles.btnLigar
-                            }
-                            onClick={alternarEnergia}
-                        >
-                            {pcLigado ? "DESLIGAR" : "LIGAR"}
-                        </button>
-
-                    )}
-
-
-                {/* -------------------------------------------
-                    FECHAR GABINETE
-                ------------------------------------------- */}
-
-                {gabineteAberto &&
-                    !backupEmAndamento &&
-                    !respostaFinalizada && (
-
-                        <button
-                            type="button"
-                            className={styles.btnFecharGabinete}
-                            onClick={fecharGabinete}
-                        >
-                            FECHAR GABINETE
-                        </button>
-
-                    )}
-
-
-                {/* -------------------------------------------
-                    MENSAGEM DURANTE A AÇÃO
-                ------------------------------------------- */}
-
-                {mensagem && (
-
-                    <div className={styles.mensagem}>
-
-                        {mensagem}
-
-                    </div>
-
-                )}
-
-
-                {/* -------------------------------------------
-                    CATEGORIAS DE ITENS
-                ------------------------------------------- */}
-
-                <div className={styles.toolsContainer}>
-
-
+                {/* Ligar / desligar (some com o gabinete aberto, durante o backup e no fim) */}
+                {!gabineteAberto && !backupEmAndamento && !respostaFinalizada && (
                     <button
                         type="button"
-                        className={`${styles.btnToolsBox} ${styles.btnColorTool} ${
-                            categoriaAberta &&
-                            tipoSelecionado === "ferramenta"
-                                ? styles.active
-                                : ""
-                        }`}
-                        disabled={
-                            backupEmAndamento ||
-                            respostaFinalizada ||
-                            verificandoItem
-                        }
-                        onClick={() =>
-                            abrirCategoria("ferramenta")
-                        }
+                        className={pcLigado ? styles.btnDesligar : hd.btnLigar}
+                        onClick={alternarEnergia}
+                    >
+                        {pcLigado ? "DESLIGAR" : "LIGAR"}
+                    </button>
+                )}
+
+                {gabineteAberto && !backupEmAndamento && !respostaFinalizada && (
+                    <button type="button" className={hd.btnFecharGabinete} onClick={fecharGabinete}>
+                        FECHAR GABINETE
+                    </button>
+                )}
+
+                {mensagem && <div className={styles.mensagem}>{mensagem}</div>}
+
+                {/* Categorias e itens */}
+                <div className={styles.toolsContainer}>
+                    <button
+                        type="button"
+                        className={`${styles.btnToolsBox} ${styles.btnColorTool} ${categoriaAberta && tipoSelecionado === "ferramenta" ? styles.active : ""}`}
+                        disabled={menuBloqueado}
+                        onClick={() => abrirCategoria("ferramenta")}
                     >
                         FERRAMENTAS
                     </button>
 
-
                     <button
                         type="button"
-                        className={`${styles.btnToolsBox} ${styles.btnColorComp} ${
-                            categoriaAberta &&
-                            tipoSelecionado === "peca"
-                                ? styles.active
-                                : ""
-                        }`}
-                        disabled={
-                            backupEmAndamento ||
-                            respostaFinalizada ||
-                            verificandoItem
-                        }
-                        onClick={() =>
-                            abrirCategoria("peca")
-                        }
+                        className={`${styles.btnToolsBox} ${styles.btnColorComp} ${categoriaAberta && tipoSelecionado === "peca" ? styles.active : ""}`}
+                        disabled={menuBloqueado}
+                        onClick={() => abrirCategoria("peca")}
                     >
                         PEÇAS
                     </button>
 
-
                     <button
                         type="button"
-                        className={`${styles.btnToolsBox} ${styles.btnColorSoft} ${
-                            categoriaAberta &&
-                            tipoSelecionado === "software"
-                                ? styles.active
-                                : ""
-                        }`}
-                        disabled={
-                            backupEmAndamento ||
-                            respostaFinalizada ||
-                            verificandoItem
-                        }
-                        onClick={() =>
-                            abrirCategoria("software")
-                        }
+                        className={`${styles.btnToolsBox} ${styles.btnColorSoft} ${categoriaAberta && tipoSelecionado === "software" ? styles.active : ""}`}
+                        disabled={menuBloqueado}
+                        onClick={() => abrirCategoria("software")}
                     >
                         SOFTWARE
                     </button>
 
-
-                    {/* ---------------------------------------
-                        ITENS DA CATEGORIA
-                    --------------------------------------- */}
-
                     {categoriaAberta && (
-
                         <div className={styles.toolsBox}>
-
                             <h3 className={styles.titleTools}>
-
-                                {tipoSelecionado === "ferramenta" &&
-                                    "Ferramentas"}
-
-                                {tipoSelecionado === "peca" &&
-                                    "Peças"}
-
-                                {tipoSelecionado === "software" &&
-                                    "Software"}
-
+                                {tipoSelecionado === "ferramenta" && "Ferramentas"}
+                                {tipoSelecionado === "peca" && "Peças"}
+                                {tipoSelecionado === "software" && "Software"}
                             </h3>
 
-
                             <div className={styles.contentTools}>
-
                                 {itens.length === 0 ? (
-
-                                    <p>
-                                        Nenhum item disponível nesta categoria.
-                                    </p>
-
+                                    <p>Nenhum item disponível nesta categoria.</p>
                                 ) : (
-
                                     itens.map(item => (
-
                                         <button
                                             type="button"
                                             key={item.id_item}
-                                            className={styles.itemCard}
-                                            disabled={
-                                                backupEmAndamento ||
-                                                respostaFinalizada ||
-                                                verificandoItem
-                                            }
-                                            onClick={() =>
-                                                usarItem(item)
-                                            }
+                                            className={hd.itemCard}
+                                            disabled={menuBloqueado}
+                                            onClick={() => usarItem(item)}
                                         >
-
                                             <img
-                                                src={
-                                                    `${API}${item.caminho_imagem}`
-                                                }
+                                                src={urlImagem(item)}
                                                 className={styles.imgItem}
                                                 alt={item.nome}
                                             />
-
-                                            <span>
-                                                {item.nome}
-                                            </span>
-
+                                            <span>{item.nome}</span>
                                         </button>
-
                                     ))
-
                                 )}
-
                             </div>
-
                         </div>
-
                     )}
-
                 </div>
 
-
-                {/* -------------------------------------------
-                    LIBERAR RELATÓRIO SOMENTE APÓS AS 3 AÇÕES
-                ------------------------------------------- */}
-
+                {/* O relatório só é liberado depois das 3 ações */}
                 {respostaFinalizada && (
-
                     <button
                         type="button"
                         className={styles.btnRelatorio}
-                        onClick={() =>
-                            navigate(`/relatorio/${idDesafio}`)
-                        }
+                        onClick={() => navigate(`/relatorio/${idDesafio}`)}
                     >
                         IR PARA RELATÓRIO
                     </button>
-
                 )}
 
-
-                {/* -------------------------------------------
-                    MODAL DA IMAGEM AMPLIADA
-                ------------------------------------------- */}
-
+                {/* Imagem ampliada */}
                 {imagemAmpliada && (
-
                     <VisualizadorImagem
                         src={imagemAmpliada.src}
                         alt={imagemAmpliada.alt}
                         closeLabel="VOLTAR AO COMPUTADOR"
-                        onClose={() =>
-                            setImagemAmpliada(null)
-                        }
+                        onClose={() => setImagemAmpliada(null)}
                     />
-
                 )}
 
-
-                {/* -------------------------------------------
-                    POP-UPS DAS ETAPAS
-                ------------------------------------------- */}
-
+                {/* Pop-ups das etapas */}
                 {popup && (
-
-                    <div
-                        className={styles.overlayPopup}
-                        role="presentation"
-                    >
-
+                    <div className={hd.overlayPopup} role="presentation">
                         <section
-                            className={styles.popupCard}
+                            className={hd.popupCard}
                             role="dialog"
                             aria-modal="true"
                             aria-labelledby="titulo-popup-hd"
                         >
-
-                            <h2 id="titulo-popup-hd">
-                                {popup.titulo}
-                            </h2>
-
-                            <p>
-                                {popup.texto}
-                            </p>
-
-                            <button
-                                type="button"
-                                className={styles.botaoPopup}
-                                onClick={() =>
-                                    setPopup(null)
-                                }
-                            >
+                            <h2 id="titulo-popup-hd">{popup.titulo}</h2>
+                            <p>{popup.texto}</p>
+                            <button type="button" className={hd.botaoPopup} onClick={() => setPopup(null)}>
                                 CONTINUAR
                             </button>
-
                         </section>
-
                     </div>
-
                 )}
-
             </div>
-
         </div>
-
     );
-
 }
 
 export default CasoHd;
