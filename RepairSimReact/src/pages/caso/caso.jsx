@@ -3,8 +3,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import bancada from '../../assets/bancada.jpeg';
 import { useJogo } from "../../context/JogoContext";
+import CasoHd from './CasoHd';
+const ID_CASO_HD = 8;
 
-function Caso() {
+function CasoPadrao() {
 
   const navigate = useNavigate();
   const { jogatina,getDesafioAtual,adicionarPontos,registrarErroDesafio } = useJogo();
@@ -366,5 +368,12 @@ function Caso() {
   );
 }
 
+function Caso() {
+  const { getDesafioAtual } = useJogo();
+  const idDesafio = Number(getDesafioAtual()?.id_desafio);
+
+  // Se o caso for o 8, ele renderiza o CasoHd, senão renderiza o padrão
+  return idDesafio === ID_CASO_HD ? <CasoHd /> : <CasoPadrao />;
+}
 
 export default Caso;
