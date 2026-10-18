@@ -1,0 +1,40 @@
+.fundo {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 20000;
+}
+
+.conteudo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    max-width: 92vw;
+    max-height: 94vh;
+}
+
+.imagem {
+    max-width: 100%;
+    max-height: 78vh;
+    object-fit: contain;
+    border: 2px solid aquamarine;
+    border-radius: 6px;
+    background-color: #000;
+    -webkit-user-drag: none;
+}
+
+.botao {
+    background-color: #4149c9;
+    border: 3px solid #7077ff;
+    color: white;
+    font-family: Unispace, monospace;
+    font-weight: bold;
+    padding: 10px 20px;
+    font-size: clamp(11px, 1.4vw, 14px);
+    border-radius: 6px;
+    cursor: pointer;
+}
