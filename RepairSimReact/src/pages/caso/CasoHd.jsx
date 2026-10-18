@@ -4,7 +4,7 @@ import styles from "./caso.module.css";        // estilos que o grupo já usa no
 import hd from "./casoHd.module.css";          // estilos exclusivos do Caso 8
 import bancada from "../../assets/bancada.jpeg";
 import { useJogo } from "../../context/JogoContext";
-import VisualizadorImagem from "../../components/VisualizadorImagem";
+import VisualizadorImagem from "../../pages/caso/VisualizadorImagem";
 
 // Endereço do servidor (o mesmo usado no restante do projeto).
 const API = "http://localhost:3000";
@@ -12,7 +12,7 @@ const API = "http://localhost:3000";
 // O backup mostra 5 imagens (0%, 25%, 50%, 75% e 100%), cada uma por 5 segundos.
 const PORCENTAGENS_BACKUP = [0, 25, 50, 75, 100];
 const ULTIMO_INDICE_BACKUP = PORCENTAGENS_BACKUP.length - 1;
-const MS_POR_IMAGEM_BACKUP = 5000;
+const MS_POR_IMAGEM_BACKUP = 1000;
 
 // Monta a URL completa de uma imagem que veio do banco.
 function urlImagem(imagem) {

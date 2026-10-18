@@ -1,0 +1,142 @@
+/* Estilos exclusivos do Caso 8 (CasoHd.jsx).
+   Ficam em um arquivo separado para não conflitar com o caso.module.css do grupo. */
+
+/* Painel com a etapa atual, no canto superior direito da bancada */
+.painelEtapasHd {
+    position: absolute;
+    top: 3%;
+    right: 3%;
+    max-width: 30%;
+    padding: 8px 12px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 2px solid aquamarine;
+    border-radius: 6px;
+    font-size: clamp(9px, 1.2vw, 13px);
+    z-index: 10;
+}
+
+.painelEtapasHd h3 {
+    margin: 0 0 6px;
+    font-size: clamp(11px, 1.5vw, 16px);
+}
+
+.painelEtapasHd p {
+    margin: 2px 0;
+}
+
+/* Botões de energia e de fechar gabinete (mesma posição do DESLIGAR do caso.module.css) */
+.btnLigar,
+.btnFecharGabinete {
+    position: absolute;
+    left: 58%;
+    bottom: 5%;
+    transform: translateX(-50%);
+    color: white;
+    font-family: Unispace, monospace;
+    font-weight: bold;
+    padding: clamp(6px, 1.2vw, 10px) clamp(10px, 2vw, 20px);
+    font-size: clamp(10px, 1.4vw, 14px);
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 10000;
+}
+
+.btnLigar {
+    background-color: #006400;
+    border: 3px solid #4dff4d;
+}
+
+.btnFecharGabinete {
+    background-color: #7a5c00;
+    border: 3px solid #ffd700;
+}
+
+/* Imagens que abrem o zoom ao clicar */
+.imagemZoomClicavel {
+    cursor: zoom-in;
+    transition: transform 0.2s ease;
+}
+
+.imagemZoomClicavel:hover {
+    transform: scale(1.03);
+}
+
+/* Aviso quando a imagem do banco não existe */
+.placeholderPcImage {
+    margin: 0;
+    padding: 8px;
+    border: 1px dashed aquamarine;
+    font-size: clamp(9px, 1.2vw, 12px);
+    text-align: center;
+}
+
+/* Item (peça, ferramenta ou software) clicável */
+.itemCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    padding: 4px;
+    margin-bottom: 6px;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-family: inherit;
+    font-size: clamp(8px, 1.1vw, 12px);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.itemCard:hover:not(:disabled) {
+    transform: scale(1.08);
+}
+
+.itemCard:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Pop-up das etapas (bloqueia a tela até clicar em CONTINUAR) */
+.overlayPopup {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 20000;
+}
+
+.popupCard {
+    width: min(90vw, 420px);
+    padding: 20px;
+    text-align: center;
+    background-color: #050505;
+    border: 3px solid aquamarine;
+    border-radius: 8px;
+    color: aquamarine;
+    font-family: Unispace, monospace;
+}
+
+.popupCard h2 {
+    margin: 0 0 10px;
+    font-size: clamp(14px, 2vw, 20px);
+}
+
+.popupCard p {
+    margin: 0 0 16px;
+    font-size: clamp(11px, 1.5vw, 15px);
+    line-height: 1.4;
+}
+
+.botaoPopup {
+    background-color: #4149c9;
+    border: 3px solid #7077ff;
+    color: white;
+    font-family: Unispace, monospace;
+    font-weight: bold;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
