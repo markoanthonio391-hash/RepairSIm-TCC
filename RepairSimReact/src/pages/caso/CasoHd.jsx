@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./caso.module.css";        // estilos que o grupo já usa nos outros casos
 import hd from "./casoHd.module.css";          // estilos exclusivos do Caso 8
@@ -13,6 +13,7 @@ const API = "http://localhost:3000";
 const PORCENTAGENS_BACKUP = [0, 25, 50, 75, 100];
 const ULTIMO_INDICE_BACKUP = PORCENTAGENS_BACKUP.length - 1;
 const MS_POR_IMAGEM_BACKUP = 1000;
+const TEMPO_MENSAGEM_MS = 3500;
 
 // Monta a URL completa de uma imagem que veio do banco.
 function urlImagem(imagem) {
@@ -38,8 +39,8 @@ function CasoHd() {
     const [itens, setItens] = useState([]);
 
     // Menu de itens
-    const [tipoSelecionado, setTipoSelecionado] = useState("software");
-    const [categoriaAberta, setCategoriaAberta] = useState(true);
+    const [tipoSelecionado, setTipoSelecionado] = useState(null);
+    const [categoriaAberta, setCategoriaAberta] = useState(false);
 
     // 1 = verificar saúde do HD | 2 = fazer backup | 3 = trocar o HD | 4 = concluído
     // O número da etapa é enviado ao backend como "ordem".
@@ -61,6 +62,17 @@ function CasoHd() {
     const [mensagem, setMensagem] = useState("");
     const [popup, setPopup] = useState(null);
     const [imagemAmpliada, setImagemAmpliada] = useState(null);
+
+    const temporizadorMensagem = useRef(null);
+
+    const mostrarMensagem = useCallback((texto, fixa = false) => {
+        window.clearTimeout(temporizadorMensagem.current);
+        setMensagem(texto);
+        if (texto && !fixa) {
+            temporizadorMensagem.current = window.setTimeout(() => setMensagem(""), TEMPO_MENSAGEM_MS);
+        }
+    }, []);
+    useEffect(() => () => window.clearTimeout(temporizadorMensagem.current), []);
 
     // ----------------------- BUSCAS NO BACKEND -----------------------
 
@@ -89,7 +101,7 @@ function CasoHd() {
             .catch(erro => {
                 console.error("Erro ao carregar imagens do Caso 8:", erro);
                 if (!cancelado) {
-                    setMensagem("Não foi possível carregar as imagens do computador.");
+                    mostrarMensagem("Não foi possível carregar as imagens do computador.");
                 }
             })
             .finally(() => {
@@ -101,10 +113,13 @@ function CasoHd() {
         return () => {
             cancelado = true;
         };
-    }, [idDesafio]);
+    }, [idDesafio, mostrarMensagem]);
 
     // Itens da categoria aberta (ferramenta, peça ou software)
     useEffect(() => {
+        if (!tipoSelecionado){
+            return;
+        }
         let cancelado = false;
 
         fetch(`${API}/itens/tipo/${tipoSelecionado}`)
@@ -123,14 +138,14 @@ function CasoHd() {
                 console.error("Erro ao carregar os itens:", erro);
                 if (!cancelado) {
                     setItens([]);
-                    setMensagem("Não foi possível carregar os itens.");
+                    mostrarMensagem("Não foi possível carregar os itens.");
                 }
             });
 
         return () => {
             cancelado = true;
         };
-    }, [tipoSelecionado]);
+    }, [tipoSelecionado, mostrarMensagem]);
 
     // ----------------------- ANIMAÇÃO DO BACKUP -----------------------
 
@@ -150,18 +165,16 @@ function CasoHd() {
             setBackupEmAndamento(false);
             setBackupConcluido(true);
             setEtapa(3);
-            setTipoSelecionado("peca"); // a troca do HD usa a categoria Peças
-            setCategoriaAberta(true);
-            setMensagem("");
+            mostrarMensagem("");
             setPopup({
                 titulo: "Backup concluído!",
-                texto: "O backup foi finalizado com sucesso. Agora desligue o computador, abra o gabinete e faça a troca do HD."
+                texto: "O backup foi finalizado com sucesso."
             });
         }, MS_POR_IMAGEM_BACKUP);
 
         // Cancela o temporizador se a tela for fechada no meio do backup.
         return () => window.clearTimeout(temporizador);
-    }, [backupEmAndamento, backupIndice]);
+    }, [backupEmAndamento, backupIndice, mostrarMensagem]);
 
     // ----------------------- IMAGENS DO PC -----------------------
 
@@ -232,31 +245,12 @@ function CasoHd() {
         imagemGabineteAtual = gabineteDesligado;
     }
 
-    // Texto do painel de etapas
-    let textoEtapa;
-
-    if (etapa === 1) {
-        textoEtapa = "Etapa 1 de 3 — Verificar a saúde do HD";
-    }
-    else if (etapa === 2 && backupEmAndamento) {
-        textoEtapa = "Etapa 2 de 3 — Backup em andamento";
-    }
-    else if (etapa === 2) {
-        textoEtapa = "Etapa 2 de 3 — Fazer backup dos arquivos";
-    }
-    else if (etapa === 3) {
-        textoEtapa = "Etapa 3 de 3 — Trocar o HD";
-    }
-    else {
-        textoEtapa = "Desafio concluído";
-    }
-
     // ----------------------- AÇÕES DO JOGADOR -----------------------
 
     // Botão LIGAR / DESLIGAR
     function alternarEnergia() {
         if (backupEmAndamento) {
-            setMensagem("Aguarde o backup terminar antes de desligar o computador.");
+            mostrarMensagem("Aguarde o backup terminar antes de desligar o computador.");
             return;
         }
 
@@ -265,12 +259,12 @@ function CasoHd() {
         }
 
         if (gabineteAberto) {
-            setMensagem("Feche o gabinete antes de ligar o computador.");
+            mostrarMensagem("Feche o gabinete antes de ligar o computador.");
             return;
         }
 
         setPcLigado(!pcLigado);
-        setMensagem(pcLigado ? "Computador desligado." : "Computador ligado.");
+        mostrarMensagem(pcLigado ? "Computador desligado." : "Computador ligado.");
     }
 
     // Clicar no gabinete: só abre com o PC desligado
@@ -280,14 +274,22 @@ function CasoHd() {
         }
 
         if (pcLigado) {
-            setMensagem("Desligue o computador antes de abrir o gabinete.");
+            mostrarMensagem("Desligue o computador antes de abrir o gabinete.");
             return;
         }
 
         // Continua aberto mesmo depois de fechar o zoom.
         setGabineteAberto(true);
-        setMensagem("Gabinete aberto.");
+        mostrarMensagem("Gabinete aberto.");
 
+        //não da zoom quando abre o gabinete
+        if (!gabineteAberto){
+            setGabineteAberto(true);
+            mostrarMensagem("Gabinete aberto.");
+            return;
+        }
+
+        //agora da o zoom se clicado na segunda vez
         if (gabineteAbertoHd) {
             setImagemAmpliada({
                 src: urlImagem(gabineteAbertoHd),
@@ -298,7 +300,7 @@ function CasoHd() {
 
     function fecharGabinete() {
         setGabineteAberto(false);
-        setMensagem("Gabinete fechado. Você pode ligar o computador novamente.");
+        mostrarMensagem("Gabinete fechado.");
     }
 
     // Clicar no monitor: abre a imagem ampliada
@@ -319,6 +321,8 @@ function CasoHd() {
             setCategoriaAberta(false);
         }
         else {
+            if (tipoSelecionado !== tipo){ 
+                setItens([]); }
             setTipoSelecionado(tipo);
             setCategoriaAberta(true);
         }
@@ -334,12 +338,12 @@ function CasoHd() {
         // Etapas 1 e 2 (software): PC ligado e gabinete fechado
         if (etapa === 1 || etapa === 2) {
             if (!pcLigado) {
-                setMensagem("Ligue o computador para executar esta ação.");
+                mostrarMensagem("Ligue o computador para executar esta ação.");
                 return;
             }
 
             if (gabineteAberto) {
-                setMensagem("Feche o gabinete antes de utilizar o software.");
+                mostrarMensagem("Feche o gabinete antes de utilizar o software.");
                 return;
             }
         }
@@ -347,18 +351,18 @@ function CasoHd() {
         // Etapa 3 (troca do HD): PC desligado e gabinete aberto
         if (etapa === 3) {
             if (pcLigado) {
-                setMensagem("Desligue o computador antes de trocar o HD.");
+                mostrarMensagem("Desligue o computador antes de mexer nas peças.");
                 return;
             }
 
             if (!gabineteAberto) {
-                setMensagem("Abra o gabinete antes de trocar o HD.");
+                mostrarMensagem("Abra o gabinete antes de mexer nas peças.");
                 return;
             }
         }
 
         setVerificandoItem(true);
-        setMensagem("Verificando item...");
+        mostrarMensagem("Verificando item...", true); //true permite não sumir sozinha
 
         try {
             const resposta = await fetch(`${API}/desafios/${idDesafio}/verificar`, {
@@ -381,7 +385,7 @@ function CasoHd() {
             // Item errado: continua na mesma etapa para tentar de novo
             if (!resultado.correto) {
                 registrarErroDesafio();
-                setMensagem("❌ " + resultado.mensagem);
+                mostrarMensagem("❌ " + resultado.mensagem);
                 return;
             }
 
@@ -389,10 +393,10 @@ function CasoHd() {
             if (etapa === 1) {
                 setSaudeVerificada(true);
                 setEtapa(2);
-                setMensagem("");
+                mostrarMensagem("");
                 setPopup({
                     titulo: "Saúde do HD verificada!",
-                    texto: "A ferramenta identificou o estado do disco. Agora faça o backup antes de substituir o HD."
+                    texto: "A ferramenta identificou o estado do disco."
                 });
                 return;
             }
@@ -401,7 +405,7 @@ function CasoHd() {
             if (etapa === 2) {
                 setBackupIndice(0);
                 setBackupEmAndamento(true);
-                setMensagem("Backup iniciado. Aguarde a conclusão.");
+                mostrarMensagem("Backup iniciado. Aguarde a conclusão.");
                 return;
             }
 
@@ -411,12 +415,12 @@ function CasoHd() {
                 setRespostaFinalizada(true);
                 setGabineteAberto(false);
                 setPcLigado(false);
-                setMensagem("✅ HD substituído com sucesso. As três ações foram concluídas.");
+                mostrarMensagem("Reparo concluído com sucesso.");
             }
         }
         catch (erro) {
             console.error("Erro ao executar ação do Caso 8:", erro);
-            setMensagem(erro.message || "Não foi possível verificar o item.");
+            mostrarMensagem(erro.message || "Não foi possível verificar o item.");
         }
         finally {
             setVerificandoItem(false);
@@ -452,14 +456,6 @@ function CasoHd() {
                     VOLTAR
                 </button>
 
-                {/* Painel de etapas */}
-                <div className={hd.painelEtapasHd}>
-                    <h3>HD danificado</h3>
-                    <p>{textoEtapa}</p>
-                    {!pcLigado && <p>Computador desligado</p>}
-                    {gabineteAberto && <p>Gabinete aberto</p>}
-                    {backupEmAndamento && <p>Backup: {PORCENTAGENS_BACKUP[backupIndice]}%</p>}
-                </div>
 
                 {/* Computador na bancada */}
                 <div className={styles.pcContainer}>
@@ -480,7 +476,7 @@ function CasoHd() {
                         <img
                             src={urlImagem(imagemGabineteAtual)}
                             alt="Gabinete do computador"
-                            className={`${styles.gabineteImage} ${hd.imagemZoomClicavel}`}
+                            className={`${styles.gabineteImage} ${gabineteAberto ? hd.imagemZoomClicavel : hd.imagemAbrivel}`}
                             onClick={abrirOuAmpliarGabinete}
                         />
                     ) : (
@@ -539,7 +535,7 @@ function CasoHd() {
                     </button>
 
                     {categoriaAberta && (
-                        <div className={styles.toolsBox}>
+                        <div className={hd.toolsBoxSemRolagem}>
                             <h3 className={styles.titleTools}>
                                 {tipoSelecionado === "ferramenta" && "Ferramentas"}
                                 {tipoSelecionado === "peca" && "Peças"}
@@ -548,23 +544,13 @@ function CasoHd() {
 
                             <div className={styles.contentTools}>
                                 {itens.length === 0 ? (
-                                    <p>Nenhum item disponível nesta categoria.</p>
+                                    <p>Carregando itens...</p>
                                 ) : (
                                     itens.map(item => (
-                                        <button
-                                            type="button"
-                                            key={item.id_item}
-                                            className={hd.itemCard}
-                                            disabled={menuBloqueado}
-                                            onClick={() => usarItem(item)}
-                                        >
-                                            <img
-                                                src={urlImagem(item)}
-                                                className={styles.imgItem}
-                                                alt={item.nome}
-                                            />
-                                            <span>{item.nome}</span>
-                                        </button>
+                                    <button type="button" key={item.id_item} className={hd.itemCard} disabled={menuBloqueado}
+                                        title={item.nome} aria-label={item.nome} onClick={() => usarItem(item)}>
+                                        <img src={urlImagem(item)} className={styles.imgItem} alt={item.nome} />
+                                    </button>
                                     ))
                                 )}
                             </div>

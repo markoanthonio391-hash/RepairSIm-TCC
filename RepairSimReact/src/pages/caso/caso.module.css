@@ -244,6 +244,26 @@ html, body {
     z-index: 10000;
 }
 
+/*Adição marko -  agora aparece o Número de Caso atual e Sua pontuação*/
+.statusJogo {
+    position: absolute;
+    top: 3%;
+    right: 2%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    padding: 8px 14px;
+    background-color: rgba(0, 0, 0, 0.75);
+    border: 2px solid aquamarine;
+    border-radius: 8px;
+    color: aquamarine;
+    font-weight: bold;
+    font-size: clamp(10px, 1.4vw, 14px);
+    z-index: 10;
+    pointer-events: none; /* não atrapalha cliques na bancada */
+}
+
 
 
 /* ==========================================================================
@@ -402,6 +422,9 @@ html, body {
     z-index: 10000;
 }
 
+:global(#root):has(> .screenWrapper) { /*esse screenWrapper so aparece só quando uma tela de caso está aberta*/
+    width: 100%;
+}
 /* Wrapper geral: ocupa a tela toda, centraliza o conteúdo */
 .screenWrapper {
     display: flex;
