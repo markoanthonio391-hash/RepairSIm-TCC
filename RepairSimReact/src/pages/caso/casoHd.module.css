@@ -1,28 +1,6 @@
 /* Estilos exclusivos do Caso 8 (CasoHd.jsx).
    Ficam em um arquivo separado para não conflitar com o caso.module.css do grupo. */
 
-/* Painel com a etapa atual, no canto superior direito da bancada */
-.painelEtapasHd {
-    position: absolute;
-    top: 3%;
-    right: 3%;
-    max-width: 30%;
-    padding: 8px 12px;
-    background-color: rgba(0, 0, 0, 0.8);
-    border: 2px solid aquamarine;
-    border-radius: 6px;
-    font-size: clamp(9px, 1.2vw, 13px);
-    z-index: 10;
-}
-
-.painelEtapasHd h3 {
-    margin: 0 0 6px;
-    font-size: clamp(11px, 1.5vw, 16px);
-}
-
-.painelEtapasHd p {
-    margin: 2px 0;
-}
 
 /* Botões de energia e de fechar gabinete (mesma posição do DESLIGAR do caso.module.css) */
 .btnLigar,
@@ -61,6 +39,10 @@
     transform: scale(1.03);
 }
 
+.imagemAbrivel { 
+    cursor: pointer; 
+}
+
 /* Aviso quando a imagem do banco não existe */
 .placeholderPcImage {
     margin: 0;
@@ -71,31 +53,15 @@
 }
 
 /* Item (peça, ferramenta ou software) clicável */
-.itemCard {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    width: 100%;
-    padding: 4px;
-    margin-bottom: 6px;
-    background: transparent;
-    border: none;
-    color: inherit;
-    font-family: inherit;
-    font-size: clamp(8px, 1.1vw, 12px);
-    cursor: pointer;
-    transition: transform 0.2s ease;
+.toolsBoxSemRolagem {
+    position: relative; display: flex; flex-direction: column; align-items: center;
+    width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; overflow: visible;
 }
-
-.itemCard:hover:not(:disabled) {
-    transform: scale(1.08);
-}
-
-.itemCard:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
+.itemCard { display: block; padding: 0; margin: 0; background: transparent; border: none;
+    line-height: 0; cursor: pointer; transition: transform .2s ease; }
+.itemCard:hover:not(:disabled) { transform: scale(1.08); }
+.itemCard:focus-visible { outline: 2px solid aquamarine; outline-offset: 2px; }
+.itemCard:disabled { opacity: .5; cursor: not-allowed; }
 
 /* Pop-up das etapas (bloqueia a tela até clicar em CONTINUAR) */
 .overlayPopup {
