@@ -480,6 +480,11 @@ body{
     background-color: #ff4d4d;
     --neon-color: #ff4d4d; }
 
+.historico{
+    background-color: #8f7bff;
+    --neon-color: #8f7bff;
+}
+
 .buttonLogin{ --neon-color: #ffffff; }
 
 .ligando{
@@ -527,6 +532,8 @@ body{
 .iconWrap.conquistas img{ transform: scale(1.35); }
 
 .iconWrap.sair img{ transform: scale(1.00); }
+
+.iconWrap.historico img{ transform: scale(1.20); }
 
 .buttonLogin{
     background-color: transparent;

@@ -6,6 +6,7 @@ import { JogoProvider } from './context/JogoContext';
 const Home = lazy(() => import ('./pages/home/home'));
 const Dificuldade = lazy(() => import('./pages/dificuldade/dificuldade'));
 const Config = lazy(() => import('./pages/home/Config/Config'));
+const Historico = lazy(() => import('./pages/home/Historico/Historico'));
 const TesteApi = lazy(() => import('./pages/testeAPI/api')); //teste de api
 const Login = lazy(() => import('./pages/Login/Login'));
 const Cadastro = lazy(() => import('./pages/Login/cadastro/cadastro'));
@@ -33,6 +34,7 @@ function App() {
                 <Route path='/config' element={<Config />} />
                 <Route path="/teste" element={<TesteApi />} />
                 <Route path="/Login" element={<Login />} />
+                <Route path='/Historico' element={<Historico />} />
                 <Route path='/cadastro' element={<Cadastro />} />      
                 <Route path="/cliente" element={<Cliente />} />
                 <Route path="/Conquistas" element={<Conquistas />} />

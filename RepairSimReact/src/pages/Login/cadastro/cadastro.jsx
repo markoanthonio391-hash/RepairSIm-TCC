@@ -81,7 +81,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Cadastro.module.css'
-import backgroundImage from '../../../assets/imgFundo.jpeg'
+import FundoAnimado from '../../../components/FundoAnimado';
 
 function Cadastro() {
     const navigate = useNavigate()
@@ -128,9 +128,7 @@ function Cadastro() {
 
     return (
         <div className={styles.page}>
-            <div className={styles.bckground}>
-                <img src={backgroundImage} alt="Background" className={styles.bckgroundImg} />
-            </div>
+            <FundoAnimado />
 
             <form className={styles.card} onSubmit={handleSubmit}>
                 <div className={styles.iconBadge}>🔧</div>

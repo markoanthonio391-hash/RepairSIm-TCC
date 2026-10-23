@@ -1,0 +1,195 @@
+/* Fundo animado da Home, isolado em um componente.
+   Fica fixo, atrás de tudo, e não captura cliques. */
+
+.stage {
+  --glow: #2f7bff;
+  --line: #1e5aa8;
+  --line-bright: #5fb0ff;
+  --dot: #7fc4ff;
+
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* acompanha a barra do navegador no celular */
+  background:
+    radial-gradient(ellipse 60% 55% at 50% 50%, rgba(47,123,255,0.35) 0%, rgba(20,60,140,0.12) 40%, rgba(2,6,17,0) 70%),
+    linear-gradient(180deg, #040a1a 0%, #020611 100%);
+  animation: breathe 6s ease-in-out infinite;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes breathe {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.18); }
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(80,140,255,0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80,140,255,0.09) 1px, transparent 1px);
+  background-size: 34px 34px;
+  -webkit-mask-image: radial-gradient(ellipse 55% 60% at 50% 50%, #000 0%, rgba(0,0,0,0.5) 45%, transparent 75%);
+  mask-image: radial-gradient(ellipse 55% 60% at 50% 50%, #000 0%, rgba(0,0,0,0.5) 45%, transparent 75%);
+  animation: gridPulse 6s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+.hex {
+  position: absolute;
+  width: min(520px, 80vw);   /* encolhe em telas pequenas */
+  height: min(520px, 80vw);
+  background-image:
+    repeating-linear-gradient(60deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px),
+    repeating-linear-gradient(-60deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px),
+    repeating-linear-gradient(0deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px);
+  opacity: 0.5;
+  animation: hexFade 8s ease-in-out infinite;
+}
+
+.bl {
+  left: -120px;
+  bottom: -160px;
+  -webkit-mask-image: radial-gradient(circle at 0% 100%, #000 55%, transparent 80%);
+  mask-image: radial-gradient(circle at 0% 100%, #000 55%, transparent 80%);
+}
+
+.tr {
+  right: -160px;
+  top: -180px;
+  -webkit-mask-image: radial-gradient(circle at 100% 0%, #000 55%, transparent 80%);
+  mask-image: radial-gradient(circle at 100% 0%, #000 55%, transparent 80%);
+  animation-delay: 2s;
+}
+
+@keyframes hexFade {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+.circuits {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.circuit-line {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.4;
+  opacity: 0.55;
+}
+
+.circuit-line.bright {
+  stroke: var(--line-bright);
+  opacity: 0.35;
+  stroke-width: 1.2;
+  filter: drop-shadow(0 0 2px rgba(120,180,255,0.6));
+}
+
+.node {
+  fill: var(--dot);
+  filter: drop-shadow(0 0 4px rgba(120,190,255,0.9));
+}
+
+.node.pulse {
+  animation: nodePulse 2.6s ease-in-out infinite;
+}
+
+@keyframes nodePulse {
+  0%, 100% { opacity: 0.4; r: 2.4px; }
+  50% { opacity: 1; r: 4.2px; }
+}
+
+.traveler {
+  fill: #bfe3ff;
+  filter: drop-shadow(0 0 6px #6fbaff) drop-shadow(0 0 12px rgba(80,150,255,0.8));
+}
+
+.particlesContainer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--dot);
+  box-shadow: 0 0 6px 1px rgba(120,190,255,0.8);
+  animation-name: twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+/* ---------- Colmeia tech (cantos inferior esquerdo e superior direito) ---------- */
+.honey {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* contorno de cada favo: pulsa e acende o interior em onda */
+.hexCell {
+  fill: var(--glow);
+  fill-opacity: 0;
+  stroke: var(--line-bright);
+  stroke-width: 1;
+  stroke-opacity: 0.12;
+  animation: hexPulse 5s ease-in-out infinite;
+}
+
+@keyframes hexPulse {
+  0%, 100% { stroke-opacity: 0.1;  fill-opacity: 0;    stroke-width: 1; }
+  45%      { stroke-opacity: 0.85; fill-opacity: 0.1;  stroke-width: 1.6; }
+  60%      { stroke-opacity: 0.4;  fill-opacity: 0.04; stroke-width: 1.2; }
+}
+
+/* feixe de luz que corre pelo perímetro de alguns favos */
+.hexRunner {
+  fill: none;
+  stroke: #bfe3ff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 16 84;
+  stroke-dashoffset: 0;
+  animation: hexRun 3.6s linear infinite;
+}
+
+@keyframes hexRun {
+  from { stroke-dashoffset: 100; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hexCell,
+  .hexRunner {
+    animation: none;
+  }
+
+  .stage,
+  .grid,
+  .hex,
+  .node.pulse,
+  .particle {
+    animation: none;
+  }
+  .particle { opacity: 0.5; }
+}
