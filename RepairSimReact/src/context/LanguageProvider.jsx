@@ -9,7 +9,8 @@ export function LanguageProvider({ children }) {
     localStorage.setItem('config_idioma', idioma);
   }, [idioma]);
 
-  const t = translations[idioma];
+  // se o valor salvo no navegador não existir em translations, usa Português (evita t === undefined e tela vazia)
+  const t = translations[idioma] ?? translations['Português'];
 
   return (
     <LanguageContext.Provider value={{ idioma, setIdioma, t }}>

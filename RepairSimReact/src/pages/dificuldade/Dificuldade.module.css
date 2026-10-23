@@ -349,3 +349,38 @@ body{
   width: 100%;
   height: 100%;
 }
+
+/*ESTILIZAÇÃO DO VIDEO*/
+.videoOverlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  background: #000;
+  z-index: 9999;
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* preenche a tela toda; use "contain" se não quiser cortar as bordas */
+  display: block;
+}
+
+.continuarButton {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  padding: 10px 22px;
+  font-family: Unispace, monospace;
+  font-size: 1rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.continuarButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
