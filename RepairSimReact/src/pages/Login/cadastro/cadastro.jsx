@@ -110,7 +110,6 @@ function Cadastro() {
             });
             const data = await response.json();
             if (response.ok) {
-                localStorage.setItem('usuario', JSON.stringify(data.usuario));
                 alert(`Cadastro realizado com sucesso!\n\nRealize o login da sua nova conta!`);
                 navigate(-1);
             } else {

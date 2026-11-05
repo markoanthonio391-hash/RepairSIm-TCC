@@ -1,16 +1,7 @@
 import styles from './Historico.module.css';
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const API_URL = 'http://localhost:3000';
-
-function lerUsuario() {
-  try {
-    return JSON.parse(localStorage.getItem('usuario'));
-  } catch {
-    return null;
-  }
-}
+import { API_URL, lerUsuario, limparSessao } from '../../../services/auth';
 
 function formatarData(valor) {
   const data = new Date(valor);
@@ -50,9 +41,16 @@ function Historico() {
       try {
         setLoading(true);
         setError('');
-        const response = await fetch(`${API_URL}/partidas/usuario/${usuario.id}`, {
+        const response = await fetch(`${API_URL}/resultados/meus`, {
+          credentials: 'include',
           signal: controller.signal,
         });
+        // login expirado: limpa os dados locais e volta para a tela de login
+        if (response.status === 401) {
+          limparSessao();
+          navigate('/login', { replace: true });
+          return;
+        }
         const data = await response.json();
         if (response.ok) {
           setPartidas(data.partidas || []);
@@ -71,7 +69,7 @@ function Historico() {
 
     carregar();
     return () => controller.abort();
-  }, [usuario]);
+  }, [usuario, navigate]);
 
   // Partículas de fundo (mesma fórmula das outras telas)
   useEffect(() => {
@@ -223,7 +221,7 @@ function Historico() {
                     <th>Data</th>
                     <th>Dificuldade</th>
                     <th>Pontuação</th>
-                    <th>Acertos</th>
+                    <th>Casos</th>
                     <th>Erros</th>
                     <th>Tempo</th>
                   </tr>
@@ -236,7 +234,7 @@ function Historico() {
                       <td className={Number(p.pontuacao) === resumo.melhor ? styles.highlight : ''}>
                         {p.pontuacao}
                       </td>
-                      <td>{p.acertos}</td>
+                      <td>{p.casos}</td>
                       <td>{p.erros}</td>
                       <td>{formatarTempo(p.tempo_segundos)}</td>
                     </tr>
