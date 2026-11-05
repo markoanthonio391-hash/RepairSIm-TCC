@@ -99,13 +99,14 @@ export function useJogo(){
 }*/
 
 import { createContext, useContext, useState } from "react";
+import { API_URL, lerUsuario, limparSessao } from "../services/auth";
 
 const JogoContext = createContext(null);
 
 export function JogoProvider({ children }) {
 
     const [jogatina, setJogatina] = useState({
-        idUsuario: 1,
+        salvo: false,
         dificuldade: null,
         desafios: [],
         indiceAtual: 0,
@@ -127,7 +128,7 @@ export function JogoProvider({ children }) {
         }
 
         setJogatina({
-            idUsuario: 1,
+            salvo: false,
             dificuldade,
             desafios: desafiosSelecionados,
             indiceAtual: 0,
@@ -202,38 +203,41 @@ export function JogoProvider({ children }) {
     const quantidadeCasosFinal = quantidadeCasosOverride !== null ? quantidadeCasosOverride : jogatina.quantidadeCasos;
 
     // -----------------------------------------------------
-    // Dados enviados para o backend
+    // Salva o resultado SOMENTE se houver um usuário logado.
+    // O backend identifica o jogador pelo cookie de login (não enviamos mais id_usuario).
+    // Sem login a partida termina normalmente, mas nada é salvo.
     // -----------------------------------------------------
+    let idResultado = null;
+    let salvo = false;
 
-    const resposta = await fetch("http://localhost:3000/resultados",
-        {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-            id_usuario: jogatina.idUsuario,
-            dificuldade: jogatina.dificuldade,
-            quantidade_casos: quantidadeCasosFinal,
-            erros_desafio: jogatina.errosDesafio,
-            erros_relatorio: errosRelatorioFinais,
-            pontos: jogatina.pontos,
-            tempo_segundos: tempoTotal
-            })
+    if (lerUsuario()) {
+        const resposta = await fetch(`${API_URL}/resultados`,
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                dificuldade: jogatina.dificuldade,
+                quantidade_casos: quantidadeCasosFinal,
+                erros_desafio: jogatina.errosDesafio,
+                erros_relatorio: errosRelatorioFinais,
+                pontos: jogatina.pontos,
+                tempo_segundos: tempoTotal
+                })
+            }
+        );
+
+        if (resposta.status === 401) {
+            // o login expirou durante a partida: encerra a jogatina sem salvar
+            limparSessao();
+        } else if (!resposta.ok) {
+            throw new Error("Erro ao salvar o resultado.");
+        } else {
+            const dados = await resposta.json();
+            idResultado = dados.id_resultado;
+            salvo = true;
         }
-    );
-
-
-    // -----------------------------------------------------
-    // Verifica se o backend aceitou o resultado
-    // -----------------------------------------------------
-    if (!resposta.ok) {
-        throw new Error("Erro ao salvar o resultado.");
     }
-
-
-    // -----------------------------------------------------
-    // Recebe o ID criado no banco
-    // -----------------------------------------------------
-    const dados = await resposta.json();
 
     // -----------------------------------------------------
     // Atualiza o contexto
@@ -245,9 +249,10 @@ export function JogoProvider({ children }) {
         tempoSegundos: tempoTotal,
         dataFinalizacao: new Date().toISOString(),
         finalizada: true,
-        idResultado: dados.id_resultado
+        salvo,
+        idResultado
     }));
-    return dados;
+    return { id_resultado: idResultado, salvo };
     }
 
     return (

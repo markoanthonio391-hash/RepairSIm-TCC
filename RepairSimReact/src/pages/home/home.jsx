@@ -9,19 +9,21 @@ import logoPlay from '../../assets/iconPlay.png'
 import logoHistorico from '../../assets/logoConq.png' // troque pelo ícone do histórico quando tiver
 import { useLanguage } from '../../context/useLanguage';
 import FundoAnimado from '../../components/FundoAnimado';
+import { lerUsuario, validarSessao, sairDaConta } from '../../services/auth';
 
 
 function Home() {
   const navigate = useNavigate();
-  function lerUsuario() {
-    try { return JSON.parse(localStorage.getItem('usuario')); }
-    catch { return null; }
-  }
-
   const [logado, setLogado] = useState(() => Boolean(lerUsuario()));
 
-  const logout = () => {
-    localStorage.removeItem('usuario');
+  // confirma com o servidor se o login (cookie) ainda é válido. Se expirou, volta para "Login"
+  useEffect(() => {
+    if (!lerUsuario()) return;
+    validarSessao().then((valida) => setLogado(valida));
+  }, []);
+
+  const logout = async () => {
+    await sairDaConta();
     setLogado(false);
   };
   

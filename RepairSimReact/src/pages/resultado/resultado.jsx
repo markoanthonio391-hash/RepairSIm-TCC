@@ -119,6 +119,12 @@ function Resultado() {
 
         </section>
 
+        {!jogatina.salvo && (
+          <p className="resultado-aviso">
+            Esta partida não foi salva no histórico. Faça login para registrar seus resultados.
+          </p>
+        )}
+        
         <footer className="resultado-footer">
 
           <button className="btn-secundario" onClick={() => navigate("/Dificuldade")}>

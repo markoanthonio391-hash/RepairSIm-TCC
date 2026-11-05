@@ -4,10 +4,14 @@ const router = express.Router();
 
 const relatorioController = require('../controllers/relatorioController');
 
-router.get('/', relatorioController.listar);
+const { autenticar, autenticarOpcional } = require('../middlewares/auth');
+
+//relatórios do usuário logado
+router.get('/', autenticar, relatorioController.listar);
 
 router.get('/desafio/:id', relatorioController.buscarDados);
 
-router.post('/avaliar', relatorioController.avaliar);
+//login opcional: logado tem o relatório salvo, visitante apenas é avaliado
+router.post('/avaliar', autenticarOpcional, relatorioController.avaliar);
 
 module.exports = router;

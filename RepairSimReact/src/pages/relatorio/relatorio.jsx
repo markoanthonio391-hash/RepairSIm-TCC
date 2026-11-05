@@ -20,9 +20,6 @@ function Relatorio() {
   const { id } = useParams();
   const idDesafio = Number(id);
 
-  // Usuário temporário
-  const idUsuario = 1;
-
   const { registrarErrosRelatorio, proximoDesafio, ehUltimoDesafio, finalizarJogatina } = useJogo();
 
 
@@ -182,13 +179,14 @@ function Relatorio() {
 
       method: "POST",
 
+       // envia o cookie de login: se estiver logado, o relatório é salvo na conta
+       credentials: "include",
+
       headers: {
         "Content-Type": "application/json"
       },
 
       body: JSON.stringify({
-
-        id_usuario: idUsuario,
 
         id_desafio: idDesafio,
 
