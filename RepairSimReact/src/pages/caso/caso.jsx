@@ -201,7 +201,12 @@ function CasoPadrao() {
   const monitorDesligado = pegarImagemPorFuncao("monitor_desligado");
   const gabineteLigado = pegarImagemPorFuncao("gabinete_ligado");
   const gabineteDesligado = pegarImagemPorFuncao("gabinete_desligado");
-  const gabineteEmpoeirado = pegarImagemPorFuncao("gabinete_empoeirado");
+
+  // gabinete ABERTO mostrando o defeito do caso.
+  // aceita "gabinete_empoeirado" (caso 1) ou qualquer funcao terminada em "_defeito"
+  // (ex: gabinete_ram_defeito = caso 2, gabinete_fonte_defeito = caso 5)
+  const gabineteDefeito = imagensPc.find(imagem => imagem.funcao === "gabinete_empoeirado" || imagem.funcao.endsWith("_defeito"));
+
   const gabineteLimpo = pegarImagemPorFuncao("gabinete_limpo");
 
   
@@ -271,13 +276,13 @@ function CasoPadrao() {
 
           )}
 
-          {/* gabinete empoeirado */}
+          {/* gabinete aberto com o defeito do caso (poeira, RAM, fonte...) */}
 
-          {estadoPc === 'manutencao' && gabineteEmpoeirado && (
+          {estadoPc === 'manutencao' && gabineteDefeito && (
 
-            <img src={`http://localhost:3000${gabineteEmpoeirado.caminho_imagem}`}
+            <img src={`http://localhost:3000${gabineteDefeito.caminho_imagem}`}
               className={styles.gabineteManutencao}
-              alt="Gabinete empoeirado"/>
+              alt="Gabinete aberto com defeito"/>
 
           )}
 
