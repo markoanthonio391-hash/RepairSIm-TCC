@@ -205,12 +205,16 @@ function Dificuldade()
         </span>
         Difícil
       </button>
-      <button className={`${styles.voltarButton} ${styles.voltar}`} onClick={() => navigate('/')}> 
+      <button
+        data-som="back"
+        className={`${styles.voltarButton} ${styles.voltar}`}
+        onClick={() => navigate('/')}
+      >
         <span className={styles.iconWrap}>
           <img src={logoVoltar} alt="Voltar" />
         </span>
         Voltar
-      </button> 
+      </button>
     </div>
   );
 }

@@ -213,7 +213,7 @@ function Config() {
         </button>
       </div>
 
-      <button className={`${styles.voltarButton} ${styles.voltar}`} onClick={() => navigate(-1)}>
+      <button data-som="back" className={`${styles.voltarButton} ${styles.voltar}`} onClick={() => navigate(-1)}>
         Voltar
       </button>
     </div>
