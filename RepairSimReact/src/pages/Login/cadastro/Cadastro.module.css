@@ -277,3 +277,157 @@
     background: rgba(255, 107, 107, 0.1);
     transform: scale(1.02);
 }
+
+/* =====================================================================
+   ANIMAÇÕES DO CARD DE CADASTRO
+   ===================================================================== */
+
+/* 1) Entrada do card: sobe, aparece e "assenta" */
+.card{
+    animation:
+        cardEntrada 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards,
+        cardNeon 5s ease-in-out 0.7s infinite;
+}
+
+@keyframes cardEntrada{
+    from { opacity: 0; transform: translateY(28px) scale(0.96); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* 2) Brilho neon do contorno "respirando" */
+@keyframes cardNeon{
+    0%, 100% {
+        border-color: rgba(0, 195, 255, 0.25);
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.4),
+            0 0 40px rgba(0, 195, 255, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+    50% {
+        border-color: rgba(0, 195, 255, 0.55);
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.4),
+            0 0 56px rgba(0, 195, 255, 0.32),
+            inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+}
+
+/* 3) Faixa de luz que corre pela borda de cima do card */
+.card::before{
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 24px;
+    right: 24px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, transparent, #36d8ff, #5ef2ff, #36d8ff, transparent);
+    background-size: 200% 100%;
+    box-shadow: 0 0 10px rgba(54, 216, 255, 0.8);
+    animation: faixaLuz 3.5s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes faixaLuz{
+    from { background-position: 200% 0; }
+    to   { background-position: -200% 0; }
+}
+
+/* 4) Ícone da chave inglesa: flutua e pulsa */
+.iconBadge{
+    animation: iconeFlutua 3.2s ease-in-out infinite;
+}
+
+@keyframes iconeFlutua{
+    0%, 100% { transform: translateY(0); box-shadow: 0 0 20px rgba(0, 157, 255, 0.5); }
+    50%      { transform: translateY(-5px); box-shadow: 0 0 32px rgba(54, 216, 255, 0.85); }
+}
+
+/* 5) Título e subtítulo aparecem em sequência */
+.cardTitle{
+    animation: textoEntra 0.6s ease-out 0.25s backwards;
+}
+
+.cardSubtitle{
+    animation: textoEntra 0.6s ease-out 0.4s backwards;
+}
+
+@keyframes textoEntra{
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* 6) Campos entram um por vez (cascata) */
+.field{
+    animation: campoEntra 0.5s ease-out backwards;
+}
+
+.grid > .field:nth-child(1){ animation-delay: 0.50s; }
+.grid > .field:nth-child(2){ animation-delay: 0.58s; }
+.grid > .field:nth-child(3){ animation-delay: 0.66s; }
+.grid > .field:nth-child(4){ animation-delay: 0.74s; }
+.grid > .field:nth-child(5){ animation-delay: 0.82s; }
+.grid > .field:nth-child(6){ animation-delay: 0.90s; }
+.grid > .field:nth-child(7){ animation-delay: 0.98s; }
+.grid > .field:nth-child(8){ animation-delay: 1.06s; }
+
+@keyframes campoEntra{
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* 7) Termos e botões entram por último */
+.termsRow{
+    animation: campoEntra 0.5s ease-out 1.15s backwards;
+}
+
+.confirmarButton{
+    animation: campoEntra 0.5s ease-out 1.25s backwards;
+}
+
+.cancelarButton{
+    animation: campoEntra 0.5s ease-out 1.35s backwards;
+}
+
+/* 8) Campo em foco sobe um pouquinho */
+.input{
+    transition:
+        border-color 0.2s ease-in-out,
+        box-shadow 0.2s ease-in-out,
+        transform 0.2s ease-in-out,
+        background 0.2s ease-in-out;
+}
+
+.input:focus{
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* 9) Botão Confirmar: gradiente que desliza + brilho no hover */
+.confirmarButton{
+    background: linear-gradient(120deg, #009dff, #36d8ff, #5ef2ff, #009dff);
+    background-size: 250% 100%;
+    animation:
+        campoEntra 0.5s ease-out 1.25s backwards,
+        gradienteDesliza 6s linear 1.75s infinite;
+}
+
+@keyframes gradienteDesliza{
+    from { background-position: 0% 50%; }
+    to   { background-position: 250% 50%; }
+}
+
+/* 10) Quem prefere menos movimento (configuração do sistema) não vê as animações */
+@media (prefers-reduced-motion: reduce){
+    .card,
+    .card::before,
+    .iconBadge,
+    .cardTitle,
+    .cardSubtitle,
+    .field,
+    .termsRow,
+    .confirmarButton,
+    .cancelarButton{
+        animation: none;
+    }
+}

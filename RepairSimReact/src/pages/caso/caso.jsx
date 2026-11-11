@@ -2,11 +2,18 @@ import styles from './caso.module.css'
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import bancada from '../../assets/bancada.jpeg';
+import { useJogo } from "../../context/JogoContext";
+import CasoHd from './CasoHd';
+const ID_CASO_HD = 8;
 
-function Caso() {
+function CasoPadrao() {
 
   const navigate = useNavigate();
-  const idDesafio = 1; //por enquanto é permanente esse id, dps podemos alterar para ser variavel(talvez)
+  const { jogatina,getDesafioAtual,adicionarPontos,registrarErroDesafio } = useJogo();
+  const desafioAtual = getDesafioAtual();
+  const idDesafio = desafioAtual?.id_desafio;
+
+  const [respostaFinalizada, setRespostaFinalizada] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [itens, setItens] = useState([]);
   const [tipoSelecionado, setTipoSelecionado] = useState('ferramenta');
@@ -66,7 +73,7 @@ function Caso() {
         console.error('Erro ao buscar imagens do PC:', erro);
       });
 
-  }, []);
+  }, [idDesafio]);
 
 
   //------------------------
@@ -84,10 +91,10 @@ function Caso() {
   //------------------------
   //pega uma imagem especifica pelo id
   //------------------------
-  function pegarImagemPc(idPc) {
-    return imagensPc.find( //.find pecorre o array ate atender a condição
-      imagem => Number(imagem.id_pc) === idPc);
-  }
+  // function pegarImagemPc(idPc) {
+  //   return imagensPc.find( //.find pecorre o array ate atender a condição
+  //     imagem => Number(imagem.id_pc) === idPc);
+  // }
 
   //------------------------
   //botão desligar
@@ -111,6 +118,10 @@ function Caso() {
   
   }
   function usarItem(item) {
+
+    if (respostaFinalizada){
+      return;
+    }
 
       //------------------------
       //clicar em um item
@@ -147,18 +158,21 @@ function Caso() {
 
         console.log('Resultado da verificação:', resultado);
 
+        //POntos sempre que entram no contexto
+        adicionarPontos(resultado.pontos);
 
         //item correto
         if (resultado.correto) {
           setEstadoPc('concluido');
           setMensagem('✅ ' + resultado.mensagem);
+          setRespostaFinalizada(true);
         }
 
         //item errado
         else {
+          registrarErroDesafio();
           setMensagem('❌ ' + resultado.mensagem);
         }
-
       })
 
       .catch(erro => {
@@ -172,22 +186,38 @@ function Caso() {
       });
 
   }
-
+  //caso n tenha nenhuma imagem...
+  if (!imagensPc.length) {
+    return (<p>Imagens deste caso ainda não disponíveis.</p>);
+  }
   //------------------------
-  //imagem especifica de cada estado do pc
+  //imagem especifica de cada funcao do pc
   //------------------------
-  const monitorLigado = pegarImagemPc(2);
-  const monitorDesligado = pegarImagemPc(1);
-  const gabineteLigado = pegarImagemPc(3);
-  const gabineteDesligado = pegarImagemPc(4);
-  const gabineteEmpoeirado = pegarImagemPc(6);
-  const gabineteLimpo = pegarImagemPc(5);
+  function pegarImagemPorFuncao(funcao) {
+    return imagensPc.find(imagem => imagem.funcao === funcao);
+  }
 
+  const monitorLigado = pegarImagemPorFuncao("monitor_ligado");
+  const monitorDesligado = pegarImagemPorFuncao("monitor_desligado");
+  const gabineteLigado = pegarImagemPorFuncao("gabinete_ligado");
+  const gabineteDesligado = pegarImagemPorFuncao("gabinete_desligado");
 
+  // gabinete ABERTO mostrando o defeito do caso.
+  // aceita "gabinete_empoeirado" (caso 1) ou qualquer funcao terminada em "_defeito"
+  // (ex: gabinete_ram_defeito = caso 2, gabinete_fonte_defeito = caso 5)
+  const gabineteDefeito = imagensPc.find(imagem => imagem.funcao === "gabinete_empoeirado" || imagem.funcao.endsWith("_defeito"));
+
+  const gabineteLimpo = pegarImagemPorFuncao("gabinete_limpo");
+
+  
   //transformando tudo em tela
   return (
     <div className={styles.screenWrapper}>
       <div className={styles.mainContainer}>
+        <div className={styles.statusJogo}>
+          <span>Caso {jogatina.indiceAtual + 1} {" "} / {jogatina.quantidadeCasos}</span>
+          <span>Pontos: {jogatina.pontos}</span>
+        </div>
         <img src={bancada} alt="Bancada" className={styles.bancada} />
         <button className={styles.btnVoltar} onClick={() => navigate('/')}>
            Voltar 
@@ -246,13 +276,13 @@ function Caso() {
 
           )}
 
-          {/* gabinete empoeirado */}
+          {/* gabinete aberto com o defeito do caso (poeira, RAM, fonte...) */}
 
-          {estadoPc === 'manutencao' && gabineteEmpoeirado && (
+          {estadoPc === 'manutencao' && gabineteDefeito && (
 
-            <img src={`http://localhost:3000${gabineteEmpoeirado.caminho_imagem}`}
+            <img src={`http://localhost:3000${gabineteDefeito.caminho_imagem}`}
               className={styles.gabineteManutencao}
-              alt="Gabinete empoeirado"/>
+              alt="Gabinete aberto com defeito"/>
 
           )}
 
@@ -275,10 +305,12 @@ function Caso() {
             onClick={desligarPc}>
             DESLIGAR </button>
           )}
-          {/*teste para levar para relatorio */}
+          
+          {respostaFinalizada && (
           <button className={styles.btnRelatorio} onClick={() => navigate(`/relatorio/${idDesafio}`)}>
             IR PARA RELATÓRIO
           </button>
+          )}
 
 
         {/*mensagem*/}
@@ -341,5 +373,12 @@ function Caso() {
   );
 }
 
+function Caso() {
+  const { getDesafioAtual } = useJogo();
+  const idDesafio = Number(getDesafioAtual()?.id_desafio);
+
+  // Se o caso for o 8, ele renderiza o CasoHd, senão renderiza o padrão
+  return idDesafio === ID_CASO_HD ? <CasoHd /> : <CasoPadrao />;
+}
 
 export default Caso;

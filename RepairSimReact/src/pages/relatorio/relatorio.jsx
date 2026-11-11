@@ -2,23 +2,25 @@
 import { useState, useEffect } from "react";
 
 // Importa o useNavigate para trocar de página
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 // Importa os estilos
 import "./Relatorio.css";
 
+import { useJogo } from "../../context/JogoContext";
+
 
 function Relatorio() {
   const navigate = useNavigate();
+
   // =====================================================
   // DADOS DO DESAFIO
   // =====================================================
 
-  // Por enquanto o desafio é fixo para teste
-  const idDesafio = 1;
+  const { id } = useParams();
+  const idDesafio = Number(id);
 
-  // Usuário temporário
-  const idUsuario = 1;
+  const { registrarErrosRelatorio, proximoDesafio, ehUltimoDesafio, finalizarJogatina } = useJogo();
 
 
   // =====================================================
@@ -38,7 +40,6 @@ function Relatorio() {
 
   // =====================================================
   // ESTADO DO FORMULÁRIO
-  // Mantemos a estrutura antiga
   // =====================================================
 
   const [form, setForm] = useState({
@@ -48,7 +49,14 @@ function Relatorio() {
     problema: "",
     diagnostico: ""
   });
-
+  useEffect(() => {
+    // Coloca uma classe especial no body
+    document.body.classList.add("tela-relatorio");
+    // Quando sair da tela,
+    // remove a classe novamente.
+    return () => {document.body.classList.remove("tela-relatorio");
+    };
+}, []);
 
   // =====================================================
   // BUSCAR DADOS DO DESAFIO
@@ -91,7 +99,7 @@ function Relatorio() {
 
       });
 
-  }, []);
+  }, [idDesafio]);
 
 
   // =====================================================
@@ -171,13 +179,14 @@ function Relatorio() {
 
       method: "POST",
 
+       // envia o cookie de login: se estiver logado, o relatório é salvo na conta
+       credentials: "include",
+
       headers: {
         "Content-Type": "application/json"
       },
 
       body: JSON.stringify({
-
-        id_usuario: idUsuario,
 
         id_desafio: idDesafio,
 
@@ -204,6 +213,7 @@ function Relatorio() {
           resultado
         );
 
+        // Os erros são contabilizados somente em continuar()
         setResultadoRelatorio(resultado);
 
       })
@@ -221,24 +231,43 @@ function Relatorio() {
 
 
   // =====================================================
-  // VOLTAR
+  // CONTINUAR
+  // Se não for o último caso, vai para o próximo cliente.
+  // Se for o último, salva o resultado e vai para a tela final.
   // =====================================================
 
-  function voltar() {
+  async function continuar() {
 
-    navigate("/caso");
+    if (!resultadoRelatorio) {
+      return;
+    }
 
-  }
+    const quantidadeErros = resultadoRelatorio.erros || 0;
 
+    // Último desafio: os erros vão direto para finalizarJogatina,
+    // pois o estado do React ainda não estaria atualizado.
+    if (ehUltimoDesafio()) {
 
-  // =====================================================
-  // PRÓXIMO CASO
-  // =====================================================
+      try {
 
-  function proximoCaso() {
+        await finalizarJogatina(quantidadeErros);
 
-    console.log("Próximo caso");
+        navigate("/resultado");
 
+      } catch (erro) {
+
+        console.error("Erro ao finalizar jogatina:", erro);
+
+      }
+
+      return;
+    }
+
+    registrarErrosRelatorio(quantidadeErros);
+
+    proximoDesafio();
+
+    navigate("/cliente");
   }
 
 
@@ -423,6 +452,7 @@ function Relatorio() {
               <button
                 key={item.id_item}
                 type="button"
+                disabled={!!resultadoRelatorio}
                 className={
                   itensSelecionados.includes(item.id_item)
                     ? "item-relatorio selecionado"
@@ -451,6 +481,7 @@ function Relatorio() {
               <button
                 key={item.id_item}
                 type="button"
+                disabled={!!resultadoRelatorio}
                 className={
                   itensSelecionados.includes(item.id_item)
                     ? "item-relatorio selecionado"
@@ -479,6 +510,7 @@ function Relatorio() {
               <button
                 key={item.id_item}
                 type="button"
+                disabled={!!resultadoRelatorio}
                 className={
                   itensSelecionados.includes(item.id_item)
                     ? "item-relatorio selecionado"
@@ -507,6 +539,10 @@ function Relatorio() {
 
           <section className="resultado-relatorio">
 
+            <p>
+              <strong>Erros cometidos no relatório:</strong>
+              {" "} {resultadoRelatorio.erros}
+            </p>
 
             {resultadoRelatorio.tipo === "completo" && (
 
@@ -588,7 +624,7 @@ function Relatorio() {
                   id => {
 
                     const item = itens.find(
-                      item => item.id_item === id
+                      item => Number(item.id_item) === Number(id)
                     );
 
                     return (
@@ -609,7 +645,7 @@ function Relatorio() {
 
             <button
               type="button"
-              onClick={() => navigate("/resultado")}
+              onClick={continuar}
             >
               CONTINUAR
             </button>
@@ -630,20 +666,6 @@ function Relatorio() {
       <footer className="relatorio-footer">
 
 
-        <button
-          className="btn-voltar"
-          onClick={voltar}
-        >
-
-          <span className="seta">
-            ←
-          </span>
-
-          VOLTAR
-
-        </button>
-
-
         {!resultadoRelatorio && (
 
           <button
@@ -658,16 +680,6 @@ function Relatorio() {
         )}
 
 
-        <button
-          className="btn-proximo"
-          onClick={proximoCaso}
-        >
-
-          PRÓXIMO CASO
-
-        </button>
-
-
       </footer>
 
 
@@ -676,5 +688,6 @@ function Relatorio() {
   );
 
 }
+
 
 export default Relatorio;

@@ -8,12 +8,19 @@ html, body {
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 100dvh;
-    min-height: 480px;
+    /* height: 100dvh; desabilitando por causa da sugestão do claude*/
+    /*Adição do claude*/
+    height: auto;
+    max-height: 100dvh;
+    aspect-ratio: 3/2; /* 1536x1024 da bancada.jpeg, mantem um tamanho fixo com base na propoção*/
+    margin: 0 auto;
+    /*fim da adição*/
+    min-height: 630px;
     font-family: Unispace, monospace;
     color: aquamarine;
     background-color: black;
-
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 /* .textContainer{
@@ -27,7 +34,7 @@ html, body {
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;   /* preenche sem distorcer */
+    object-fit: cover;   /*preenche sem distorcer */
     z-index: 0;
     -webkit-user-drag: none;
     user-select: none;
@@ -116,7 +123,7 @@ html, body {
     border-style: double;
     background-color: transparent;
     display: block;
-
+    -webkit-user-drag: none;
 }
 
 /*===========================================================================*/
@@ -125,7 +132,7 @@ html, body {
 /*AREA DO PC*/
 .pcContainer {
     position: absolute;
-    bottom: 15%;
+    bottom: 5%; /*antes tava 15%, abaixei para fica em cima da bancada*/
     left: 58%;
     transform: translateX(-50%);
     display: flex;
@@ -135,20 +142,23 @@ html, body {
     width: 75%;
     height: 42%;
     z-index: 5;
+    
 }
 
 /*MONITOR*/
 .monitorImage {
-    width: 18%;
+    width: 50%;
     height: auto;
     object-fit: contain;
+    -webkit-user-drag: none;
 }
 
 /*GABINETE*/
 .gabineteImage {
-    width: 36%;
+    width: 32%;
     height: auto;
     object-fit: contain;
+    -webkit-user-drag: none;
 }
 
 /*GABINETE DURANTE A MANUTENÇÃO*/
@@ -156,6 +166,7 @@ html, body {
     width: 40%;
     height: auto;
     object-fit: contain;
+    -webkit-user-drag: none;
 }
 
 /*GABINETE CLICÁVEL*/
@@ -231,6 +242,26 @@ html, body {
     border-radius: 6px;
     cursor: pointer;
     z-index: 10000;
+}
+
+/*Adição marko -  agora aparece o Número de Caso atual e Sua pontuação*/
+.statusJogo {
+    position: absolute;
+    top: 3%;
+    right: 2%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    padding: 8px 14px;
+    background-color: rgba(0, 0, 0, 0.75);
+    border: 2px solid aquamarine;
+    border-radius: 8px;
+    color: aquamarine;
+    font-weight: bold;
+    font-size: clamp(10px, 1.4vw, 14px);
+    z-index: 10;
+    pointer-events: none; /* não atrapalha cliques na bancada */
 }
 
 
@@ -391,6 +422,9 @@ html, body {
     z-index: 10000;
 }
 
+:global(#root):has(> .screenWrapper) { /*esse screenWrapper so aparece só quando uma tela de caso está aberta*/
+    width: 100%;
+}
 /* Wrapper geral: ocupa a tela toda, centraliza o conteúdo */
 .screenWrapper {
     display: flex;
@@ -404,6 +438,7 @@ html, body {
     /* padding: 20px; */
     box-sizing: border-box;
     background-color: black;
-    overflow-y: auto; 
+    overflow-y: auto;
+    
 }
 

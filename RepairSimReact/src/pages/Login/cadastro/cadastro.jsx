@@ -78,10 +78,10 @@
 //     };
 //     export default Cadastro;
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Cadastro.module.css'
-import backgroundImage from '../../../assets/imgFundo.jpeg'
+import FundoAnimado from '../../../components/FundoAnimado';
 
 function Cadastro() {
     const navigate = useNavigate()
@@ -110,7 +110,6 @@ function Cadastro() {
             });
             const data = await response.json();
             if (response.ok) {
-                localStorage.setItem('usuario', JSON.stringify(data.usuario));
                 alert(`Cadastro realizado com sucesso!\n\nRealize o login da sua nova conta!`);
                 navigate(-1);
             } else {
@@ -124,11 +123,11 @@ function Cadastro() {
         }
     };
 
+
+
     return (
         <div className={styles.page}>
-            <div className={styles.bckground}>
-                <img src={backgroundImage} alt="Background" className={styles.bckgroundImg} />
-            </div>
+            <FundoAnimado />
 
             <form className={styles.card} onSubmit={handleSubmit}>
                 <div className={styles.iconBadge}>🔧</div>

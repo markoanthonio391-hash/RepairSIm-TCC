@@ -1,221 +1,3 @@
-/* .container{
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 100dvh;
-    padding: clamp(1rem, 4vh, 3rem) 1rem;
-    box-sizing: border-box;
-    gap: clamp(0.75rem, 2vh, 1.25rem);
-    overflow-y: auto;
-}
-
-.bckground{
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-}
-
-.bckgroundImg{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.title{
-    color: #F5F7FA;
-    font-family: Unispace, monospace;
-    font-style: italic;
-    text-align: center;
-    font-size: clamp(1.75rem, 5vw, 3rem);
-    margin: 0 0 clamp(1rem, 3vh, 2rem);
-}
-
-.optionRow{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.4rem;
-    width: 100%;
-}
-
-.optionLabel{
-    font-family: Unispace, monospace;
-    color: #A8B3C7;
-    text-align: center;
-    font-size: clamp(0.9rem, 2vw, 1.2rem);
-    margin: 0;
-}
-
-.optionButton{
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: min(70vw, 16rem);
-    height: clamp(2.5rem, 6vh, 3.25rem);
-    font-family: Unispace, monospace;
-    font-size: clamp(14px, 2vw, 18px);
-    cursor: pointer;
-    border-radius: 20px;
-    border: 3px solid transparent;
-    color: black;
-    box-sizing: border-box;
-    box-shadow:
-        0 0 6px var(--neon-color),
-        0 0 16px var(--neon-color),
-        0 0 30px color-mix(in srgb, var(--neon-color) 55%, transparent);
-    text-shadow: 0 0 8px color-mix(in srgb, var(--neon-color) 80%, transparent);
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.15s ease-in-out, filter 0.15s ease-in-out;
-}
-
-.optionButton:hover{
-    transform: scale(1.05);
-    filter: brightness(1.1);
-    border-color: var(--neon-color);
-    box-shadow:
-        0 0 8px var(--neon-color),
-        0 0 20px var(--neon-color),
-        0 0 40px color-mix(in srgb, var(--neon-color) 70%, transparent),
-        inset 0 0 14px color-mix(in srgb, var(--neon-color) 40%, transparent);
-    text-shadow: 0 0 10px color-mix(in srgb, var(--neon-color) 90%, transparent);
-}
-
-.optionButton:focus-visible{
-    outline: none;
-    transform: scale(1.03);
-    border-color: var(--neon-color);
-    box-shadow:
-        0 0 8px var(--neon-color),
-        0 0 20px var(--neon-color),
-        0 0 40px color-mix(in srgb, var(--neon-color) 70%, transparent);
-}
-
-.tema{ background-color: #009dff; --neon-color: #00c3ff; }
-.idioma{ background-color: #009dff; --neon-color: #00c3ff; }
-.som{ background-color: #009dff; --neon-color: #00c3ff; }
-.fonte{ background-color: #009dff; --neon-color: #00c3ff; }
-
-.voltarButton{
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: clamp(2.5rem, 8vh, 4.5rem);
-    font-family: Unispace, monospace;
-    border: 3px solid transparent;
-    width: min(70vw, 16rem);
-    height: clamp(2.5rem, 6vh, 3.25rem);
-    font-size: clamp(14px, 2vw, 18px);
-    cursor: pointer;
-    border-radius: 20px;
-    color: white;
-    box-sizing: border-box;
-    box-shadow:
-        0 0 8px var(--neon-color),
-        0 0 22px var(--neon-color),
-        0 0 42px color-mix(in srgb, var(--neon-color) 65%, transparent);
-    text-shadow: 0 0 8px color-mix(in srgb, var(--neon-color) 80%, transparent);
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.15s ease-in-out, filter 0.15s ease-in-out;
-}
-
-.voltarButton:hover{
-    transform: scale(1.05);
-    filter: brightness(1.1);
-    border-color: var(--neon-color);
-}
-
-.voltarButton:focus-visible{
-    outline: none;
-    transform: scale(1.03);
-    border-color: var(--neon-color);
-}
-
-.voltar{
-    background-color: #3a4a5c;
-    --neon-color: #7dd3fc;
-} */
-
-/* .container{
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 100dvh;
-    padding: clamp(1rem, 4vh, 3rem) 1rem;
-    box-sizing: border-box;
-    gap: clamp(0.75rem, 2vh, 1.25rem);
-    overflow-y: auto;
-}
-
-.bckground{
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-}
-
-.bckgroundImg{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.title{
-    color: #F5F7FA;
-    font-family: Unispace, monospace;
-    font-style: italic;
-    text-align: center;
-    font-size: clamp(1.75rem, 5vw, 3rem);
-    margin: 0 0 clamp(1rem, 3vh, 2rem);
-}
-
-.optionRow{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.4rem;
-    width: 100%;
-}
-
-.optionLabel{
-    font-family: Unispace, monospace;
-    color: #A8B3C7;
-    text-align: center;
-    font-size: clamp(0.9rem, 2vw, 1.2rem);
-    margin: 0;
-}
-
-.optionButton{
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: min(70vw, 16rem);
-    height: clamp(2.5rem, 6vh, 3.25rem);
-    font-family: Unispace, monospace;
-    font-size: clamp(14px, 2vw, 18px);
-    cursor: pointer;
-    border-radius: 20px;
-    border: 3px solid transparent;
-    color: black;
-    box-sizing: border-box;
-    box-shadow:
-        0 0 6px var(--neon-color), 
-        0 0 16px var(--neon-color),
-        0 0 30px color-mix(in srgb, var(--neon-color) 55%, transparent);
-    text-shadow: 0 0 8px color-mix(in srgb, var(--neon-color) 80%, transparent);
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.15s ease-in-out, filter 0.15s ease-in-out;
-}        
-*/
-
 .container{
     position: relative;
     display: flex;
@@ -406,4 +188,223 @@
 .temaClaro .voltarButton:hover{
     box-shadow: 0 4px 14px rgba(10, 25, 47, 0.35);
     filter: brightness(0.95);
+}
+
+.stage {
+  --bg-deep: #020611;
+  --bg-mid: #040d21;
+  --glow: #2f7bff;
+  --glow-soft: #1a4fb8;
+  --line: #1e5aa8;
+  --line-bright: #5fb0ff;
+  --dot: #7fc4ff;
+
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: 
+    radial-gradient(ellipse 60% 55% at 50% 50%, rgba(47,123,255,0.35) 0%, rgba(20,60,140,0.12) 40%, rgba(2,6,17,0) 70%),
+    linear-gradient(180deg, #040a1a 0%, #020611 100%);
+  animation: breathe 6s ease-in-out infinite;
+  overflow: hidden;
+  z-index: -1; /* Mantém o fundo atrás dos botões */
+}
+
+@keyframes breathe {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.18); }
+}
+
+/* Grid tecnológico ao fundo */
+.grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(80,140,255,0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80,140,255,0.09) 1px, transparent 1px);
+  background-size: 34px 34px;
+  -webkit-mask-image: radial-gradient(ellipse 55% 60% at 50% 50%, #000 0%, rgba(0,0,0,0.5) 45%, transparent 75%);
+  mask-image: radial-gradient(ellipse 55% 60% at 50% 50%, #000 0%, rgba(0,0,0,0.5) 45%, transparent 75%);
+  animation: gridPulse 6s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* Padrões hexagonais */
+.hex {
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  background-image:
+    repeating-linear-gradient(60deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px),
+    repeating-linear-gradient(-60deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px),
+    repeating-linear-gradient(0deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px);
+  opacity: 0.5;
+  animation: hexFade 8s ease-in-out infinite;
+}
+
+.bl { 
+  left: -120px; 
+  bottom: -160px; 
+  -webkit-mask-image: radial-gradient(circle at 0% 100%, #000 55%, transparent 80%); 
+  mask-image: radial-gradient(circle at 0% 100%, #000 55%, transparent 80%); 
+}
+
+.tr { 
+  right: -160px; 
+  top: -180px; 
+  -webkit-mask-image: radial-gradient(circle at 100% 0%, #000 55%, transparent 80%); 
+  mask-image: radial-gradient(circle at 100% 0%, #000 55%, transparent 80%); 
+  animation-delay: 2s;
+}
+
+@keyframes hexFade {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* Linhas e Conexões do SVG */
+.circuits {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.circuit-line {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.4;
+  opacity: 0.55;
+}
+
+.circuit-line.bright {
+  stroke: var(--line-bright);
+  opacity: 0.35;
+  stroke-width: 1.2;
+  filter: drop-shadow(0 0 2px rgba(120,180,255,0.6));
+}
+
+.node {
+  fill: var(--dot);
+  filter: drop-shadow(0 0 4px rgba(120,190,255,0.9));
+}
+
+.node.pulse {
+  animation: nodePulse 2.6s ease-in-out infinite;
+}
+
+@keyframes nodePulse {
+  0%, 100% { opacity: 0.4; r: 2.4px; }
+  50% { opacity: 1; r: 4.2px; }
+}
+
+/* Os pulsos de energia que correm as trilhas */
+.traveler {
+  fill: #bfe3ff;
+  filter: drop-shadow(0 0 6px #6fbaff) drop-shadow(0 0 12px rgba(80,150,255,0.8));
+}
+
+/* Partículas piscantes espalhadas */
+.particlesContainer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--dot);
+  box-shadow: 0 0 6px 1px rgba(120,190,255,0.8);
+  animation-name: twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+.particlesContainer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* Deixa passar qualquer clique do mouse para os botões */
+  width: 100%;
+  height: 100%;
+}
+
+.sliderPanel{
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: min(70vw, 16rem);
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease, opacity 0.2s ease, margin 0.25s ease;
+}
+
+.sliderPanelAberto{
+    max-height: 3.5rem;
+    opacity: 1;
+    margin-top: 0.25rem;
+}
+
+.slider{
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    outline: none;
+    cursor: pointer;
+    /* parte preenchida em ciano até a % atual */
+    background: linear-gradient(90deg, #00c3ff var(--pct), rgba(255,255,255,0.18) var(--pct));
+    box-shadow: 0 0 8px rgba(0, 195, 255, 0.5);
+}
+
+.slider::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #00c3ff;
+    box-shadow: 0 0 10px #00c3ff, 0 0 20px rgba(0, 195, 255, 0.6);
+    transition: transform 0.15s ease-in-out;
+}
+
+.slider::-moz-range-thumb{
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #00c3ff;
+    box-shadow: 0 0 10px #00c3ff, 0 0 20px rgba(0, 195, 255, 0.6);
+}
+
+.slider:hover::-webkit-slider-thumb,
+.slider:focus-visible::-webkit-slider-thumb{
+    transform: scale(1.2);
+}
+
+.sliderValor{
+    font-family: Unispace, monospace;
+    color: #F5F7FA;
+    min-width: 3.2ch;
+    text-align: right;
+    text-shadow: 0 0 6px #00c3ff;
+}
+
+.temaClaro .sliderValor{
+    color: #0A192F;
+    text-shadow: none;
 }

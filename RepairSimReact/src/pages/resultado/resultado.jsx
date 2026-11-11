@@ -1,18 +1,37 @@
-import { useState, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import { useJogo } from "../../context/JogoContext";
 import "./resultado.css";
 
 function Resultado() {
-  const resultado = {
-    dificuldade: "",
-    quantidadeDesafios: "",
-    errosDesafios: "",
-    errosRelatorios: "",
-    pontuacaoFinal: "",
-    tempoTotal: "",
-    dataFinalizada: "",
-  };
+  const navigate = useNavigate();
+    const { jogatina } = useJogo();
+
+
+    function formatarTempo(segundos) {
+        const minutos = Math.floor(segundos / 60);
+        const segundosRestantes = segundos % 60;
+        return `${String(minutos).padStart(2, "0")}:${String(
+            segundosRestantes
+        ).padStart(2, "0")}`;
+    }
+
+
+    //caso tentem acessar resultado sem terminar uma jogatina
+    if (!jogatina.finalizada) {
+        return (
+            <main className="resultado">
+                <div className="resultado-container">
+                    <h1>Nenhum resultado disponível.</h1>
+                    <button className="btn-principal"
+                    onClick={() => navigate("/Dificuldade")}>
+                        VOLTAR
+                    </button>
+                </div>
+            </main>
+        );
+
+    }
+
 
   return (
     <main className="resultado">
@@ -31,9 +50,9 @@ function Resultado() {
         <section className="pontuacao">
           <span>Pontuação final</span>
 
-          <strong>{resultado.pontuacaoFinal}</strong>
+          <strong>{jogatina.pontos}</strong>
 
-          <small>/ 100</small>
+        
         </section>
 
         <section className="resultado-cards">
@@ -44,7 +63,7 @@ function Resultado() {
             <p>Dificuldade</p>
 
             <strong>
-              {resultado.dificuldade}
+              {jogatina.dificuldade}
             </strong>
           </div>
 
@@ -54,7 +73,7 @@ function Resultado() {
             <p>Desafios</p>
 
             <strong>
-              {resultado.quantidadeDesafios}
+              {jogatina.quantidadeCasos}
             </strong>
           </div>
 
@@ -64,7 +83,7 @@ function Resultado() {
             <p>Erros nos desafios</p>
 
             <strong>
-              {resultado.errosDesafios}
+              {jogatina.errosDesafio}
             </strong>
           </div>
 
@@ -74,7 +93,7 @@ function Resultado() {
             <p>Erros nos relatórios</p>
 
             <strong>
-              {resultado.errosRelatorios}
+              {jogatina.errosRelatorio}
             </strong>
           </div>
 
@@ -84,7 +103,7 @@ function Resultado() {
             <p>Tempo total</p>
 
             <strong>
-              {resultado.tempoTotal}
+              {formatarTempo(jogatina.tempoSegundos)}
             </strong> 
           </div>
 
@@ -94,24 +113,27 @@ function Resultado() {
             <p>Finalizada em</p>
 
             <strong>
-              {resultado.dataFinalizada}
+              {jogatina.dataFinalizacao ? new Date(jogatina.dataFinalizacao).toLocaleDateString("pt-BR") : "-"}
             </strong>
           </div>
 
         </section>
 
+        {!jogatina.salvo && (
+          <p className="resultado-aviso">
+            Esta partida não foi salva no histórico. Faça login para registrar seus resultados.
+          </p>
+        )}
+        
         <footer className="resultado-footer">
 
-          <button className="btn-secundario" onclick={() => Navigate("/detalhes")}>
-            Ver detalhes
+          <button className="btn-secundario" onClick={() => navigate("/Dificuldade")}>
+            NOVO JOGO
           </button>
-
-          <button className="btn-principal" onClick={() => Navigate("/simulacao")}>
-            Nova simulação
+               <button className="btn-principal" onClick={() => navigate("/")}>
+            INÍCIO
           </button>
-
         </footer>
-
       </div>
     </main>
   );

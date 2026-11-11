@@ -7,7 +7,9 @@ export const translations = {
     configuracoes: 'Configurações',
     conquistas: 'Conquistas',
     sair: 'Sair',
+    historico: 'Histórico',
     login: 'Login',
+    logout: 'Sair da conta',
 
     // Dificuldade
     dificuldadeTitle: 'DIFICULDADES',
@@ -63,7 +65,9 @@ export const translations = {
     configuracoes: 'Settings',
     conquistas: 'Achievements',
     sair: 'Exit',
+    historico: 'History',
     login: 'Login',
+    logout: 'Logout',
 
     // Dificuldade
     dificuldadeTitle: 'DIFFICULTY',

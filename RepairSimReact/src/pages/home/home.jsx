@@ -2,22 +2,31 @@ import styles from './Home.module.css';
 import { useState, useEffect } from 'react'
 import TechSolveLogo from '../../assets/TechSolveLogo.png'
 import { useNavigate } from 'react-router-dom'
-import logoSair from '../../assets/logoSair.png'
 import logoConfig from '../../assets/logoConfig.png'
 import logoConquistas from '../../assets/logoConq.png'
 import logoPlay from '../../assets/iconPlay.png'
-import { useTheme } from '../../context/useTheme';
-import backgroundImageDark from '../../assets/imgFundo.jpeg'
-import backgroundImageLight from '../../assets/imgFundoBranco.jpeg'
+import logoHistorico from '../../assets/logoConq.png' // troque pelo ícone do histórico quando tiver
 import { useLanguage } from '../../context/useLanguage';
+import FundoAnimado from '../../components/FundoAnimado';
+import { lerUsuario, validarSessao, sairDaConta } from '../../services/auth';
+
 
 function Home() {
   const navigate = useNavigate();
+  const [logado, setLogado] = useState(() => Boolean(lerUsuario()));
+
+  // confirma com o servidor se o login (cookie) ainda é válido. Se expirou, volta para "Login"
+  useEffect(() => {
+    if (!lerUsuario()) return;
+    validarSessao().then((valida) => setLogado(valida));
+  }, []);
+
+  const logout = async () => {
+    await sairDaConta();
+    setLogado(false);
+  };
   
-  const { tema } = useTheme();
-  const backgroundImage = tema === 'Claro' ? backgroundImageLight : backgroundImageDark;
-  
-  const claro = tema === 'Claro';
+           
 
   const { t } = useLanguage(); // Adicione esta linha para obter a função de tradução
 
@@ -29,10 +38,6 @@ function Home() {
     return () => clearTimeout(timer);
     }, []);
 
-  const fecharJanela = () => {
-    setEstaAberta(false);
-  };
-
   if (!estaAberta) {
     return null;
   }
@@ -40,11 +45,8 @@ function Home() {
   const faseClasse = ligando ? styles.ligando : styles.ligado;
 
   return (
-    <div className={`${styles.container} ${claro ? styles.temaClaro : ''}`}>
-      <div className={styles.bckground}>
-        <img src={backgroundImage} alt="Background" className={styles.bckgroundImg} />
-        <div className={styles.circuitoGlow}></div>
-      </div>
+    <div className={styles.container}>
+      <FundoAnimado />
 
       <div className={styles['tech-solve-logo']}>
         <img src={TechSolveLogo} alt="TechSolve Logo" className={`${styles.logoTechSolve} ${styles['tech-solve-logo']}`} />
@@ -83,22 +85,27 @@ function Home() {
         {t.conquistas}
       </button>
 
-      <button
-        className={`${styles.menuButton} ${styles.sair} ${faseClasse}`}
-        onClick={() => fecharJanela('Sair')}
-      >
-        <span className={`${styles.iconWrap} ${styles.sair}`}>
-          <img src={logoSair} alt={t.sair} />
-        </span>
-        {t.sair}
-      </button>
+       {logado && (
+        <button
+          className={`${styles.menuButton} ${styles.historico} ${faseClasse}`}
+          onClick={() => navigate('/Historico')} 
+        > 
+          <span className={`${styles.iconWrap} ${styles.historico}`}>
+            <img src={logoHistorico} alt={t.historico} />
+          </span>
+          {t.historico}
+        </button>
+      )} 
 
-      <button
-        className={`${styles.menuButton} ${styles.buttonLogin} ${faseClasse}`}
-        onClick={() => navigate('/login')}
-      >
-        {t.login}
-      </button>
+      {logado ? (
+        <button className={`${styles.menuButton} ${styles.buttonLogin} ${faseClasse}`} onClick={logout}>
+          {t.logout}
+        </button>
+      ) : (
+        <button className={`${styles.menuButton} ${styles.buttonLogin} ${faseClasse}`} onClick={() => navigate('/login')}>
+          {t.login}
+        </button>
+      )}
     </div>
     
   );

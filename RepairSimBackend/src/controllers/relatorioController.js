@@ -1,10 +1,11 @@
 const conexao = require('../config/db');
+const { z } = require('zod');
 
-// Lista todos os relatórios
+// Lista os relatórios do usuário logado
 exports.listar = (req, res) => {
-    const sql = `select * from relatorio`;
+    const sql = `select * from relatorio where id_usuario = ?`; //só os do usuário logado
 
-    conexao.query(sql, (erro, resultado) =>{
+    conexao.query(sql, [req.usuario.id], (erro, resultado) =>{
         if (erro) {
             console.error('Erro ao listar relatórios:', erro);
             return res.status(500).json({
@@ -39,18 +40,27 @@ exports.buscarDados = (req, res) => {
     });
 };
 
+//molde dos dados enviados ao avaliar. O id do usuário NÃO vem do front, vem do cookie de login
+const avaliarSchema = z.object({
+    id_desafio: z.coerce.number().int().positive(),
+    itens: z.array(z.coerce.number().int().positive()).max(50)
+});
+
 //avalia o relatorio
+//quem está logado tem o relatório salvo no banco. Quem joga sem conta é avaliado normalmente, mas nada é salvo
 exports.avaliar = (req, res) =>{
-    const idDesafio = req.body.id_desafio;
-    const idUsuario = req.body.id_usuario;
-    const itensSelecionados = req.body.itens;
+    const validacao = avaliarSchema.safeParse(req.body);
 
     //validando
-    if (!idDesafio || !idUsuario || !Array.isArray(itensSelecionados)) {
+    if (!validacao.success) {
         return res.status(400).json({
             mensagem: 'Dados do relatório inválidos.'
         });
     }
+
+    const idDesafio = validacao.data.id_desafio;
+    const idsSelecionados = [...new Set(validacao.data.itens)]; //remove ids repetidos
+    const idUsuario = req.usuario ? req.usuario.id : null; //null = jogando sem login
 
     //buscando os intens corretos do desafio pelo inner join
     const sqlCorretos = `select i.id_item, i.nome, i.tipo 
@@ -65,13 +75,15 @@ exports.avaliar = (req, res) =>{
             });
         }
 
+        if (itensCorretos.length === 0) {
+            return res.status(404).json({
+                mensagem: 'Desafio não encontrado.'
+            });
+        }
+
         //transforma em ids para comparar
         const idsCorretos = itensCorretos.map(
             item => Number(item.id_item)
-        );
-
-        const idsSelecionados = itensSelecionados.map(
-            id => Number(id)
         );
 
         //itens corretos que o jogador acertou
@@ -103,9 +115,41 @@ exports.avaliar = (req, res) =>{
             item => acertos.includes(Number(item.id_item))
         )
 
-        const erroDetalhes = itensSelecionados.filter(id => erros.includes(Number(id))).map(id => Number(id));
+        const erroDetalhes = idsSelecionados.filter(id => erros.includes(id));
         
         const esquecidosDetalhes = itensCorretos.filter(item => esquecidos.includes(Number(item.id_item)));
+
+        //enviando a resposta para o front
+        function enviarResposta(){
+            if (acertouTudo){
+                return res.json({
+                    correto: true, erros: 0,tipo: 'completo', 
+                    mensagem: 'Parabéns! Você registrou corretamente todos os itens utilizados.', 
+                    itensCorretos: acertosDetalhes, itensIncorretos: [], itensEsquecidos: []
+                });
+            }
+
+            if (errouTudo) {
+                return res.json({
+                    correto: false, erros: erros.length,tipo: 'totalmente_incorreto',
+                    mensagem: 'Você não selecionou nenhum dos itens corretos.',
+                    itensCorretos: itensCorretos, itensIncorretos: idsSelecionados, itensEsquecidos: esquecidosDetalhes
+                });
+            }
+
+            if (acertouParte) {
+                return res.json({
+                    correto: false, erros: erros.length,tipo: 'parcial',
+                    mensagem: 'Você acertou parte do relatório, mas selecionou itens incorretos ou deixou itens corretos de fora.',
+                    itensCorretos: acertosDetalhes, itensIncorretos: erroDetalhes, itensEsquecidos: esquecidosDetalhes
+                });
+            }
+        }
+
+        //sem login: avalia, mas não salva nada no banco
+        if (!idUsuario) {
+            return enviarResposta();
+        }
 
         //salvar relatorio
         const inserirRelatorio = `insert into relatorio (id_usuario, id_desafio, relatorio_correto) values (?, ?, ?)`;
@@ -119,13 +163,13 @@ exports.avaliar = (req, res) =>{
             }
             const idRelatorio = resultadoRelatorio.insertId;
 
-            //parou em salvar itens selecionados
+            //se não selecionou nada, não há itens para salvar
             if (idsSelecionados.length === 0){
                 return enviarResposta();
             }
 
             const valores = idsSelecionados.map(id =>{
-                const correto = idsCorretos.includes(Number(id));
+                const correto = idsCorretos.includes(id);
                 return[idRelatorio, id, correto];
             });
 
@@ -143,35 +187,7 @@ exports.avaliar = (req, res) =>{
                 }
 
                 enviarResposta();
-            }
-        );
-
-        //enviando a resposta para o front
-        function enviarResposta(){
-            if (acertouTudo){
-                return res.json({
-                    correto: true, tipo: 'completo', 
-                    mensagem: 'Parabéns! Você registrou corretamente todos os itens utilizados.', 
-                    itensCorretos: acertosDetalhes, itensIncorretos: [], itensEsquecidos: []
-                });
-            }
-
-            if (errouTudo) {
-                return res.json({
-                    correto: false, tipo: 'totalmente_incorreto',
-                    mensagem: 'Você não selecionou nenhum dos itens corretos.',
-                    itensCorretos: itensCorretos, itensIncorretos: idsSelecionados, itensEsquecidos: esquecidosDetalhes
-                });
-            }
-
-            if (acertouParte) {
-                return res.json({
-                    correto: false, tipo: 'parcial',
-                    mensagem: 'Você acertou parte do relatório, mas selecionou itens incorretos ou deixou itens corretos de fora.',
-                    itensCorretos: acertosDetalhes, itensIncorretos: erroDetalhes, itensEsquecidos: esquecidosDetalhes
-                });
-            }
-        }
-        })
-    })
+            });
+        });
+    });
 }
