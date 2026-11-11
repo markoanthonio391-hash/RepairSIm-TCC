@@ -2,7 +2,6 @@ import styles from './Home.module.css';
 import { useState, useEffect } from 'react'
 import TechSolveLogo from '../../assets/TechSolveLogo.png'
 import { useNavigate } from 'react-router-dom'
-import logoSair from '../../assets/logoSair.png'
 import logoConfig from '../../assets/logoConfig.png'
 import logoConquistas from '../../assets/logoConq.png'
 import logoPlay from '../../assets/iconPlay.png'
@@ -38,10 +37,6 @@ function Home() {
     const timer = setTimeout(() => setLigando(false), 4500);
     return () => clearTimeout(timer);
     }, []);
-
-  const fecharJanela = () => {
-    setEstaAberta(false);
-  };
 
   if (!estaAberta) {
     return null;
@@ -101,16 +96,6 @@ function Home() {
           {t.historico}
         </button>
       )} 
-
-      <button
-        className={`${styles.menuButton} ${styles.sair} ${faseClasse}`}
-        onClick={() => fecharJanela('Sair')}
-      >
-        <span className={`${styles.iconWrap} ${styles.sair}`}>
-          <img src={logoSair} alt={t.sair} />
-        </span>
-        {t.sair}
-      </button>
 
       {logado ? (
         <button className={`${styles.menuButton} ${styles.buttonLogin} ${faseClasse}`} onClick={logout}>
