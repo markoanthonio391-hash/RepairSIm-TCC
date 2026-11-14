@@ -17,6 +17,7 @@ function Dificuldade()
   // const [count, setCount] = useState(0)
 
   const [particulas, setParticulas] = useState([]);
+  const [mostrarVideos, setMostrarVideos] = useState(false);
 
   useEffect(() => {
     const count = 60; // Total de partículas do seu código original
@@ -52,16 +53,37 @@ function Dificuldade()
       }
 
       const dados = await resposta.json();
+      console.log("desafios recebidos:", dados.desafios);
 
       iniciarJogatina(dificuldade, dados.desafios);
 
-      navigate("/cliente");
+      setMostrarVideos(true);
     }
     catch (erro){
       console.error("Erro ao iniciar jogatina:", erro);
     }
   }
-
+  if (mostrarVideos) {
+  return (
+    <div className={styles.videoOverlay}>
+      <video
+        src="/videos/videoentrando.mp4"
+        className={styles.video}
+        autoPlay
+        playsInline
+        disablePictureInPicture
+        onContextMenu={(e) => e.preventDefault()}
+        onEnded={() => navigate("/cliente")}
+      />
+      <button
+        className={styles.continuarButton}
+        onClick={() => navigate("/cliente")}
+      >
+        Pular
+      </button>
+    </div>
+  );
+}
   return (
     <div className={styles.container}>
       <div className={styles['tech-solve-logo']}>
@@ -183,12 +205,16 @@ function Dificuldade()
         </span>
         Difícil
       </button>
-      <button className={`${styles.voltarButton} ${styles.voltar}`} onClick={() => navigate('/')}> 
+      <button
+        data-som="back"
+        className={`${styles.voltarButton} ${styles.voltar}`}
+        onClick={() => navigate('/')}
+      >
         <span className={styles.iconWrap}>
           <img src={logoVoltar} alt="Voltar" />
         </span>
         Voltar
-      </button> 
+      </button>
     </div>
   );
 }

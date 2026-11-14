@@ -1,6 +1,7 @@
 import styles from './Login.module.css';
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { salvarUsuario } from '../../services/auth'
 //import backgroundImage from '../../assets/imgFundo.jpeg'
 
 function Login() {
@@ -17,13 +18,14 @@ function Login() {
           setLoading(true);
           setError('');
           const response = await fetch('http://localhost:3000/usuarios/login', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email, senha }),
-          });
+            method: 'POST',
+            credentials: 'include', // permite receber o cookie de login
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, senha }),
+            });
           const data = await response.json();
           if (response.ok) {
-              localStorage.setItem('usuario', JSON.stringify(data.usuario));
+              salvarUsuario(data.usuario);
               alert(`Login realizado com sucesso!\n\nOlá ${data.usuario.username}!`);
               navigate('/');
           } else {

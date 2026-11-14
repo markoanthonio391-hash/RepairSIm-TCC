@@ -207,3 +207,11 @@ body {
   }
 }
  
+
+/*Caso o usuario n tenha logado aparece esse CSS*/
+.resultado-aviso {
+    margin: 0;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--cor-texto-suave);
+}

@@ -120,9 +120,9 @@ exports.listarAleatoriosPorDificuldade = (req, res) => {
 }
 
 const sql =`
-    select *
-    from desafios
-    where dificuldade = ?
+    select d.*
+    from desafios d
+    where d.dificuldade = ? and exists (select 1 from desafio_imagens_pc dip where dip.id_desafio = d.id_desafio)
     order by rand()
 `;
 
