@@ -2,7 +2,7 @@ const conexao = require("../config/db");
 
 // Lista todos os desafios
 exports.listar = (req, res) => {
-    const sql = "SELECT * FROM desafios";
+    const sql = "SELECT * FROM desafios WHERE id_instituicao IS NULL"; //só casos padrão: os exclusivos de instituição não aparecem aqui
 
     conexao.query(sql, (erro, resultado) => {
         if (erro) {
@@ -122,7 +122,7 @@ exports.listarAleatoriosPorDificuldade = (req, res) => {
 const sql =`
     select d.*
     from desafios d
-    where d.dificuldade = ? and exists (select 1 from desafio_imagens_pc dip where dip.id_desafio = d.id_desafio)
+    where d.dificuldade = ? and d.id_instituicao is null and exists (select 1 from desafio_imagens_pc dip where dip.id_desafio = d.id_desafio)
     order by rand()
 `;
 

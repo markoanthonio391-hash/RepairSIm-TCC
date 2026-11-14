@@ -2,6 +2,7 @@ const conexao = require('../config/db');
 const bcrypt = require('bcrypt'); //aplica o bcrypt para criptografar as senhas
 const { z } = require('zod'); //valida e limpa tudo que chega do front antes de usar
 const { NOME_COOKIE, opcoesCookie, opcoesCookieLogin, gerarToken } = require('../utils/token');
+const { buscarVinculo, vinculoParaFront } = require('../utils/vinculo');
 
 const db = conexao.promise(); //mesma conexão, mas permite usar async/await nas consultas
 
@@ -152,13 +153,18 @@ exports.login = async (req, res) => {
         //o token vai num cookie httpOnly, o JavaScript do navegador não consegue lê-lo
         res.cookie(NOME_COOKIE, gerarToken(usuario), opcoesCookieLogin());
 
+        //instituição e papel (aluno/admin) do usuário. O front usa isso só para mostrar ou esconder botões;
+        //quem realmente barra o acesso é o servidor, consultando o banco a cada requisição
+        const vinculo = await buscarVinculo(usuario.id_usuario);
+
         //só dados básicos vão para o react (nunca a senha nem o email)
         res.status(200).json({
             mensagem: 'Login realizado com sucesso!',
             usuario: {
                 id_usuario: usuario.id_usuario,
                 nome: usuario.nome,
-                username: usuario.username
+                username: usuario.username,
+                ...vinculoParaFront(vinculo)
             }
         });
 
@@ -189,7 +195,9 @@ exports.me = async (req, res) => {
             return res.status(401).json({ mensagem: 'Sessão inválida.' });
         }
 
-        res.json({ usuario: resultado[0] });
+        const vinculo = await buscarVinculo(req.usuario.id);
+
+        res.json({ usuario: { ...resultado[0], ...vinculoParaFront(vinculo) } });
 
     } catch (erro) {
         console.error('Erro ao buscar sessão:', erro.message);
