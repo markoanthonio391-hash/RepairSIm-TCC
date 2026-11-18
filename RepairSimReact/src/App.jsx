@@ -5,6 +5,7 @@ import { LanguageProvider } from './context/LanguageProvider';
 import { SoundProvider } from './context/SoundProvider';
 import { JogoProvider } from './context/JogoContext';
 import SomGlobal from './components/SomGlobal';
+
 const Home = lazy(() => import ('./pages/home/home'));
 const Dificuldade = lazy(() => import('./pages/dificuldade/dificuldade'));
 const Config = lazy(() => import('./pages/home/Config/Config'));
@@ -13,7 +14,7 @@ const TesteApi = lazy(() => import('./pages/testeAPI/api')); //teste de api
 const Login = lazy(() => import('./pages/Login/Login'));
 const Cadastro = lazy(() => import('./pages/Login/cadastro/cadastro'));
 const Cliente = lazy(() => import('./pages/cliente/cliente'));
-const Conquistas = lazy(() => import('./pages/home/Conquistas/Conquistas'));
+const Conquistas = lazy(() => import('./pages/Conquistas/Conquistas'));
 const Caso = lazy(() => import('./pages/caso/caso'));
 const Relatorio = lazy(() => import('./pages/relatorio/relatorio'));
 const Resultado = lazy(() => import('./pages/resultado/resultado')); 
@@ -43,6 +44,7 @@ function App() {
                     <Route path="/caso" element={<Caso />} />
                     <Route path='/resultado' element={<Resultado/>} />
                     <Route path='*'element={<h1>Not Found</h1>} />
+                    
                   </Routes>
                 </JogoProvider>
               </Suspense>

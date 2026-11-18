@@ -34,6 +34,7 @@ const imagensPcRoutes = require('./routes/imagensPcRoutes');
 
 const desafioImagensPcRoutes = require('./routes/desafioImagensPcRoutes');
 
+const conquistaRoutes = require('./routes/conquistaRoutes');
 
 const cors = require('cors'); //permite o acesso ao servidor pelo FrontEnd
 
@@ -78,6 +79,8 @@ app.use('/relatorios', relatorioRoutes);
 app.use('/imagens-pc', imagensPcRoutes);
 
 app.use('/desafio-imagens-pc', desafioImagensPcRoutes);
+
+app.use('/api/conquistas', conquistaRoutes);
 
 
 //rota que não existe
