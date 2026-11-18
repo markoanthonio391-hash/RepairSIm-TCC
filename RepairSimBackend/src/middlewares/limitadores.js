@@ -25,8 +25,27 @@ exports.limitadorLogin = criarLimitador(
     { skipSuccessfulRequests: true }
 );
 
+//entrar em instituição: o código de convite não pode ser adivinhado por tentativa e erro (10 erros a cada 15 minutos)
+exports.limitadorEntrarInstituicao = criarLimitador(
+    15, 10,
+    'Muitas tentativas de código. Aguarde 15 minutos e tente novamente.',
+    { skipSuccessfulRequests: true }
+);
+
+//cadastro de casos exclusivos (envia imagens, então é uma rota mais "pesada")
+exports.limitadorCriarDesafio = criarLimitador(
+    60, 30,
+    'Muitos casos cadastrados em pouco tempo. Tente novamente mais tarde.'
+);
+
 //cadastro: evita criação de contas em massa
 exports.limitadorCadastro = criarLimitador(
     60, 10,
     'Muitos cadastros feitos a partir deste dispositivo. Tente novamente mais tarde.'
+);
+
+//avaliar relatório: a resposta mostra o gabarito do caso, então limita para ninguém varrer todos os casos de uma vez
+exports.limitadorAvaliar = criarLimitador(
+    15, 60,
+    'Muitos relatórios enviados em pouco tempo. Aguarde alguns minutos e tente novamente.'
 );

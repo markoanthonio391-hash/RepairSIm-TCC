@@ -8,22 +8,27 @@ import logoPlay from '../../assets/iconPlay.png'
 import logoHistorico from '../../assets/logoConq.png' // troque pelo ícone do histórico quando tiver
 import { useLanguage } from '../../context/useLanguage';
 import FundoAnimado from '../../components/FundoAnimado';
-import { lerUsuario, validarSessao, sairDaConta } from '../../services/auth';
+import { lerUsuario, validarSessao, sairDaConta, ehAdmin } from '../../services/auth';
 
 
 function Home() {
   const navigate = useNavigate();
   const [logado, setLogado] = useState(() => Boolean(lerUsuario()));
+  const [admin, setAdmin] = useState(() => ehAdmin()); // só mostra/esconde o botão; quem protege é o servidor (403)
 
   // confirma com o servidor se o login (cookie) ainda é válido. Se expirou, volta para "Login"
   useEffect(() => {
     if (!lerUsuario()) return;
-    validarSessao().then((valida) => setLogado(valida));
+    validarSessao().then((valida) => {
+      setLogado(valida);
+      setAdmin(valida && ehAdmin()); // validarSessao atualizou papel/instituição no localStorage
+    });
   }, []);
 
   const logout = async () => {
     await sairDaConta();
     setLogado(false);
+    setAdmin(false);
   };
   
            
@@ -96,6 +101,16 @@ function Home() {
           {t.historico}
         </button>
       )} 
+
+      {logado && admin && (
+        <button
+          type="button"
+          className={`${styles.menuButton} ${styles.historico} ${faseClasse}`}
+          onClick={() => navigate('/cadastrar-desafio')}
+        >
+          Cadastrar desafio
+        </button>
+      )}
 
       {logado ? (
         <button className={`${styles.menuButton} ${styles.buttonLogin} ${faseClasse}`} onClick={logout}>

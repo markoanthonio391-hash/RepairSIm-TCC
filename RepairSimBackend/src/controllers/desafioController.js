@@ -1,8 +1,9 @@
 const conexao = require("../config/db");
+const { validarEtapas, buscarEtapas } = require("../utils/etapas");
 
 // Lista todos os desafios
 exports.listar = (req, res) => {
-    const sql = "SELECT * FROM desafios";
+    const sql = "SELECT * FROM desafios WHERE id_instituicao IS NULL"; //só casos padrão: os exclusivos de instituição não aparecem aqui
 
     conexao.query(sql, (erro, resultado) => {
         if (erro) {
@@ -100,6 +101,48 @@ exports.verificarItem = (req, res) => {
     });
 };
 
+// Etapas do desafio: quantas são e ONDE cada uma acontece (software = PC ligado e gabinete fechado,
+// hardware = PC desligado e gabinete aberto). Não revela qual é o item correto.
+exports.listarEtapas = async (req, res) => {
+    const idDesafio = Number(req.params.id);
+
+    if (!Number.isInteger(idDesafio) || idDesafio <= 0) {
+        return res.status(400).json({ mensagem: "Desafio inválido." });
+    }
+
+    try {
+        const [desafios] = await conexao.promise().query(
+            "select id_desafio, dificuldade from desafios where id_desafio = ?",
+            [idDesafio]
+        );
+
+        if (desafios.length === 0) {
+            return res.status(404).json({ mensagem: "Desafio não encontrado." });
+        }
+
+        const { resumo, etapas } = await buscarEtapas(idDesafio);
+
+        if (etapas.length === 0) {
+            return res.status(404).json({ mensagem: "Este desafio não tem etapas cadastradas." });
+        }
+
+        const validacao = validarEtapas(desafios[0].dificuldade, resumo);
+
+        res.json({
+            id_desafio: idDesafio,
+            dificuldade: desafios[0].dificuldade,
+            total_etapas: etapas.length,
+            valido: validacao.valido,
+            motivo: validacao.motivo,
+            etapas
+        });
+
+    } catch (erro) {
+        console.error("Erro ao buscar etapas:", erro.message);
+        res.status(500).json({ mensagem: "Erro ao buscar as etapas do desafio." });
+    }
+};
+
 ////////////////////////////////DIEGO PART4///////////////////////////////////
 
 exports.listarAleatoriosPorDificuldade = (req, res) => {
@@ -119,10 +162,16 @@ exports.listarAleatoriosPorDificuldade = (req, res) => {
     });
 }
 
+//total_etapas e os dados usados pela REGRA DE ETAPAS (Facil = 1, Medio = 2, Dificil = 3) vem do desafio_itens
 const sql =`
-    select d.*
+    select d.*, e.total_etapas, e.ordens_distintas, e.primeira_ordem, e.ultima_ordem
     from desafios d
-    where d.dificuldade = ? and exists (select 1 from desafio_imagens_pc dip where dip.id_desafio = d.id_desafio)
+    inner join (
+        select id_desafio, count(*) as total_etapas, count(distinct ordem) as ordens_distintas,
+               min(ordem) as primeira_ordem, max(ordem) as ultima_ordem
+        from desafio_itens group by id_desafio
+    ) e on e.id_desafio = d.id_desafio
+    where d.dificuldade = ? and d.id_instituicao is null and exists (select 1 from desafio_imagens_pc dip where dip.id_desafio = d.id_desafio)
     order by rand()
 `;
 
@@ -130,7 +179,7 @@ const sql =`
 conexao.query(
     sql,
     [dificuldade],
-    (erro, resultados) => {
+    (erro, resultadosBrutos) => {
         if (erro) {
 
             console.error(
@@ -145,57 +194,38 @@ conexao.query(
 
 }
 
+//REGRA DE ETAPAS: só entra na jogatina o caso com a quantidade de etapas da dificuldade, em sequência.
+//um caso fora da regra NÃO quebra o jogo: ele só deixa de ser sorteado, e o motivo aparece no console do servidor.
+const resultados = resultadosBrutos.filter((caso) => {
+    const validacao = validarEtapas(dificuldade, caso);
+
+    if (!validacao.valido) {
+        console.warn(`Caso ${caso.id_desafio} (${caso.titulo}) fora da regra de etapas e ignorado: ${validacao.motivo}`);
+    }
+
+    return validacao.valido;
+});
+
+//não devolve as colunas auxiliares da regra para o front (total_etapas continua indo)
+resultados.forEach((caso) => {
+    delete caso.ordens_distintas;
+    delete caso.primeira_ordem;
+    delete caso.ultima_ordem;
+});
+
+if (resultados.length === 0) {
+    return res.status(404).json({
+        mensagem: 'Ainda não há casos válidos para esta dificuldade.'
+    });
+}
+
+//SEM REPETIÇÃO: a partida tem no máximo 10 casos e cada caso aparece uma única vez.
+//Se existirem menos de 10 casos válidos nesta dificuldade, a partida tem só esses (e termina na tela de resultado).
 const quantidadeDesejada = 10;
 
-let desafiosSelecionados = [];
+const desafiosSelecionados = resultados.slice(0, quantidadeDesejada);
 
-//Caso normal: Tem 10 ou Mais
-if (resultados.length >= quantidadeDesejada) {
-
-    desafiosSelecionados =
-        resultados.slice(
-            0,
-            quantidadeDesejada
-        );
-}
-
-//TESTE: Ainda não tem 10
-
-else {
-
-    desafiosSelecionados =
-        [...resultados];
-
-        const permitirRepeticaoTeste = true;
-
-        if (
-            permitirRepeticaoTeste &&
-            resultados.length > 0
-        ) {
-
-            while (
-                desafiosSelecionados.length <
-                quantidadeDesejada
-            ) {
-
-                const indiceAleatorio =
-                    Math.floor(
-                        Math.random() *
-                        resultados.length
-                    );
-
-                    desafiosSelecionados.push(
-                        resultados[indiceAleatorio]
-                    );
-            }
-        }
-}
-
-//EMBARALHAMENTO NOVAMENTE
-
-desafiosSelecionados.sort(
-    () => Math.random() - 0.5
-);
+//a consulta já vem em ordem aleatória (order by rand()), então não precisa embaralhar de novo
 
 res.json({
     quantidade: desafiosSelecionados.length,

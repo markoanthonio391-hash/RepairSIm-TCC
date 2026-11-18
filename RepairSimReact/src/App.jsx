@@ -1,5 +1,5 @@
 import {lazy, Suspense} from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { ThemeProvider } from './context/ThemeProvider'
 import { LanguageProvider } from './context/LanguageProvider';
 import { SoundProvider } from './context/SoundProvider';
@@ -18,6 +18,7 @@ const Conquistas = lazy(() => import('./pages/Conquistas/Conquistas'));
 const Caso = lazy(() => import('./pages/caso/caso'));
 const Relatorio = lazy(() => import('./pages/relatorio/relatorio'));
 const Resultado = lazy(() => import('./pages/resultado/resultado')); 
+const CadastrarDesafio = lazy(() => import('./pages/admin/CadastrarDesafio'));
 //#Problemas na importação da página de relatórios
 //  (Causador de fundo branco nas telas de caso e de cliente)
 
@@ -34,7 +35,8 @@ function App() {
                     <Route path='/' element={<Home />} />
                     <Route path='/Dificuldade' element={<Dificuldade />} />
                     <Route path='/config' element={<Config />} />
-                    <Route path="/teste" element={<TesteApi />} />
+                    {/* página de teste da API: só existe no modo de desenvolvimento (npm run dev) */}
+                    {import.meta.env.DEV && <Route path="/teste" element={<TesteApi />} />}
                     <Route path="/Login" element={<Login />} />
                     <Route path='/Historico' element={<Historico />} />
                     <Route path='/cadastro' element={<Cadastro />} />      
@@ -43,8 +45,13 @@ function App() {
                     <Route path="/relatorio/:id" element={<Relatorio />} />
                     <Route path="/caso" element={<Caso />} />
                     <Route path='/resultado' element={<Resultado/>} />
-                    <Route path='*'element={<h1>Not Found</h1>} />
-                    
+                    <Route path='/cadastrar-desafio' element={<CadastrarDesafio />} />
+                    <Route path='*' element={
+                      <div style={{ color: 'white', textAlign: 'center', padding: '48px 16px' }}>
+                        <h1>Página não encontrada</h1>
+                        <Link to="/" style={{ color: 'aquamarine' }}>Voltar para o início</Link>
+                      </div>
+                    } />
                   </Routes>
                 </JogoProvider>
               </Suspense>

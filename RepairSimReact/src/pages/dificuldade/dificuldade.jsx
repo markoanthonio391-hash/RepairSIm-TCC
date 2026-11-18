@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 //import backgroundImageDark from '../../assets/imgFundo.jpeg'
 //import backgroundImageLight from '../../assets/imgFundoBranco.jpeg'
 import { useJogo } from "../../context/JogoContext";
+import { API_URL, temInstituicao, limparSessao } from '../../services/auth';
 
 function Dificuldade()
  {
@@ -18,6 +19,8 @@ function Dificuldade()
 
   const [particulas, setParticulas] = useState([]);
   const [mostrarVideos, setMostrarVideos] = useState(false);
+  const [erro, setErro] = useState(""); // mensagem na tela (antes o erro só ia para o console)
+  const [iniciando, setIniciando] = useState(false); // evita clicar em duas dificuldades ao mesmo tempo
 
   useEffect(() => {
     const count = 60; // Total de partículas do seu código original
@@ -44,23 +47,77 @@ function Dificuldade()
   //const { tema } = useTheme();
   //const backgroundImage = tema === 'Escuro' ? backgroundImageDark : backgroundImageLight;
   const { iniciarJogatina } = useJogo();
+  //Casos exclusivos da instituição (só para quem tem instituição). A resposta tem o mesmo formato do sorteio normal.
+  async function iniciarExclusivos() {
+    if (iniciando) {
+      return;
+    }
+
+    setIniciando(true);
+    setErro("");
+
+    try {
+      const resposta = await fetch(`${API_URL}/desafios-exclusivos/jogar`, { credentials: 'include' });
+      const dados = await resposta.json().catch(() => ({}));
+
+      if (resposta.status === 401) {
+        limparSessao();
+        navigate('/login');
+        return;
+      }
+
+      if (!resposta.ok) {
+        // 403 (sem instituição ativa), 404 (instituição sem casos) e os demais: a API já manda a mensagem pronta
+        setErro(dados.mensagem || "Não foi possível carregar os casos exclusivos.");
+        return;
+      }
+
+      // todo caso exclusivo é gravado como "Facil" (o iniciarJogatina exige uma dificuldade)
+      iniciarJogatina("Facil", dados.desafios);
+      setMostrarVideos(true);
+    }
+    catch (erroIniciar) {
+      console.error("Erro ao iniciar casos exclusivos:", erroIniciar);
+      setErro("Não foi possível iniciar a partida. Verifique a conexão com o servidor e tente de novo.");
+    }
+    finally {
+      setIniciando(false);
+    }
+  }
+
   async function iniciar(dificuldade) {
+    if (iniciando) {
+      return;
+    }
+
+    setIniciando(true);
+    setErro("");
+
     try {
       const resposta = await fetch (`http://localhost:3000/desafios/dificuldade/${dificuldade}/aleatorios`);
+
+      //404 = nenhum caso válido nesta dificuldade (ver regra de etapas no backend)
+      if (resposta.status === 404){
+        setErro("Ainda não há casos disponíveis para esta dificuldade. Escolha outra.");
+        return;
+      }
 
       if (!resposta.ok){
         throw new Error("Erro ao montar a jogatina.");
       }
 
       const dados = await resposta.json();
-      console.log("desafios recebidos:", dados.desafios);
 
       iniciarJogatina(dificuldade, dados.desafios);
 
       setMostrarVideos(true);
     }
-    catch (erro){
-      console.error("Erro ao iniciar jogatina:", erro);
+    catch (erroIniciar){
+      console.error("Erro ao iniciar jogatina:", erroIniciar);
+      setErro("Não foi possível iniciar a partida. Verifique a conexão com o servidor e tente de novo.");
+    }
+    finally {
+      setIniciando(false);
     }
   }
   if (mostrarVideos) {
@@ -91,6 +148,12 @@ function Dificuldade()
       </div>
       <h1 className={styles.title}>DIFICULDADES</h1>
       <h2 className={styles.subtitle}>Selecione uma dificuldade</h2>
+
+      {erro && (
+        <p role="alert" style={{ position: 'relative', zIndex: 5, color: '#ff8a8a', textAlign: 'center', margin: '8px 16px' }}>
+          {erro}
+        </p>
+      )}
 
       <div className={styles.stage}>
       <div className={styles.grid}></div>
@@ -205,6 +268,11 @@ function Dificuldade()
         </span>
         Difícil
       </button>
+      {temInstituicao() && (
+        <button type="button" className={`${styles.menuButton} ${styles.exclusivo}`} onClick={iniciarExclusivos}>
+          Casos exclusivos
+        </button>
+      )}
       <button
         data-som="back"
         className={`${styles.voltarButton} ${styles.voltar}`}

@@ -8,9 +8,9 @@ const { autenticar } = require('../middlewares/auth');
 
 const { limitadorLogin, limitadorCadastro } = require('../middlewares/limitadores');
 
-router.post('/cadastro', usuarioController.cadastrar);
+router.post('/cadastro', limitadorCadastro, usuarioController.cadastrar);
 
-router.post('/login', usuarioController.login);
+router.post('/login', limitadorLogin, usuarioController.login);
 
 router.post('/logout', usuarioController.logout);
 

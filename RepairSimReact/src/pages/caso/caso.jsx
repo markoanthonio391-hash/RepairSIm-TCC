@@ -1,10 +1,16 @@
 import styles from './caso.module.css'
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import bancada from '../../assets/bancada.jpeg';
 import { useJogo } from "../../context/JogoContext";
 import CasoHd from './CasoHd';
+import CasoEtapas from './CasoEtapas';
 const ID_CASO_HD = 8;
+
+// CHAVE LIGA/DESLIGA da "fase 2": os casos Fáceis (1 etapa) também abrem o CasoEtapas.
+// Se algo der errado nos casos Fáceis, troque para false: eles voltam a abrir o CasoPadrao antigo (uma linha só).
+// Só apague o CasoPadrao depois de testar todos os Fáceis com esta chave em true.
+const USAR_CASO_ETAPAS_NOS_FACEIS = true;
 
 function CasoPadrao() {
 
@@ -20,6 +26,7 @@ function CasoPadrao() {
   const [imagensPc, setImagensPc] = useState([]);
   const [estadoPc, setEstadoPc] = useState('ligado');
   const [mensagem, setMensagem] = useState('');
+  const verificando = useRef(false); //trava de clique duplo (o estado só muda no próximo render, a ref muda na hora)
 
   //------------------------
   //busca a imagens de itens
@@ -38,7 +45,6 @@ function CasoPadrao() {
       })
 
       .then(dados => {
-        console.log('Itens recebidos do backend:', dados);
         setItens(dados);
       })
 
@@ -53,7 +59,8 @@ function CasoPadrao() {
   //------------------------
    useEffect(() => {
 
-    fetch(`http://localhost:3000/desafio-imagens-pc/desafio/${idDesafio}`)
+    //credentials: 'include' envia o cookie de login (casos exclusivos respondem 404 sem ele)
+    fetch(`http://localhost:3000/desafio-imagens-pc/desafio/${idDesafio}`, { credentials: 'include' })
 
       .then(resposta => {
 
@@ -65,7 +72,6 @@ function CasoPadrao() {
       })
 
       .then(dados => {
-        console.log('Imagens do PC:', dados);
         setImagensPc(dados);
       })
 
@@ -117,6 +123,12 @@ function CasoPadrao() {
     setMensagem('');
   
   }
+  //fecha o gabinete limpo no final do caso (volta para o estado desligado)
+  function fecharGabineteFinal() {
+    setEstadoPc('desligado');
+    setMensagem('');
+  }
+
   function usarItem(item) {
 
     if (respostaFinalizada){
@@ -130,10 +142,18 @@ function CasoPadrao() {
       setMensagem('Primeiro desligue o computador e abra o gabinete.');
       return;
     }
+
+    //clique duplo no item certo não pode somar os pontos duas vezes
+    if (verificando.current) {
+      return;
+    }
+    verificando.current = true;
     
       fetch(`http://localhost:3000/desafios/${idDesafio}/verificar`, {
 
       method: 'POST',
+
+      credentials: 'include',
 
       headers: {
         'Content-Type': 'application/json'
@@ -156,7 +176,6 @@ function CasoPadrao() {
 
       .then(resultado => {
 
-        console.log('Resultado da verificação:', resultado);
 
         //POntos sempre que entram no contexto
         adicionarPontos(resultado.pontos);
@@ -183,6 +202,10 @@ function CasoPadrao() {
           'Erro ao verificar o item.'
         );
 
+      })
+
+      .finally(() => {
+        verificando.current = false;
       });
 
   }
@@ -305,8 +328,15 @@ function CasoPadrao() {
             onClick={desligarPc}>
             DESLIGAR </button>
           )}
+
+          {/* final do caso: o gabinete limpo fica aberto até o jogador fechar */}
+          {estadoPc === 'concluido' && (
+          <button className={styles.btnDesligar} onClick={fecharGabineteFinal}>
+            FECHAR GABINETE </button>
+          )}
           
-          {respostaFinalizada && (
+          {/* o relatório só aparece depois de fechar o gabinete */}
+          {respostaFinalizada && estadoPc !== 'concluido' && (
           <button className={styles.btnRelatorio} onClick={() => navigate(`/relatorio/${idDesafio}`)}>
             IR PARA RELATÓRIO
           </button>
@@ -375,10 +405,27 @@ function CasoPadrao() {
 
 function Caso() {
   const { getDesafioAtual } = useJogo();
-  const idDesafio = Number(getDesafioAtual()?.id_desafio);
+  const desafio = getDesafioAtual();
 
-  // Se o caso for o 8, ele renderiza o CasoHd, senão renderiza o padrão
-  return idDesafio === ID_CASO_HD ? <CasoHd /> : <CasoPadrao />;
+  // Sem desafio na memória (ex.: F5 no meio da partida): volta para a escolha de dificuldade
+  if (!desafio) {
+    return <Navigate to="/dificuldade" replace />;
+  }
+
+  const idDesafio = Number(desafio.id_desafio);
+
+  // id 8 -> CasoHd (Difícil, 3 etapas fixas)
+  if (idDesafio === ID_CASO_HD) {
+    return <CasoHd />;
+  }
+
+  // Médio (2 etapas) -> CasoEtapas. Fácil também, enquanto a chave da fase 2 estiver ligada
+  if (desafio.dificuldade === 'Medio' || USAR_CASO_ETAPAS_NOS_FACEIS) {
+    return <CasoEtapas key={idDesafio} />;
+  }
+
+  // qualquer outro -> CasoPadrao (antigo)
+  return <CasoPadrao />;
 }
 
 export default Caso;

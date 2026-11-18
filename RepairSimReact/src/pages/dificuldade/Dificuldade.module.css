@@ -170,6 +170,8 @@ body{
 
 .voltar{ background-color: #3a4a5c; --neon-color: #7dd3fc; }
 
+.exclusivo{ background-color: #5b3fa0; --neon-color: #a78bfa; }
+
 .iconWrap{
     position: absolute;
     left: clamp(1rem, 4vw, 1.5rem);
