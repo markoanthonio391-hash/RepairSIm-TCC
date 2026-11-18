@@ -86,7 +86,8 @@ function CasoHd() {
         let cancelado = false; // evita atualizar o estado se a tela já foi fechada
         setCarregandoImagens(true);
 
-        fetch(`${API}/desafio-imagens-pc/desafio/${idDesafio}`)
+        // credentials: "include" envia o cookie de login (os casos exclusivos de instituição respondem 404 sem ele)
+        fetch(`${API}/desafio-imagens-pc/desafio/${idDesafio}`, { credentials: "include" })
             .then(resposta => {
                 if (!resposta.ok) {
                     throw new Error("Erro ao buscar as imagens do computador.");
@@ -367,6 +368,7 @@ function CasoHd() {
         try {
             const resposta = await fetch(`${API}/desafios/${idDesafio}/verificar`, {
                 method: "POST",
+                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 // "ordem" é a etapa atual: o backend só aceita o item se ele
                 // estiver cadastrado em desafio_itens com essa ordem.
@@ -411,11 +413,11 @@ function CasoHd() {
 
             // Etapa 3: troca do HD (fim do desafio)
             if (etapa === 3) {
+                // Final de caso de hardware: o gabinete CONTINUA aberto (mostrando a imagem limpa) e o PC não liga
+                // nem desliga sozinho. O jogador fecha o gabinete e só então o botão do relatório aparece.
                 setEtapa(4);
                 setRespostaFinalizada(true);
-                setGabineteAberto(false);
-                setPcLigado(false);
-                mostrarMensagem("Reparo concluído com sucesso.");
+                mostrarMensagem("Reparo concluído! Feche o gabinete para continuar.", true);
             }
         }
         catch (erro) {
@@ -497,7 +499,7 @@ function CasoHd() {
                     </button>
                 )}
 
-                {gabineteAberto && !backupEmAndamento && !respostaFinalizada && (
+                {gabineteAberto && !backupEmAndamento && (
                     <button type="button" className={hd.btnFecharGabinete} onClick={fecharGabinete}>
                         FECHAR GABINETE
                     </button>
@@ -558,8 +560,8 @@ function CasoHd() {
                     )}
                 </div>
 
-                {/* O relatório só é liberado depois das 3 ações */}
-                {respostaFinalizada && (
+                {/* O relatório só é liberado depois das 3 ações E com o gabinete fechado */}
+                {respostaFinalizada && !gabineteAberto && (
                     <button
                         type="button"
                         className={styles.btnRelatorio}

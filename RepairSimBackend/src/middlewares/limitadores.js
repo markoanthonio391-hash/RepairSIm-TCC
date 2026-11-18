@@ -43,3 +43,9 @@ exports.limitadorCadastro = criarLimitador(
     60, 10,
     'Muitos cadastros feitos a partir deste dispositivo. Tente novamente mais tarde.'
 );
+
+//avaliar relatório: a resposta mostra o gabarito do caso, então limita para ninguém varrer todos os casos de uma vez
+exports.limitadorAvaliar = criarLimitador(
+    15, 60,
+    'Muitos relatórios enviados em pouco tempo. Aguarde alguns minutos e tente novamente.'
+);

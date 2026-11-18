@@ -22,6 +22,24 @@ export function limparSessao() {
   localStorage.removeItem('usuario');
 }
 
+//junta campos novos ao usuário já salvo (ex.: papel e instituição depois de entrar numa instituição)
+export function atualizarUsuario(campos) {
+  const atual = lerUsuario();
+  if (!atual) return;
+  salvarUsuario({ ...atual, ...campos });
+}
+
+//true se o usuário logado é ADM de uma instituição.
+//ATENÇÃO: isto só serve para mostrar ou esconder botões (o localStorage pode ser editado). Quem protege de verdade é o servidor (403).
+export function ehAdmin() {
+  return lerUsuario()?.papel === 'admin';
+}
+
+//true se o usuário logado pertence a uma instituição (aluno ou ADM)
+export function temInstituicao() {
+  return Boolean(lerUsuario()?.instituicao);
+}
+
 //sai da conta: o servidor apaga o cookie e o front apaga os dados locais
 export async function sairDaConta() {
   try {
@@ -41,7 +59,17 @@ export async function validarSessao() {
       limparSessao();
       return false;
     }
-    return resposta.ok ? true : Boolean(lerUsuario());
+
+    if (resposta.ok) {
+      //atualiza papel e instituição (quem foi promovido a ADM ou entrou numa instituição vê o botão novo sem sair e entrar de novo)
+      const dados = await resposta.json().catch(() => null);
+      if (dados?.usuario) {
+        atualizarUsuario({ papel: dados.usuario.papel ?? null, instituicao: dados.usuario.instituicao ?? null });
+      }
+      return true;
+    }
+
+    return Boolean(lerUsuario());
   } catch {
     return Boolean(lerUsuario());
   }

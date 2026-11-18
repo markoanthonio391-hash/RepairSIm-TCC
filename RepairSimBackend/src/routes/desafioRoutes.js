@@ -20,4 +20,7 @@ router.get('/:id', acessoPorId, desafioController.buscarPorId);
 
 router.post('/:id/verificar', acessoPorId, desafioController.verificarItem);
 
+//quantas etapas o caso tem e onde cada uma acontece (software ou hardware)
+router.get('/:id/etapas', acessoPorId, desafioController.listarEtapas);
+
 module.exports = router;

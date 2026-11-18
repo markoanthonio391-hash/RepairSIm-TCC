@@ -7,12 +7,16 @@ const VALIDADE_DIAS = 7;
 // opções do cookie de sessão
 // httpOnly: o JavaScript do navegador NÃO consegue ler o cookie (protege contra roubo de token via XSS)
 // sameSite lax: o navegador não envia o cookie em requisições vindas de outros sites (protege contra CSRF)
+// Se o front e a API ficarem em DOMÍNIOS diferentes (ex.: Vercel + Render), defina COOKIE_SAMESITE=none no .env
+// (o "none" só funciona com secure, ou seja, NODE_ENV=production e HTTPS)
 // secure: em produção o cookie só trafega por HTTPS
 function opcoesCookie() {
+    const sameSite = ['lax', 'strict', 'none'].includes(process.env.COOKIE_SAMESITE) ? process.env.COOKIE_SAMESITE : 'lax';
+
     return {
         httpOnly: true,
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
+        sameSite,
+        secure: process.env.NODE_ENV === 'production' || sameSite === 'none',
         path: '/'
     };
 }

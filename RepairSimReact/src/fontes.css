@@ -1,0 +1,32 @@
+/* Fonte Unispace: antes só funcionava em computadores com a fonte instalada. Agora o próprio site carrega os 4 arquivos. */
+@font-face {
+  font-family: 'Unispace';
+  src: url('./fonts/unispace/Unispace Rg.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Unispace';
+  src: url('./fonts/unispace/Unispace It.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Unispace';
+  src: url('./fonts/unispace/Unispace Bd.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Unispace';
+  src: url('./fonts/unispace/Unispace Bd It.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}

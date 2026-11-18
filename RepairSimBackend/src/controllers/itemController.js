@@ -7,7 +7,8 @@ exports.listar = (req, res) => {
     conexao.query(sql, (erro, resultado) => {
 
         if (erro) {
-            return res.status(500).json(erro);
+            console.error('Erro ao listar itens:', erro);
+            return res.status(500).json({ mensagem: 'Erro interno.' });
         }
 
         res.json(resultado);

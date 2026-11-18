@@ -43,6 +43,11 @@ const cors = require('cors'); //permite o acesso ao servidor pelo FrontEnd
 
 const app = express(); //cria a aplicação Express para ser usada
 
+//atrás de proxy (Render, Nginx...) o limitador precisa enxergar o IP real de cada jogador. Só liga se TRUST_PROXY=1 no .env
+if (process.env.TRUST_PROXY) {
+    app.set('trust proxy', Number(process.env.TRUST_PROXY) || 1);
+}
+
 //cabeçalhos de segurança. A política "cross-origin" é necessária porque o front (porta 5173) carrega as imagens deste servidor (porta 3000)
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 
@@ -108,7 +113,7 @@ app.use((erro, req, res, next) => { // eslint-disable-line no-unused-vars
 });
 
 
-const porta = 3000; //define a porta que o servidor vai rodar durante a aplicação
+const porta = process.env.PORT || 3000; //define a porta que o servidor vai rodar durante a aplicação
 
 //inicia o servidor Node.js e deixa ele escutando as requisições na porta definida
 app.listen(porta, () => { 

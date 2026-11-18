@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 //import backgroundLight from '../../../assets/imgFundoBranco.jpeg'
 import { useLanguage } from '../../../context/useLanguage';
 import { useSound } from '../../../context/useSound';
+import EntrarInstituicao from '../../../components/EntrarInstituicao';
 
 const IDIOMAS = ['Português', 'English'];
 const FONTES = ['Padrão', 'Grande'];
@@ -164,9 +165,13 @@ function Config() {
 
       <div className={styles.optionRow}>
         <p className={styles.optionLabel}>Alteração de tema</p>
+        {/* A troca de tema está desligada (o useTheme está comentado acima), então o botão fica desativado em vez de dar erro ao clicar.
+            Para religar: descomente o useTheme e volte o onClick para setTema(prev => proximoValor(['Escuro', 'Claro'], prev)). */}
         <button
+          type="button"
           className={`${styles.optionButton} ${styles.tema}`}
-          onClick={() => setTema(prev => proximoValor(['Escuro', 'Claro'], prev))}
+          disabled
+          title="Em breve"
         >
           Tema
         </button>
@@ -205,6 +210,9 @@ function Config() {
           <span className={styles.sliderValor}>{volume}%</span>
         </div>
       </div>
+
+      {/* instituição: entrar com código de convite (aluno) ou ver o código (ADM) */}
+      <EntrarInstituicao />
 
       <div className={styles.optionRow}>
         <p className={styles.optionLabel}>Alteração de fonte</p>
