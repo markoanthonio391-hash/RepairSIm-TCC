@@ -1,6 +1,11 @@
 const conexao = require('../config/db');
 const { z } = require('zod');
 
+//limites usados para conferir o placar (ajuste aqui se mudar a pontuação do jogo)
+const PONTOS_MAXIMO_POR_CASO = 30; //3 etapas x 10 pontos (Difícil)
+const PONTOS_BASE_MAXIMO = 500; //folga acima do maior pontos_base cadastrado (300)
+const SEGUNDOS_MINIMOS_POR_CASO = 5;
+
 //molde dos dados que o front pode enviar ao finalizar uma jogatina.
 //o id do usuário NÃO vem daqui: ele é pego do cookie de login (req.usuario)
 const resultadoSchema = z.object({
@@ -10,6 +15,20 @@ const resultadoSchema = z.object({
     erros_relatorio: z.number().int().min(0).max(1000).default(0),
     pontos: z.number().int().min(-1000000).max(1000000), //pode ser negativo pois existem penalidades
     tempo_segundos: z.number().int().min(0).max(7 * 24 * 60 * 60).default(0)
+}).superRefine((dados, contexto) => {
+    //O navegador é quem informa os pontos, então o servidor confere se o placar é POSSÍVEL (não é uma prova absoluta,
+    //mas barra os placares absurdos no Histórico). Cada etapa certa vale +10 e o difícil tem 3 etapas, logo no máximo 30 por caso.
+    //O pontos_base (soma uma vez por partida) fica abaixo de PONTOS_BASE_MAXIMO.
+    const maximoPossivel = PONTOS_BASE_MAXIMO + dados.quantidade_casos * PONTOS_MAXIMO_POR_CASO;
+
+    if (dados.pontos > maximoPossivel) {
+        contexto.addIssue({ code: 'custom', path: ['pontos'], message: 'Pontuação impossível.' });
+    }
+
+    //tempo mínimo plausível: ninguém conclui um caso (ligar, abrir, usar o item e fazer o relatório) em menos de poucos segundos
+    if (dados.pontos > 0 && dados.tempo_segundos < dados.quantidade_casos * SEGUNDOS_MINIMOS_POR_CASO) {
+        contexto.addIssue({ code: 'custom', path: ['tempo_segundos'], message: 'Tempo implausível.' });
+    }
 });
 
 // salva o resultado de uma jogatina do usuário logado

@@ -60,7 +60,7 @@
 //             <input type="date" value={data_nascimento} onChange={(e)=>setDataNascimento(e.target.value)} placeholder='   Data de Nascimento' className={styles.input}/>
 //             <input type='tel' placeholder='   (00) 00000-0000' className={styles.input}/>
 //             <input  type="email" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="   E-mail" className={styles.input} />
-//             <input type="password" value={senha} onChange={(e)=>setSenha(e.target.value)} placeholder="   Senha" className={styles.input} />
+//             <input type="password" autoComplete="new-password" value={senha} onChange={(e)=>setSenha(e.target.value)} placeholder="   Senha" className={styles.input} />
 //             <input type='password' value={confirmarSenha} onChange={(e)=>setConfirmarSenha(e.target.value)} placeholder='   Confirme a senha'  className={styles.input} />
 //             <div className={styles.containerTerms}>
 //                 <input type='checkbox' className={styles.inputTerms} />
@@ -78,7 +78,7 @@
 //     };
 //     export default Cadastro;
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Cadastro.module.css'
 import FundoAnimado from '../../../components/FundoAnimado';
@@ -91,11 +91,16 @@ function Cadastro() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
+    const [termosAceitos, setTermosAceitos] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!termosAceitos) {
+            setError("Você precisa aceitar os termos de uso para criar a conta.");
+            return;
+        }
         if (senha !== confirmarSenha) {
             setError("As senhas não coincidem.");
             return;
@@ -111,7 +116,7 @@ function Cadastro() {
             const data = await response.json();
             if (response.ok) {
                 alert(`Cadastro realizado com sucesso!\n\nRealize o login da sua nova conta!`);
-                navigate(-1);
+                navigate('/login'); // navigate(-1) podia levar para fora do site
             } else {
                 setError(data.mensagem);
             }
@@ -161,16 +166,16 @@ function Cadastro() {
                     </div>
                     <div className={styles.field}>
                         <label className={styles.fieldLabel}>Senha</label>
-                        <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="••••••••" className={styles.input} />
+                        <input type="password" autoComplete="new-password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="••••••••" className={styles.input} />
                     </div>
                     <div className={styles.field}>
                         <label className={styles.fieldLabel}>Confirme a senha</label>
-                        <input type="password" value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)} placeholder="••••••••" className={styles.input} />
+                        <input type="password" autoComplete="new-password" value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)} placeholder="••••••••" className={styles.input} />
                     </div>
                 </div>
 
                 <div className={styles.termsRow}>
-                    <input type="checkbox" className={styles.inputTerms} id="termos" aria-label="Li e aceito os termos de uso" />
+                    <input type="checkbox" className={styles.inputTerms} id="termos" checked={termosAceitos} onChange={(e) => setTermosAceitos(e.target.checked)} />
                     <label htmlFor="termos" className={styles.terms}>Li e aceito os termos de uso</label>
                 </div>
 

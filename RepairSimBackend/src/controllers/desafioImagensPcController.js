@@ -10,7 +10,8 @@ exports.listar = (req, res) => { // sempre que for pedido a listar de desafio im
     conexao.query(selecao, (erro, resultado) => { // executa no MySQL
 
         if(erro){
-            return res.status(500).json(erro); // Retorna json com erro
+            console.error('Erro ao listar imagens do PC:', erro);
+            return res.status(500).json({ mensagem: 'Erro interno.' }); // não expõe a consulta nem o nome das tabelas
         }
 
         res.json(resultado); // Transforma tudo em JSON.

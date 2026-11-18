@@ -1,0 +1,21 @@
+.pagina { min-height: 100vh; background: rgb(1, 0, 44); color: #fff; font-family: Unispace, monospace; padding: 24px 16px 64px; box-sizing: border-box; }
+.conteudo { max-width: 760px; margin: 0 auto; }
+.titulo { text-align: center; margin: 8px 0 20px; }
+.secao { background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(125, 211, 252, 0.35); border-radius: 10px; padding: 16px; margin-bottom: 24px; }
+.campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+.campo label { font-size: 0.95rem; }
+.campo input[type="text"], .campo textarea, .campo select { font-family: inherit; font-size: 1rem; padding: 8px; border-radius: 6px; border: 1px solid #7dd3fc; background: #0b0a3a; color: #fff; }
+.campo textarea { min-height: 80px; resize: vertical; }
+.ajuda { font-size: 0.8rem; opacity: 0.75; }
+.grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.previa { max-width: 100%; max-height: 140px; object-fit: contain; border-radius: 6px; background: rgba(255, 255, 255, 0.08); margin-top: 4px; }
+.botoes { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.botao { font-family: inherit; font-size: 1rem; padding: 10px 18px; border-radius: 8px; border: 2px solid #22c55e; background: green; color: #fff; cursor: pointer; }
+.botao:disabled { opacity: 0.5; cursor: not-allowed; }
+.botaoVoltar { border-color: #7dd3fc; background: #3a4a5c; }
+.botaoPerigo { border-color: #ef4444; background: rgb(190, 0, 0); padding: 6px 12px; font-size: 0.9rem; }
+.erro { color: #ff8a8a; margin: 8px 0; }
+.sucesso { color: #86efac; margin: 8px 0; }
+.caso { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.15); }
+.caso:last-child { border-bottom: none; }
+.casoInfo small { opacity: 0.75; display: block; }

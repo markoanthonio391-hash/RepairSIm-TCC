@@ -46,6 +46,34 @@ const avaliarSchema = z.object({
     itens: z.array(z.coerce.number().int().positive()).max(50)
 });
 
+//salva o relatório e os seus itens dentro de uma transação (se um insert falhar, o outro é desfeito)
+async function salvarRelatorio(idUsuario, idDesafio, acertouTudo, idsSelecionados, idsCorretos) {
+    const ligacao = await conexao.promise().getConnection(); //uma conexão só para esta transação
+
+    try {
+        await ligacao.beginTransaction();
+
+        const [relatorio] = await ligacao.query(
+            'insert into relatorio (id_usuario, id_desafio, relatorio_correto) values (?, ?, ?)',
+            [idUsuario, idDesafio, acertouTudo]
+        );
+
+        const valores = idsSelecionados.map(id => [relatorio.insertId, id, idsCorretos.includes(id)]);
+
+        await ligacao.query(
+            'insert into relatorio_itens (id_relatorio, id_item, correto) values ?',
+            [valores]
+        );
+
+        await ligacao.commit();
+    } catch (erro) {
+        await ligacao.rollback();
+        throw erro;
+    } finally {
+        ligacao.release(); //devolve a conexão para o pool
+    }
+}
+
 //avalia o relatorio
 //quem está logado tem o relatório salvo no banco. Quem joga sem conta é avaliado normalmente, mas nada é salvo
 exports.avaliar = (req, res) =>{
@@ -146,48 +174,20 @@ exports.avaliar = (req, res) =>{
             }
         }
 
-        //sem login: avalia, mas não salva nada no banco
-        if (!idUsuario) {
+        //sem login OU sem nenhum item marcado: avalia, mas não salva nada no banco
+        //(um relatório vazio não é um laudo de verdade e só serviria para espiar o gabarito)
+        if (!idUsuario || idsSelecionados.length === 0) {
             return enviarResposta();
         }
 
-        //salvar relatorio
-        const inserirRelatorio = `insert into relatorio (id_usuario, id_desafio, relatorio_correto) values (?, ?, ?)`;
-
-        conexao.query(inserirRelatorio, [idUsuario, idDesafio, acertouTudo], (erro, resultadoRelatorio) => {
-            if (erro) {
-                console.error('Erro ao salvar relatório: ', erro);
-                return res.status(500).json({
+        //grava o relatório e os itens numa TRANSAÇÃO: ou grava tudo ou não grava nada (sem relatório órfão)
+        salvarRelatorio(idUsuario, idDesafio, acertouTudo, idsSelecionados, idsCorretos)
+            .then(() => enviarResposta())
+            .catch((erroSalvar) => {
+                console.error('Erro ao salvar relatório: ', erroSalvar);
+                res.status(500).json({
                     mensagem: 'Erro ao salvar relatório.'
                 });
-            }
-            const idRelatorio = resultadoRelatorio.insertId;
-
-            //se não selecionou nada, não há itens para salvar
-            if (idsSelecionados.length === 0){
-                return enviarResposta();
-            }
-
-            const valores = idsSelecionados.map(id =>{
-                const correto = idsCorretos.includes(id);
-                return[idRelatorio, id, correto];
             });
-
-            const inserirItens = `insert into relatorio_itens (id_relatorio, id_item, correto) values ?`;
-
-            conexao.query(inserirItens, [valores], (erro) => {
-                if (erro) {
-                    console.error(
-                        'Erro ao salvar itens do relatório:',
-                        erro
-                    );
-                    return res.status(500).json({
-                        mensagem: 'Erro ao salvar itens do relatório.'
-                    });
-                }
-
-                enviarResposta();
-            });
-        });
     });
 }
