@@ -185,7 +185,12 @@ function CasoPadrao() {
           setEstadoPc('concluido');
           setMensagem('✅ ' + resultado.mensagem);
           setRespostaFinalizada(true);
-        }
+
+          if (desafioAtual?.dificuldade === 'Facil') {
+    ganharConquista('TECNICO_INICIANTE', 'Técnico Iniciante');
+  }
+}
+        
 
         //item errado
         else {

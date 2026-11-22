@@ -7,7 +7,7 @@ router.get('/:id_usuario', async (req, res) => {
     const { id_usuario } = req.params;
 
     try {
-        const [conquistas] = await db.query(
+        const [conquistas] = await db.promise().query(
             'SELECT codigo_conquista, titulo, data_conquista FROM conquistas_usuario WHERE id_usuario = ?',
             [id_usuario]
         );
@@ -32,7 +32,7 @@ router.post('/desbloquear', async (req, res) => {
             VALUES (?, ?, ?)
             ON DUPLICATE KEY UPDATE data_conquista = data_conquista
         `;
-        await db.query(query, [id_usuario, codigo_conquista, titulo]);
+        await db.promise().query(query, [id_usuario, codigo_conquista, titulo]);
         return res.status(200).json({ sucesso: true, mensagem: 'Conquista desbloqueada com sucesso!' });
     } catch (error) {
         console.error(error);
