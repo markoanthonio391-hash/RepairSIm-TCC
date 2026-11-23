@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 //import backgroundLight from '../../../assets/imgFundoBranco.jpeg'
 import { useLanguage } from '../../../context/useLanguage';
 import { useSound } from '../../../context/useSound';
-import EntrarInstituicao from '../../../components/EntrarInstituicao';
 
 const IDIOMAS = ['Português', 'English'];
 const FONTES = ['Padrão', 'Grande'];
@@ -210,9 +209,6 @@ function Config() {
           <span className={styles.sliderValor}>{volume}%</span>
         </div>
       </div>
-
-      {/* instituição: entrar com código de convite (aluno) ou ver o código (ADM) */}
-      <EntrarInstituicao />
 
       <div className={styles.optionRow}>
         <p className={styles.optionLabel}>Alteração de fonte</p>

@@ -35,7 +35,10 @@ const imagensPcRoutes = require('./routes/imagensPcRoutes');
 const desafioImagensPcRoutes = require('./routes/desafioImagensPcRoutes');
 
 const conquistaRoutes = require('./routes/conquistaRoutes');
-const instituicaoRoutes = require('./routes/instituicaoRoutes');
+
+const salaRoutes = require('./routes/salaRoutes');
+const resultadoProfessorRoutes = require('./routes/resultadoProfessorRoutes');
+
 
 const desafioExclusivoRoutes = require('./routes/desafioExclusivoRoutes');
 
@@ -90,7 +93,9 @@ app.use('/imagens-pc', imagensPcRoutes);
 app.use('/desafio-imagens-pc', desafioImagensPcRoutes);
 
 app.use('/api/conquistas', conquistaRoutes);
-app.use('/instituicoes', instituicaoRoutes); //vínculo do usuário com a instituição (entrar com código, ver a minha)
+
+app.use('/professor', resultadoProfessorRoutes); //resultados dos alunos (só professor ADM)
+app.use('/salas', salaRoutes); //sala de prova: o professor gera o código, o aluno entra com ele
 
 app.use('/desafios-exclusivos', desafioExclusivoRoutes); //casos exclusivos das instituições (cadastro pelo ADM e jogo)
 

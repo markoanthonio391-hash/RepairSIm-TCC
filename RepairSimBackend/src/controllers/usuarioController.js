@@ -3,6 +3,8 @@ const bcrypt = require('bcrypt'); //aplica o bcrypt para criptografar as senhas
 const { z } = require('zod'); //valida e limpa tudo que chega do front antes de usar
 const { NOME_COOKIE, opcoesCookie, opcoesCookieLogin, gerarToken } = require('../utils/token');
 const { buscarVinculo, vinculoParaFront } = require('../utils/vinculo');
+const { interromperPartidasDoAluno } = require('../utils/partida');
+const crypto = require('crypto');
 
 const db = conexao.promise(); //mesma conexão, mas permite usar async/await nas consultas
 
@@ -150,12 +152,24 @@ exports.login = async (req, res) => {
             }
         }
 
-        //o token vai num cookie httpOnly, o JavaScript do navegador não consegue lê-lo
-        res.cookie(NOME_COOKIE, gerarToken(usuario), opcoesCookieLogin());
-
-        //instituição e papel (aluno/admin) do usuário. O front usa isso só para mostrar ou esconder botões;
+        //papel (aluno/admin) vindo do e-mail. O front usa isso só para mostrar ou esconder botões;
         //quem realmente barra o acesso é o servidor, consultando o banco a cada requisição
         const vinculo = await buscarVinculo(usuario.id_usuario);
+
+        //SESSÃO ÚNICA (só alunos): cada login gera um identificador novo. O login anterior deixa de valer e a
+        //partida que ele tinha em andamento vira "interrompida". Professores não entram nesta regra (podem testar em 2 janelas).
+        let sid = null;
+
+        if (vinculo && vinculo.papel === 'aluno') {
+            sid = crypto.randomUUID();
+            await db.query('update usuario set sessao_id = ? where id_usuario = ?', [sid, usuario.id_usuario]);
+            await interromperPartidasDoAluno(usuario.id_usuario, 'sessao_substituida');
+        } else {
+            await db.query('update usuario set sessao_id = null where id_usuario = ?', [usuario.id_usuario]);
+        }
+
+        //o token vai num cookie httpOnly, o JavaScript do navegador não consegue lê-lo
+        res.cookie(NOME_COOKIE, gerarToken(usuario, sid), opcoesCookieLogin());
 
         //só dados básicos vão para o react (nunca a senha nem o email)
         res.status(200).json({

@@ -2,6 +2,7 @@ import styles from './Historico.module.css';
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_URL, lerUsuario, limparSessao } from '../../../services/auth';
+import Estrelas from '../../../components/Estrelas';
 
 function formatarData(valor) {
   const data = new Date(valor);
@@ -16,6 +17,10 @@ function formatarTempo(segundos) {
   const s = String(total % 60).padStart(2, '0');
   return `${m}:${s}`;
 }
+
+// nomes com acento para mostrar na tela (no banco ficam sem acento)
+const ROTULO_DIFICULDADE = { Facil: 'Fácil', Medio: 'Médio', Dificil: 'Difícil' };
+const rotuloDificuldade = (d) => ROTULO_DIFICULDADE[d] ?? d;
 
 function Historico() {
   const navigate = useNavigate();
@@ -208,7 +213,7 @@ function Historico() {
                 <option value="todas">Todas</option>
                 {dificuldades.map((d) => (
                   <option key={d} value={d}>
-                    {d}
+                    {rotuloDificuldade(d)}
                   </option>
                 ))}
               </select>
@@ -221,6 +226,7 @@ function Historico() {
                     <th>Data</th>
                     <th>Dificuldade</th>
                     <th>Pontuação</th>
+                    <th>Estrelas</th>
                     <th>Casos</th>
                     <th>Erros</th>
                     <th>Tempo</th>
@@ -230,10 +236,11 @@ function Historico() {
                   {visiveis.map((p) => (
                     <tr key={p.id}>
                       <td>{formatarData(p.data_partida)}</td>
-                      <td>{p.dificuldade}</td>
+                      <td>{rotuloDificuldade(p.dificuldade)}</td>
                       <td className={Number(p.pontuacao) === resumo.melhor ? styles.highlight : ''}>
                         {p.pontuacao}
                       </td>
+                      <td><Estrelas valor={p.estrelas} /></td>
                       <td>{p.casos}</td>
                       <td>{p.erros}</td>
                       <td>{formatarTempo(p.tempo_segundos)}</td>

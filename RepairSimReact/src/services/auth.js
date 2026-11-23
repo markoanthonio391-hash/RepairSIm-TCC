@@ -35,9 +35,39 @@ export function ehAdmin() {
   return lerUsuario()?.papel === 'admin';
 }
 
-//true se o usuário logado pertence a uma instituição (aluno ou ADM)
+//true se o usuário tem e-mail institucional (aluno ou professor ADM): é quem vê "Casos exclusivos"
 export function temInstituicao() {
-  return Boolean(lerUsuario()?.instituicao);
+  return Boolean(lerUsuario()?.papel);
+}
+
+//SESSÃO ÚNICA: se o servidor avisar que esta conta entrou em outro dispositivo, qualquer tela volta ao login com um aviso.
+//Instalado uma vez no main.jsx: observa as respostas da API sem precisar mexer em cada fetch do projeto.
+export function instalarAvisoSessaoSubstituida() {
+  if (window.__avisoSessaoInstalado) return;
+  window.__avisoSessaoInstalado = true;
+
+  const fetchOriginal = window.fetch.bind(window);
+
+  window.fetch = async (...args) => {
+    const resposta = await fetchOriginal(...args);
+
+    if (resposta.status === 401) {
+      try {
+        const dados = await resposta.clone().json();
+
+        if (dados?.codigo === 'SESSAO_SUBSTITUIDA') {
+          limparSessao();
+          sessionStorage.setItem('aviso_login', dados.mensagem);
+          sessionStorage.removeItem('repairsim_jogatina'); //a partida em andamento foi interrompida no servidor
+          window.location.assign('/login');
+        }
+      } catch {
+        // resposta sem JSON: não é o aviso
+      }
+    }
+
+    return resposta;
+  };
 }
 
 //sai da conta: o servidor apaga o cookie e o front apaga os dados locais
@@ -64,7 +94,7 @@ export async function validarSessao() {
       //atualiza papel e instituição (quem foi promovido a ADM ou entrou numa instituição vê o botão novo sem sair e entrar de novo)
       const dados = await resposta.json().catch(() => null);
       if (dados?.usuario) {
-        atualizarUsuario({ papel: dados.usuario.papel ?? null, instituicao: dados.usuario.instituicao ?? null });
+        atualizarUsuario({ papel: dados.usuario.papel ?? null });
       }
       return true;
     }

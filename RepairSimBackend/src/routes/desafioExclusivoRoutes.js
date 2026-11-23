@@ -13,7 +13,7 @@ const { receberImagens } = require('../middlewares/upload');
 const { limitadorCriarDesafio } = require('../middlewares/limitadores');
 
 //sorteia casos exclusivos para jogar (aluno ou ADM da instituição). Fica antes de "/:id" por segurança
-router.get('/jogar', autenticar, exigirMembro, desafioExclusivoController.sortearParaJogar);
+router.post('/jogar', autenticar, exigirMembro, desafioExclusivoController.sortearParaJogar);
 
 //ADM: lista os casos da própria instituição
 router.get('/', autenticar, exigirAdmin, desafioExclusivoController.listar);
@@ -22,7 +22,10 @@ router.get('/', autenticar, exigirAdmin, desafioExclusivoController.listar);
 //a ordem importa: primeiro confere se é ADM, só depois aceita o upload
 router.post('/', autenticar, exigirAdmin, limitadorCriarDesafio, receberImagens, desafioExclusivoController.criar);
 
-//ADM: remove (desativa) um caso da própria instituição
+//ADM: liga ou desliga um caso no sorteio (interruptor ativo/desativado). Não derruba quem já está jogando o caso
+router.patch('/:id/ativo', autenticar, exigirAdmin, desafioExclusivoController.alternarAtivo);
+
+//ADM: remove um caso da própria instituição (some de vez)
 router.delete('/:id', autenticar, exigirAdmin, desafioExclusivoController.desativar);
 
 module.exports = router;

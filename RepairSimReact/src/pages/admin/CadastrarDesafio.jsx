@@ -14,7 +14,8 @@ const IMAGENS_FIXAS = [
   { campo: 'monitor_ligado', rotulo: 'Monitor ligado' },
   { campo: 'monitor_desligado', rotulo: 'Monitor desligado' },
   { campo: 'gabinete_ligado', rotulo: 'Gabinete ligado' },
-  { campo: 'gabinete_desligado', rotulo: 'Gabinete desligado (o jogador clica nele para abrir)' }
+  { campo: 'gabinete_desligado', rotulo: 'Gabinete desligado (o jogador clica nele para abrir)' },
+  { campo: 'gabinete_limpo', rotulo: 'Gabinete aberto de lado e limpo (aparece quando o problema for resolvido)' }
 ];
 
 const FORM_VAZIO = {
@@ -40,6 +41,14 @@ function CadastrarDesafio() {
   const [sucesso, setSucesso] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [chaveInputs, setChaveInputs] = useState(0); // muda para limpar os campos de arquivo
+
+  // sala de prova (código para os alunos)
+  const [sala, setSala] = useState(null);            // { codigo, segundos_restantes }
+  const [fimMs, setFimMs] = useState(0);             // momento (performance.now) em que o código expira
+  const [agora, setAgora] = useState(() => performance.now());
+  const [minutosSala, setMinutosSala] = useState(10);
+  const [erroSala, setErroSala] = useState('');
+  const [gerando, setGerando] = useState(false);
 
   const admin = ehAdmin();
 
@@ -70,6 +79,32 @@ function CadastrarDesafio() {
     }
   }, [tratarAcesso]);
 
+  // coloca na tela o código vindo do servidor (a contagem usa os segundos que o SERVIDOR calculou)
+  const mostrarSala = useCallback((dados) => {
+    setSala(dados);
+    setFimMs(performance.now() + dados.segundos_restantes * 1000);
+    setAgora(performance.now());
+  }, []);
+
+  const carregarSala = useCallback(async () => {
+    try {
+      const resposta = await fetch(`${API_URL}/salas/ativa`, { credentials: 'include' });
+      if (tratarAcesso(resposta)) return;
+      if (!resposta.ok) throw new Error('Erro ao buscar o código.');
+      const dados = await resposta.json();
+      if (dados.sala) mostrarSala(dados.sala);
+    } catch (e) {
+      console.error('Erro ao buscar a sala ativa:', e);
+    }
+  }, [tratarAcesso, mostrarSala]);
+
+  // contagem regressiva do código (atualiza a cada segundo enquanto existir um código)
+  useEffect(() => {
+    if (!sala) return;
+    const timer = setInterval(() => setAgora(performance.now()), 1000);
+    return () => clearInterval(timer);
+  }, [sala]);
+
   // itens (opções da resposta correta) e lista de casos: uma vez ao abrir
   useEffect(() => {
     if (!admin) return;
@@ -85,9 +120,10 @@ function CadastrarDesafio() {
       });
 
     carregarCasos();
+    carregarSala();
 
     return () => { cancelado = true; };
-  }, [admin, carregarCasos]);
+  }, [admin, carregarCasos, carregarSala]);
 
   // libera as URLs de prévia só ao sair da tela (a ref guarda sempre o valor mais recente)
   const previasRef = useRef({});
@@ -204,6 +240,90 @@ function CadastrarDesafio() {
     }
   }
 
+  async function gerarCodigo() {
+    if (gerando) return;
+
+    setGerando(true);
+    setErroSala('');
+
+    try {
+      const resposta = await fetch(`${API_URL}/salas`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ minutos: minutosSala })
+      });
+
+      if (tratarAcesso(resposta)) return;
+
+      const dados = await resposta.json().catch(() => ({}));
+
+      if (!resposta.ok) {
+        setErroSala(dados.mensagem || 'Não foi possível gerar o código.');
+        return;
+      }
+
+      mostrarSala(dados.sala);
+    } catch (erroRede) {
+      console.error('Erro ao gerar o código:', erroRede);
+      setErroSala('Não foi possível conectar ao servidor.');
+    } finally {
+      setGerando(false);
+    }
+  }
+
+  async function cancelarCodigo() {
+    setErroSala('');
+
+    try {
+      const resposta = await fetch(`${API_URL}/salas/ativa`, { method: 'DELETE', credentials: 'include' });
+
+      if (tratarAcesso(resposta)) return;
+
+      if (!resposta.ok) {
+        setErroSala('Não foi possível cancelar o código.');
+        return;
+      }
+
+      setSala(null);
+    } catch (erroRede) {
+      console.error('Erro ao cancelar o código:', erroRede);
+      setErroSala('Não foi possível conectar ao servidor.');
+    }
+  }
+
+  // interruptor do professor: caso desativado não entra no sorteio (mas pode ser reativado)
+  async function alternarAtivo(caso) {
+    const novoValor = !caso.ativo;
+
+    setErro('');
+    setSucesso('');
+
+    try {
+      const resposta = await fetch(`${API_URL}/desafios-exclusivos/${caso.id_desafio}/ativo`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ativo: novoValor })
+      });
+
+      if (tratarAcesso(resposta)) return;
+
+      const resultado = await resposta.json().catch(() => ({}));
+
+      if (!resposta.ok) {
+        setErro(resultado.mensagem || 'Não foi possível alterar o caso.');
+        return;
+      }
+
+      // atualiza só este caso na lista (sem buscar tudo de novo)
+      setCasos((lista) => lista.map((c) => (c.id_desafio === caso.id_desafio ? { ...c, ativo: novoValor ? 1 : 0 } : c)));
+    } catch (erroRede) {
+      console.error('Erro ao alterar o caso:', erroRede);
+      setErro('Não foi possível conectar ao servidor.');
+    }
+  }
+
   async function remover(caso) {
     if (!window.confirm(`Remover o caso "${caso.titulo}" do jogo?`)) return;
 
@@ -232,6 +352,10 @@ function CadastrarDesafio() {
       setErro('Não foi possível conectar ao servidor.');
     }
   }
+
+  const restante = sala ? Math.max(0, Math.ceil((fimMs - agora) / 1000)) : 0;
+  const minutosRestantes = String(Math.floor(restante / 60)).padStart(2, '0');
+  const segundosRestantes = String(restante % 60).padStart(2, '0');
 
   const rotuloProblema = form.origem_problema === 'software'
     ? 'Monitor mostrando o problema'
@@ -309,7 +433,7 @@ function CadastrarDesafio() {
               {previas.imagem_problema && <img className={styles.previa} src={previas.imagem_problema} alt={`Prévia: ${rotuloProblema}`} />}
             </div>
           </div>
-          <p className={styles.ajuda}>PNG, JPG ou WEBP, até 2 MB cada. Sem a imagem do problema o jogador vê menos pistas.</p>
+          <p className={styles.ajuda}>PNG, JPG ou WEBP, até 2 MB cada. As 5 imagens com * são obrigatórias. Sem a imagem do problema o jogador vê menos pistas.</p>
 
           {erro && <p className={styles.erro} role="alert">{erro}</p>}
           {sucesso && <p className={styles.sucesso} role="status">{sucesso}</p>}
@@ -326,21 +450,70 @@ function CadastrarDesafio() {
 
         <section className={styles.secao}>
           <h2>Casos da sua instituição</h2>
+          <p className={styles.ajuda}>Só os casos ativos entram no sorteio (até 10 por partida). Desativar não apaga o caso; remover apaga de vez.</p>
           {casos.length === 0 ? (
             <p>Nenhum caso cadastrado ainda.</p>
           ) : (
             casos.map((caso) => (
-              <div className={styles.caso} key={caso.id_desafio}>
+              <div className={`${styles.caso} ${caso.ativo ? '' : styles.casoInativo}`} key={caso.id_desafio}>
                 <div className={styles.casoInfo}>
                   <strong>{caso.titulo}</strong>
                   <small>{caso.cliente} · {caso.origem_problema} · resposta: {caso.item_resposta}</small>
+                  <small>{caso.ativo ? 'Ativo: entra no sorteio' : 'Desativado: não entra no sorteio'}</small>
                 </div>
-                <button type="button" className={`${styles.botao} ${styles.botaoPerigo}`} onClick={() => remover(caso)}>
-                  REMOVER
-                </button>
+                <div className={styles.acoesCaso}>
+                  <button type="button" className={`${styles.botao} ${caso.ativo ? styles.botaoVoltar : ''}`} onClick={() => alternarAtivo(caso)}>
+                    {caso.ativo ? 'DESATIVAR' : 'ATIVAR'}
+                  </button>
+                  <button type="button" className={`${styles.botao} ${styles.botaoPerigo}`} onClick={() => remover(caso)}>
+                    REMOVER
+                  </button>
+                </div>
               </div>
             ))
           )}
+        </section>
+
+        <section className={styles.secao}>
+          <h2>Sala de prova (código para os alunos)</h2>
+          <p className={styles.ajuda}>
+            O aluno digita este código em "Casos exclusivos" para COMEÇAR uma partida com os seus casos ativos.
+            Quem já começou termina normalmente depois que o código expira. Um código novo cancela o anterior.
+          </p>
+
+          <div className={styles.campo}>
+            <label htmlFor="validade">Validade do código</label>
+            <select id="validade" value={minutosSala} onChange={(e) => setMinutosSala(Number(e.target.value))}>
+              <option value={5}>5 minutos</option>
+              <option value={10}>10 minutos</option>
+              <option value={30}>30 minutos</option>
+              <option value={60}>60 minutos</option>
+            </select>
+          </div>
+
+          <div className={styles.botoes}>
+            <button type="button" className={styles.botao} onClick={gerarCodigo} disabled={gerando}>
+              {gerando ? 'GERANDO...' : 'GERAR CÓDIGO'}
+            </button>
+            {sala && restante > 0 && (
+              <button type="button" className={`${styles.botao} ${styles.botaoVoltar}`} onClick={cancelarCodigo}>
+                CANCELAR CÓDIGO
+              </button>
+            )}
+          </div>
+
+          {sala && (
+            <div className={styles.codigoBox}>
+              <span className={restante > 0 ? styles.codigo : `${styles.codigo} ${styles.codigoExpirado}`}>{sala.codigo}</span>
+              <span>
+                {restante > 0
+                  ? `Expira em ${minutosRestantes}:${segundosRestantes}`
+                  : 'Código expirado. Gere outro para novas partidas.'}
+              </span>
+            </div>
+          )}
+
+          {erroSala && <p className={styles.erro} role="alert">{erroSala}</p>}
         </section>
       </div>
     </div>

@@ -1,14 +1,13 @@
-/*import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { API_URL, lerUsuario, limparSessao } from "../services/auth";
 
-//cria um contexto no react para gerenciar o todo o jogo
-const JogoContext = createContext(null); //começa como null para dps ser preenchido
+const JogoContext = createContext(null);
 
-//CONTEXTO DA JOGATINA
+// A partida fica guardada no sessionStorage (some ao fechar a aba) para sobreviver ao F5 no meio do jogo.
+const CHAVE_PARTIDA = "repairsim_jogatina";
 
-//o provider é quem gerencia o estado total da partida, permitindo com que as outras telas acessem os dados do jogo
-export function JogoProvider({ children }){ 
-    //estado centralizado/padrão do jogo
-const [jogatina, setJogatina] = useState({
+const ESTADO_INICIAL = {
+    salvo: false,
     dificuldade: null,
     desafios: [],
     indiceAtual: 0,
@@ -16,112 +15,42 @@ const [jogatina, setJogatina] = useState({
     pontos: 0,
     errosDesafio: 0,
     errosRelatorio: 0,
-    tempoInicio: null
-});
+    tempoInicio: null,
+    tempoSegundos: 0,
+    dataFinalizacao: null,
+    baseAplicado: false,
+    finalizada: false,
+    estrelas: null,  // nota de 0 a 5 calculada pelo servidor ao salvar o resultado (null = sem nota)
+    idPartida: null, // partida registrada no servidor (casos exclusivos jogados por aluno numa sala)
+    teste: false     // professor testando os próprios casos: nada é salvo
+};
 
-//INICIAR UMA NOVA JOGATINA
-//inicializa o estado do jogo com os desafios escolhidos e define a pontuação
-function iniciarJogatina(dificuldade, desafiosSelecionados){
-    //validação de segurança para impedir o inicio de um jogo sem conteudo
-    if (desafiosSelecionados.length === 0) {
-        console.error("Nenhum desafio selecionado.");
-        return;
+function lerPartidaSalva() {
+    try {
+        const texto = sessionStorage.getItem(CHAVE_PARTIDA);
+        if (!texto) return null;
+
+        const dados = JSON.parse(texto);
+        return dados && Array.isArray(dados.desafios) ? { ...ESTADO_INICIAL, ...dados } : null;
+    } catch {
+        return null; // navegador sem sessionStorage (modo privado) ou conteúdo estragado
     }
-
-    //coloca aqui o pontos bases com base no primeiro desafio
-    const pontosBase = desafiosSelecionados[0].pontos_base;
-
-    //reseta o estado para valores de um novo jogo
-    setJogatina({
-        dificuldade,
-        desafios: desafiosSelecionados,
-        indiceAtual: 0,
-        quantidadeCasos: desafiosSelecionados.length,
-        pontos: pontosBase,
-        errosDesafio: 0,
-        errosRelatorio: 0,
-        tempoInicio: Date.now() //registra o momento do inicio da partida
-    });
 }
-
-//DESAFIO ATUAL
-function getDesafioAtual(){
-    //retorna o objeto do desafio correspondente á posição(indice) atual na lista
-    return jogatina.desafios[jogatina.indiceAtual];
-}
-
-//ADICIONA / REMOVE PONTOS
-function adicionarPontos(valor){
-    //atualizar a pontuação somando o valor recebido ao total
-    setJogatina(prev => ({...prev, pontos: prev.pontos + valor}));
-}
-
-//REGISTRA ERRO NO DESAFIO
-function registraErroDesafio(){
-    //adiciona em 1 o contador de erros cometidos durante a jogatina
-    setJogatina(prev => ({...prev, errosDesafio: prev.errosDesafio + 1}));
-}
-
-//REGISTRA ERRO NO RELATÓRIO
-function registraErroRelatorio(){
-    setJogatina(prev => ({...prev, errosRelatorio: prev.errosRelatorio + 1}));
-}
-
-//avança para o próximo desafio
-function proximoDesafio(){
-    //muda a posição atual do indice para a proxima, exibindo o proximo desafio
-    setJogatina(prev =>({...prev, indiceAtual: prev.indiceAtual + 1}));
-}
-
-//retorno do contexto
-return(
-    //retorna todo o estado do jogo para os componentes filhos
-    <JogoContext.Provider value={{
-        jogatina, iniciarJogatina, getDesafioAtual, adicionarPontos,
-        registraErroDesafio, registraErroRelatorio, proximoDesafio
-    }}>
-        {children}
-    </JogoContext.Provider>
-);
-    
-}
-
-//hook(ligação com outros componentes)
-export function useJogo(){
-    const contexto = useContext(JogoContext);
-
-    //garante que o hook só seja usado por componentes que estão em JogoProvider, evitando erro de indefinido
-    if (!contexto){
-        throw new Error("useJogo precisa estar dentro de JogoProvider.")
-    }
-
-    return contexto;
-}*/
-
-import { createContext, useContext, useState } from "react";
-import { API_URL, lerUsuario, limparSessao } from "../services/auth";
-
-const JogoContext = createContext(null);
 
 export function JogoProvider({ children }) {
 
-    const [jogatina, setJogatina] = useState({
-        salvo: false,
-        dificuldade: null,
-        desafios: [],
-        indiceAtual: 0,
-        quantidadeCasos: 10,
-        pontos: 0,
-        errosDesafio: 0,
-        errosRelatorio: 0,
-        tempoInicio: null,
-        tempoSegundos: 0,
-        dataFinalizacao: null,
-        baseAplicado: false,
-        finalizada: false
-    });
+    const [jogatina, setJogatina] = useState(() => lerPartidaSalva() ?? ESTADO_INICIAL);
 
-    function iniciarJogatina(dificuldade, desafiosSelecionados) {
+    useEffect(() => {
+        try {
+            sessionStorage.setItem(CHAVE_PARTIDA, JSON.stringify(jogatina));
+        } catch {
+            // sem armazenamento: o jogo funciona igual, só não sobrevive ao F5
+        }
+    }, [jogatina]);
+
+    // extra (só nos casos exclusivos): { idPartida, teste }
+    function iniciarJogatina(dificuldade, desafiosSelecionados, extra = {}) {
         if (desafiosSelecionados.length === 0) {
             console.error("Nenhum desafio selecionado.");
             return;
@@ -140,7 +69,10 @@ export function JogoProvider({ children }) {
             tempoSegundos: 0,
             dataFinalizacao: null,
             baseAplicado: false,
-            finalizada: false
+            finalizada: false,
+            estrelas: null,
+            idPartida: extra.idPartida ?? null,
+            teste: Boolean(extra.teste)
         });
     }
 
@@ -209,8 +141,10 @@ export function JogoProvider({ children }) {
     // -----------------------------------------------------
     let idResultado = null;
     let salvo = false;
+    let estrelas = null;
 
-    if (lerUsuario()) {
+    // professor testando (teste = true): a partida não é salva em lugar nenhum
+    if (lerUsuario() && !jogatina.teste) {
         const resposta = await fetch(`${API_URL}/resultados`,
             {
                 method: "POST",
@@ -222,7 +156,8 @@ export function JogoProvider({ children }) {
                 erros_desafio: jogatina.errosDesafio,
                 erros_relatorio: errosRelatorioFinais,
                 pontos: jogatina.pontos,
-                tempo_segundos: tempoTotal
+                tempo_segundos: tempoTotal,
+                ...(jogatina.idPartida ? { id_partida: jogatina.idPartida } : {})
                 })
             }
         );
@@ -235,6 +170,7 @@ export function JogoProvider({ children }) {
         } else {
             const dados = await resposta.json();
             idResultado = dados.id_resultado;
+            estrelas = dados.estrelas ?? null;
             salvo = true;
         }
     }
@@ -250,7 +186,8 @@ export function JogoProvider({ children }) {
         dataFinalizacao: new Date().toISOString(),
         finalizada: true,
         salvo,
-        idResultado
+        idResultado,
+        estrelas
     }));
     return { id_resultado: idResultado, salvo };
     }

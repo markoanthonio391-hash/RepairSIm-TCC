@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client'
 //import './index.css'
 import './fontes.css' //carrega a fonte Unispace (@font-face)
 import App from './App.jsx'
+import { instalarAvisoSessaoSubstituida } from './services/auth'
+
+instalarAvisoSessaoSubstituida() //aviso de "conta entrou em outro dispositivo" (sessão única dos alunos)
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

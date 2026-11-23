@@ -1,4 +1,5 @@
 const conexao = require('../config/db');
+const { registrarRelatorio } = require('../utils/partida');
 const { z } = require('zod');
 
 // Lista os relatórios do usuário logado
@@ -94,7 +95,7 @@ exports.avaliar = (req, res) =>{
     const sqlCorretos = `select i.id_item, i.nome, i.tipo 
         from desafio_itens di inner join itens i on di.id_item = i.id_item where di.id_desafio = ?`;
     
-    conexao.query(sqlCorretos, [idDesafio], (erro, itensCorretos) => {
+    conexao.query(sqlCorretos, [idDesafio], async (erro, itensCorretos) => {
         if (erro) {
             console.error('Erro ao buscar itens corretos:', erro);
 
@@ -137,6 +138,14 @@ exports.avaliar = (req, res) =>{
 
         //cenario 3, errou tudo
         const errouTudo = acertos.length === 0;
+
+        //aluno em partida de sala: guarda no servidor se o relatório deste caso estava certo e quantos itens errados marcou
+        //(se der erro aqui o jogo segue normalmente)
+        try {
+            await registrarRelatorio(idUsuario, idDesafio, acertouTudo, erros.length);
+        } catch (erroPartida) {
+            console.error('Erro ao registrar o relatório na partida:', erroPartida.message);
+        }
 
         //conveter ids para objetos
         const acertosDetalhes = itensCorretos.filter(

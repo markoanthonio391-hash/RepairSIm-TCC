@@ -112,6 +112,16 @@ function Home() {
         </button>
       )}
 
+      {logado && admin && (
+        <button
+          type="button"
+          className={`${styles.menuButton} ${styles.historico} ${faseClasse}`}
+          onClick={() => navigate('/resultados-professor')}
+        >
+          Resultados dos alunos
+        </button>
+      )}
+
       {logado ? (
         <button className={`${styles.menuButton} ${styles.buttonLogin} ${faseClasse}`} onClick={logout}>
           {t.logout}

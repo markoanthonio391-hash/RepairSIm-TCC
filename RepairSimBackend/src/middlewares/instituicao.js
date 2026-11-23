@@ -1,37 +1,38 @@
-// middlewares que decidem O QUE o usuário logado pode fazer, conforme a instituição e o papel dele.
-// devem vir DEPOIS do middleware "autenticar" (que preenche req.usuario).
+// middlewares que decidem O QUE o usuário logado pode fazer, conforme o papel dele (aluno ou admin/professor).
+// o papel vem do e-mail (ver utils/vinculo.js). Devem vir DEPOIS do middleware "autenticar" (que preenche req.usuario).
 const conexao = require('../config/db');
 const { buscarVinculo } = require('../utils/vinculo');
+const { alunoPodeJogarCaso } = require('../utils/partida');
 
 const db = conexao.promise();
 
-//exige que o usuário faça parte de uma instituição ativa (aluno ou admin). Preenche req.vinculo
+//exige que o usuário tenha e-mail institucional (aluno ou professor ADM). Preenche req.vinculo
 exports.exigirMembro = async (req, res, next) => {
     try {
         const vinculo = await buscarVinculo(req.usuario.id);
 
         if (!vinculo) {
             return res.status(403).json({
-                mensagem: 'Você precisa fazer parte de uma instituição ativa para acessar os casos exclusivos.'
+                mensagem: 'Os casos exclusivos são só para quem tem e-mail institucional.'
             });
         }
 
         req.vinculo = vinculo;
         next();
     } catch (erro) {
-        console.error('Erro ao verificar instituição:', erro.message);
+        console.error('Erro ao verificar o papel do usuário:', erro.message);
         res.status(500).json({ mensagem: 'Erro interno do servidor.' });
     }
 };
 
-//exige que o usuário seja ADM de uma instituição ativa. Preenche req.vinculo
+//exige que o usuário seja professor ADM (e-mail de professor + promovido por você). Preenche req.vinculo
 exports.exigirAdmin = async (req, res, next) => {
     try {
         const vinculo = await buscarVinculo(req.usuario.id);
 
         if (!vinculo || vinculo.papel !== 'admin') {
             return res.status(403).json({
-                mensagem: 'Apenas administradores de uma instituição ativa podem fazer isso.'
+                mensagem: 'Apenas professores autorizados podem fazer isso.'
             });
         }
 
@@ -44,8 +45,10 @@ exports.exigirAdmin = async (req, res, next) => {
 };
 
 // protege as rotas que já existiam e recebem o id de um desafio (verificar, imagens, relatório...).
-// - desafio padrão (id_instituicao nulo): passa, como sempre foi (inclusive para quem joga sem login)
-// - desafio exclusivo: só passa quem está logado E é da mesma instituição do desafio
+// - desafio padrão (origem_problema nula): passa, como sempre foi (inclusive para quem joga sem login)
+// - desafio exclusivo: passa só
+//     * o professor DONO do caso (criado_por), ou
+//     * o aluno que tem uma PARTIDA em andamento (até 2 horas) com este caso sorteado para ele
 // para quem não pode, respondemos 404 (e não 403) para não revelar que o caso existe.
 // "extrairId" diz onde está o id: (req) => req.params.id   ou   (req) => req.body.id_desafio
 // deve vir DEPOIS de "autenticarOpcional".
@@ -59,7 +62,7 @@ exports.exigirAcessoDesafio = (extrairId) => async (req, res, next) => {
 
     try {
         const [desafios] = await db.query(
-            'select id_instituicao, ativo from desafios where id_desafio = ?',
+            'select criado_por, origem_problema, removido from desafios where id_desafio = ?',
             [idDesafio]
         );
 
@@ -69,20 +72,38 @@ exports.exigirAcessoDesafio = (extrairId) => async (req, res, next) => {
 
         const desafio = desafios[0];
 
-        //caso padrão do jogo
-        if (desafio.id_instituicao === null) {
+        //caso padrão do jogo (só os exclusivos têm origem_problema preenchida)
+        if (desafio.origem_problema === null) {
             return next();
         }
 
         const naoEncontrado = () => res.status(404).json({ mensagem: 'Desafio não encontrado.' });
 
-        if (!desafio.ativo || !req.usuario) {
+        //caso REMOVIDO = inexistente. Caso apenas DESATIVADO continua acessível (quem já está jogando termina o caso)
+        if (desafio.removido || !req.usuario) {
             return naoEncontrado();
         }
 
         const vinculo = await buscarVinculo(req.usuario.id);
 
-        if (!vinculo || vinculo.id_instituicao !== desafio.id_instituicao) {
+        if (!vinculo) {
+            return naoEncontrado();
+        }
+
+        //professor dono do caso (testes dele)
+        if (vinculo.papel === 'admin') {
+            if (desafio.criado_por === req.usuario.id) {
+                req.vinculo = vinculo;
+                return next();
+            }
+
+            return naoEncontrado();
+        }
+
+        //aluno: só se o caso foi sorteado para uma partida dele que está em andamento
+        const idPartida = await alunoPodeJogarCaso(req.usuario.id, idDesafio);
+
+        if (!idPartida) {
             return naoEncontrado();
         }
 

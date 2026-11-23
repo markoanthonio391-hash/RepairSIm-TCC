@@ -4,12 +4,22 @@ import { sounds } from '../audio/sounds';
 
 export function SoundProvider({ children }) {
   const [volume, setVolume] = useState(() => {
-    const salvo = localStorage.getItem('config_volume_pct');
-    return salvo !== null ? Number(salvo) : 70;
+    try {
+      const salvo = localStorage.getItem('config_volume_pct');
+      if (salvo === null) return 70;
+      // valor estragado no navegador viraria NaN e quebraria o som: força um número entre 0 e 100
+      return Math.min(100, Math.max(0, Number(salvo) || 0));
+    } catch {
+      return 70;
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem('config_volume_pct', String(volume));
+    try {
+      localStorage.setItem('config_volume_pct', String(volume));
+    } catch {
+      // modo privado de alguns navegadores: o som funciona igual, só não guarda o volume
+    }
   }, [volume]);
 
   const play = useCallback((nome) => {
