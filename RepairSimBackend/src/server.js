@@ -34,6 +34,7 @@ const imagensPcRoutes = require('./routes/imagensPcRoutes');
 
 const desafioImagensPcRoutes = require('./routes/desafioImagensPcRoutes');
 
+const conquistaRoutes = require('./routes/conquistaRoutes');
 const instituicaoRoutes = require('./routes/instituicaoRoutes');
 
 const desafioExclusivoRoutes = require('./routes/desafioExclusivoRoutes');
@@ -88,6 +89,7 @@ app.use('/imagens-pc', imagensPcRoutes);
 
 app.use('/desafio-imagens-pc', desafioImagensPcRoutes);
 
+app.use('/api/conquistas', conquistaRoutes);
 app.use('/instituicoes', instituicaoRoutes); //vínculo do usuário com a instituição (entrar com código, ver a minha)
 
 app.use('/desafios-exclusivos', desafioExclusivoRoutes); //casos exclusivos das instituições (cadastro pelo ADM e jogo)
