@@ -10,7 +10,8 @@ import { useNavigate } from 'react-router-dom';
 //import backgroundImageDark from '../../assets/imgFundo.jpeg'
 //import backgroundImageLight from '../../assets/imgFundoBranco.jpeg'
 import { useJogo } from "../../context/JogoContext";
-import { API_URL, temInstituicao, limparSessao } from '../../services/auth';
+import { temInstituicao } from '../../services/auth';
+import SalaExclusiva from '../../components/SalaExclusiva';
 
 function Dificuldade()
  {
@@ -21,6 +22,7 @@ function Dificuldade()
   const [mostrarVideos, setMostrarVideos] = useState(false);
   const [erro, setErro] = useState(""); // mensagem na tela (antes o erro só ia para o console)
   const [iniciando, setIniciando] = useState(false); // evita clicar em duas dificuldades ao mesmo tempo
+  const [salaAberta, setSalaAberta] = useState(false); // janela dos casos exclusivos (código da sala)
 
   useEffect(() => {
     const count = 60; // Total de partículas do seu código original
@@ -47,42 +49,12 @@ function Dificuldade()
   //const { tema } = useTheme();
   //const backgroundImage = tema === 'Escuro' ? backgroundImageDark : backgroundImageLight;
   const { iniciarJogatina } = useJogo();
-  //Casos exclusivos da instituição (só para quem tem instituição). A resposta tem o mesmo formato do sorteio normal.
-  async function iniciarExclusivos() {
-    if (iniciando) {
-      return;
-    }
-
-    setIniciando(true);
-    setErro("");
-
-    try {
-      const resposta = await fetch(`${API_URL}/desafios-exclusivos/jogar`, { credentials: 'include' });
-      const dados = await resposta.json().catch(() => ({}));
-
-      if (resposta.status === 401) {
-        limparSessao();
-        navigate('/login');
-        return;
-      }
-
-      if (!resposta.ok) {
-        // 403 (sem instituição ativa), 404 (instituição sem casos) e os demais: a API já manda a mensagem pronta
-        setErro(dados.mensagem || "Não foi possível carregar os casos exclusivos.");
-        return;
-      }
-
-      // todo caso exclusivo é gravado como "Facil" (o iniciarJogatina exige uma dificuldade)
-      iniciarJogatina("Facil", dados.desafios);
-      setMostrarVideos(true);
-    }
-    catch (erroIniciar) {
-      console.error("Erro ao iniciar casos exclusivos:", erroIniciar);
-      setErro("Não foi possível iniciar a partida. Verifique a conexão com o servidor e tente de novo.");
-    }
-    finally {
-      setIniciando(false);
-    }
+  //Casos exclusivos: a janela SalaExclusiva cuida do código da sala e chama o servidor. Quando o servidor devolve
+  //os casos sorteados, a partida começa igual à normal (todo caso exclusivo é gravado como "Facil").
+  function iniciarExclusivos(dados) {
+    iniciarJogatina("Facil", dados.desafios, { idPartida: dados.id_partida ?? null, teste: Boolean(dados.teste) });
+    setSalaAberta(false);
+    setMostrarVideos(true);
   }
 
   async function iniciar(dificuldade) {
@@ -269,9 +241,13 @@ function Dificuldade()
         Difícil
       </button>
       {temInstituicao() && (
-        <button type="button" className={`${styles.menuButton} ${styles.exclusivo}`} onClick={iniciarExclusivos}>
+        <button type="button" className={`${styles.menuButton} ${styles.exclusivo}`} onClick={() => setSalaAberta(true)}>
           Casos exclusivos
         </button>
+      )}
+
+      {salaAberta && (
+        <SalaExclusiva onIniciar={iniciarExclusivos} onFechar={() => setSalaAberta(false)} />
       )}
       <button
         data-som="back"

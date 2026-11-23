@@ -3,10 +3,20 @@ import { LanguageContext } from './LanguageContext';
 import { translations } from '../i18n/translations';
 
 export function LanguageProvider({ children }) {
-  const [idioma, setIdioma] = useState(() => localStorage.getItem('config_idioma') || 'Português');
+  const [idioma, setIdioma] = useState(() => {
+    try {
+      return localStorage.getItem('config_idioma') || 'Português';
+    } catch {
+      return 'Português'; // localStorage bloqueado (modo privado)
+    }
+  });
 
   useEffect(() => {
-    localStorage.setItem('config_idioma', idioma);
+    try {
+      localStorage.setItem('config_idioma', idioma);
+    } catch {
+      // sem armazenamento: só não guarda a escolha
+    }
   }, [idioma]);
 
   // se o valor salvo no navegador não existir em translations, usa Português (evita t === undefined e tela vazia)

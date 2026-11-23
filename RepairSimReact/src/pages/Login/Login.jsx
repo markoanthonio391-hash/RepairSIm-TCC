@@ -9,7 +9,16 @@ function Login() {
     const navigate = useNavigate()
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
-    const [error, setError] = useState('');
+    // se a conta foi derrubada por outro login (sessão única), mostra o aviso guardado pelo services/auth.js
+    const [error, setError] = useState(() => {
+        try {
+            const aviso = sessionStorage.getItem('aviso_login');
+            sessionStorage.removeItem('aviso_login');
+            return aviso || '';
+        } catch {
+            return '';
+        }
+    });
     const [loading, setLoading] = useState(false);
     
     const handleSubmit = async (e) => {

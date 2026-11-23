@@ -19,3 +19,8 @@
 .caso { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.15); }
 .caso:last-child { border-bottom: none; }
 .casoInfo small { opacity: 0.75; display: block; }
+.casoInativo { opacity: 0.55; }
+.codigoBox { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 16px 0 4px; }
+.codigo { font-size: 3rem; letter-spacing: 10px; font-weight: 700; color: #a78bfa; }
+.codigoExpirado { color: #6b7280; text-decoration: line-through; }
+.acoesCaso { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }

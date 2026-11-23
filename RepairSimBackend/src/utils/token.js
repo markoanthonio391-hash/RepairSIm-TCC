@@ -27,9 +27,11 @@ function opcoesCookieLogin() {
 }
 
 //cria o token. Dentro dele vai só o id do usuário (nunca senha ou email)
-function gerarToken(usuario) {
+//"sid" = identificador da sessão: só existe para ALUNOS (sessão única). Se a conta entrar em outro lugar, o sid muda
+//no banco e este token deixa de valer.
+function gerarToken(usuario, sid = null) {
     return jwt.sign(
-        { sub: String(usuario.id_usuario) },
+        sid ? { sub: String(usuario.id_usuario), sid } : { sub: String(usuario.id_usuario) },
         process.env.JWT_SECRET,
         { algorithm: 'HS256', expiresIn: `${VALIDADE_DIAS}d`, issuer: 'repairsim' }
     );

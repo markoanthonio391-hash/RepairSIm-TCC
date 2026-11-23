@@ -1,10 +1,18 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Estrelas from "../../components/Estrelas";
 import { useJogo } from "../../context/JogoContext";
 import "./resultado.css";
 
 function Resultado() {
   const navigate = useNavigate();
     const { jogatina } = useJogo();
+
+    //marca o body só enquanto esta tela está aberta (o CSS global do resultado foi limitado a esta classe)
+    useEffect(() => {
+        document.body.classList.add("tela-resultado");
+        return () => document.body.classList.remove("tela-resultado");
+    }, []);
 
 
     function formatarTempo(segundos) {
@@ -54,6 +62,14 @@ function Resultado() {
 
         
         </section>
+
+        {jogatina.estrelas !== null && jogatina.estrelas !== undefined && (
+          <section className="pontuacao">
+            <span>Avaliação</span>
+
+            <strong><Estrelas valor={jogatina.estrelas} tamanho="2rem" /></strong>
+          </section>
+        )}
 
         <section className="resultado-cards">
 
@@ -119,7 +135,13 @@ function Resultado() {
 
         </section>
 
-        {!jogatina.salvo && (
+        {jogatina.teste && (
+          <p className="resultado-aviso">
+            Partida de teste do professor: ela não é salva no histórico.
+          </p>
+        )}
+
+        {!jogatina.salvo && !jogatina.teste && (
           <p className="resultado-aviso">
             Esta partida não foi salva no histórico. Faça login para registrar seus resultados.
           </p>

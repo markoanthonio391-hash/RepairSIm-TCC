@@ -5,9 +5,10 @@ const multer = require('multer');
 const TAMANHO_MAXIMO_MB = 2;
 
 //nomes dos campos de arquivo aceitos.
-//4 imagens padrão do computador + 1 imagem do PROBLEMA (um único campo: o servidor decide se ela é a do
+//5 imagens obrigatórias (monitor ligado/desligado, gabinete ligado/desligado e o gabinete aberto LIMPO) + 1 imagem do PROBLEMA (um único campo: o servidor decide se ela é a do
 //monitor (software) ou a do gabinete aberto (hardware) olhando o campo origem_problema)
-const CAMPOS_OBRIGATORIOS = ['monitor_ligado', 'monitor_desligado', 'gabinete_ligado', 'gabinete_desligado'];
+//gabinete_limpo = gabinete aberto de lado e limpo: aparece no fim de um caso de hardware (e se o jogador abrir o gabinete num caso de software)
+const CAMPOS_OBRIGATORIOS = ['monitor_ligado', 'monitor_desligado', 'gabinete_ligado', 'gabinete_desligado', 'gabinete_limpo'];
 const CAMPOS_OPCIONAIS = ['imagem_problema'];
 
 const upload = multer({

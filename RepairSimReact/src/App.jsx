@@ -19,6 +19,7 @@ const Caso = lazy(() => import('./pages/caso/caso'));
 const Relatorio = lazy(() => import('./pages/relatorio/relatorio'));
 const Resultado = lazy(() => import('./pages/resultado/resultado')); 
 const CadastrarDesafio = lazy(() => import('./pages/admin/CadastrarDesafio'));
+const ResultadosProfessor = lazy(() => import('./pages/admin/ResultadosProfessor'));
 //#Problemas na importação da página de relatórios
 //  (Causador de fundo branco nas telas de caso e de cliente)
 
@@ -46,6 +47,7 @@ function App() {
                     <Route path="/caso" element={<Caso />} />
                     <Route path='/resultado' element={<Resultado/>} />
                     <Route path='/cadastrar-desafio' element={<CadastrarDesafio />} />
+                    <Route path='/resultados-professor' element={<ResultadosProfessor />} />
                     <Route path='*' element={
                       <div style={{ color: 'white', textAlign: 'center', padding: '48px 16px' }}>
                         <h1>Página não encontrada</h1>

@@ -5,6 +5,7 @@ import hd from "./casoHd.module.css";          // estilos reaproveitados do Caso
 import bancada from "../../assets/bancada.jpeg";
 import { useJogo } from "../../context/JogoContext";
 import VisualizadorImagem from "./VisualizadorImagem";
+import { ganharConquista } from "../../utils/ganharConquista"; // conquistas (arquivo que veio da main do Diego)
 
 // CASO COM ETAPAS (serve para Fácil = 1 etapa, Médio = 2 etapas e, no futuro, Difícil = 3).
 // É o CasoHd sem as partes do HD: a quantidade de etapas e ONDE cada uma acontece vêm do backend (GET /desafios/:id/etapas).
@@ -15,6 +16,13 @@ import VisualizadorImagem from "./VisualizadorImagem";
 const API = "http://localhost:3000";
 
 const TEMPO_MENSAGEM_MS = 3500;
+
+// Gabinete aberto de lado e limpo, usado SÓ se o caso não tiver nenhuma imagem de gabinete aberto cadastrada.
+// (Antes, casos sem essa imagem, como os casos 6 e 7, mostravam "Imagem do gabinete não cadastrada" ao abrir o gabinete.)
+const GABINETE_ABERTO_PADRAO = { caminho_imagem: "/imagens/gabinetes/gabinete_de_lado.png" };
+
+// texto quando o computador desliga sozinho (casos com "desliga_sozinho_segundos", como o caso 4)
+const MENSAGEM_SUPERAQUECIMENTO = "O computador superaqueceu e desligou sozinho.";
 
 // Monta a URL completa de uma imagem que veio do banco.
 function urlImagem(imagem) {
@@ -48,6 +56,10 @@ function CasoEtapas() {
 
     // Etapa atual (começa em 1). O número da etapa é enviado ao backend como "ordem".
     const [etapa, setEtapa] = useState(1);
+
+    // Comportamento do computador neste caso (vem do backend em /etapas):
+    //  pc_inicial = "ligado" ou "desligado" | desliga_sozinho_segundos = se ligar o PC, ele desliga sozinho depois de X segundos
+    const [config, setConfig] = useState({ pc_inicial: "ligado", desliga_sozinho_segundos: null });
 
     // Menu de itens
     const [tipoSelecionado, setTipoSelecionado] = useState(null);
@@ -114,6 +126,14 @@ function CasoEtapas() {
                 setTotalEtapas(Number(dados.total_etapas));
                 setEtapas(Array.isArray(dados.etapas) ? dados.etapas : []);
                 setEtapa(1);
+
+                // o caso 4, por exemplo, começa com o computador DESLIGADO e desliga sozinho se for ligado
+                const configDoCaso = {
+                    pc_inicial: dados.config?.pc_inicial === "desligado" ? "desligado" : "ligado",
+                    desliga_sozinho_segundos: Number(dados.config?.desliga_sozinho_segundos) || null
+                };
+                setConfig(configDoCaso);
+                setPcLigado(configDoCaso.pc_inicial !== "desligado");
             })
             .catch(erro => {
                 console.error("Erro ao carregar as etapas:", erro);
@@ -199,6 +219,23 @@ function CasoEtapas() {
         };
     }, [mostrarMensagem]);
 
+    // DESLIGA SOZINHO (superaquecimento): enquanto o PC estiver ligado e o caso não terminou, conta os segundos.
+    // Se o jogador desligar antes (ou o caso terminar), a contagem é cancelada.
+    useEffect(() => {
+        const segundos = config.desliga_sozinho_segundos;
+
+        if (!pcLigado || respostaFinalizada || !segundos) {
+            return;
+        }
+
+        const temporizador = window.setTimeout(() => {
+            setPcLigado(false);
+            mostrarMensagem(MENSAGEM_SUPERAQUECIMENTO);
+        }, segundos * 1000);
+
+        return () => window.clearTimeout(temporizador);
+    }, [pcLigado, respostaFinalizada, config.desliga_sozinho_segundos, mostrarMensagem]);
+
     // ----------------------- IMAGENS DO PC -----------------------
 
     // Procura uma imagem pela "funcao" cadastrada em desafio_imagens_pc.
@@ -233,7 +270,13 @@ function CasoEtapas() {
     // ----------------------- REGRAS DA ETAPA -----------------------
 
     // modo da etapa atual e da última etapa (software ou hardware)
-    const modoDaEtapa = etapas.find(item => Number(item.ordem) === etapa)?.modo ?? "hardware";
+    const infoEtapaAtual = etapas.find(item => Number(item.ordem) === etapa);
+    const modoDaEtapa = infoEtapaAtual?.modo ?? "hardware";
+
+    // Imagens ESPECÍFICAS da etapa atual (monitor_etapa_N / gabinete_etapa_N), se o caso tiver.
+    // Ex.: caso 5, etapa 1 = gabinete com faíscas (aviso); etapa 2 = fonte queimada. Caso 6, etapa 2 = monitor com "HD cheio".
+    const monitorDaEtapa = infoEtapaAtual?.funcao_monitor ? buscarImagem(infoEtapaAtual.funcao_monitor) : undefined;
+    const gabineteDaEtapa = infoEtapaAtual?.funcao_gabinete ? buscarImagem(infoEtapaAtual.funcao_gabinete) : undefined;
     const modoUltimaEtapa = etapas.find(item => Number(item.ordem) === totalEtapas)?.modo ?? "hardware";
 
     // Qual imagem do MONITOR aparece agora?
@@ -246,7 +289,7 @@ function CasoEtapas() {
         imagemMonitorAtual = monitorLigado; // problema resolvido: monitor volta ao normal
     }
     else {
-        imagemMonitorAtual = monitorProblema ?? monitorLigado;
+        imagemMonitorAtual = monitorDaEtapa ?? monitorProblema ?? monitorLigado;
     }
 
     // Qual imagem do GABINETE aparece agora?
@@ -254,8 +297,8 @@ function CasoEtapas() {
 
     if (gabineteAberto) {
         imagemGabineteAtual = respostaFinalizada
-            ? (gabineteLimpo ?? gabineteDefeito)
-            : (gabineteDefeito ?? gabineteLimpo);
+            ? (gabineteLimpo ?? gabineteDefeito ?? GABINETE_ABERTO_PADRAO)
+            : (gabineteDaEtapa ?? gabineteDefeito ?? gabineteLimpo ?? GABINETE_ABERTO_PADRAO);
     }
     else if (pcLigado) {
         imagemGabineteAtual = gabineteLigado;
@@ -300,7 +343,7 @@ function CasoEtapas() {
         }
 
         // Segundo clique: amplia a imagem do defeito
-        const imagemZoom = gabineteDefeito ?? gabineteLimpo;
+        const imagemZoom = imagemGabineteAtual; // amplia exatamente a imagem que está na tela (inclusive a da etapa)
 
         if (imagemZoom) {
             setImagemAmpliada({ src: urlImagem(imagemZoom), alt: "Interior do gabinete" });
@@ -414,6 +457,12 @@ function CasoEtapas() {
             setRespostaFinalizada(true);
             setCategoriaAberta(false);
 
+            // Conquista "Técnico Iniciante": mesma regra que o Diego colocou no CasoPadrao (caso fácil concluído).
+            // Os casos fáceis agora abrem este componente, então o gatilho precisa estar aqui também.
+            if (desafioAtual?.dificuldade === "Facil") {
+                ganharConquista("TECNICO_INICIANTE", "Técnico Iniciante");
+            }
+
             if (modoUltimaEtapa === "software") {
                 // Software: o monitor volta ao normal e o botão do relatório aparece na hora
                 mostrarMensagem("Reparo concluído com sucesso.", true);
@@ -480,7 +529,7 @@ function CasoEtapas() {
 
                 {/* Computador na bancada */}
                 <div className={styles.pcContainer}>
-                    {imagemMonitorAtual ? (
+                    {imagemMonitorAtual && !carregandoEtapas ? (
                         <img
                             src={urlImagem(imagemMonitorAtual)}
                             alt="Monitor"
@@ -488,12 +537,12 @@ function CasoEtapas() {
                             onClick={() => ampliarImagem(imagemMonitorAtual, "Monitor ampliado")}
                         />
                     ) : (
-                        !carregandoImagens && (
+                        !carregandoImagens && !carregandoEtapas && (
                             <p className={hd.placeholderPcImage}>Imagem do monitor não cadastrada.</p>
                         )
                     )}
 
-                    {imagemGabineteAtual ? (
+                    {imagemGabineteAtual && !carregandoEtapas ? (
                         <img
                             src={urlImagem(imagemGabineteAtual)}
                             alt="Gabinete do computador"
@@ -501,7 +550,7 @@ function CasoEtapas() {
                             onClick={abrirOuAmpliarGabinete}
                         />
                     ) : (
-                        !carregandoImagens && (
+                        !carregandoImagens && !carregandoEtapas && (
                             <p className={hd.placeholderPcImage}>Imagem do gabinete não cadastrada.</p>
                         )
                     )}

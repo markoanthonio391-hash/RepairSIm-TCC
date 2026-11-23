@@ -1,3 +1,4 @@
+import { ganharConquista } from '../../utils/ganharConquista';
 import styles from './caso.module.css'
 import { useState, useEffect, useRef } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';

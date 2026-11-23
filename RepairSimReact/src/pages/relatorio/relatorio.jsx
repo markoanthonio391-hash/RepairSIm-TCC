@@ -37,6 +37,13 @@ function Relatorio() {
 
   const [carregando, setCarregando] = useState(true);
 
+  // mensagens de falha de rede (antes a tela ficava em "Carregando..." para sempre ou o erro só ia para o console)
+  const [erroCarregamento, setErroCarregamento] = useState("");
+  const [erroAcao, setErroAcao] = useState("");
+
+  // trava de clique duplo no SALVAR LAUDO (dois cliques rápidos criavam dois relatórios)
+  const [salvando, setSalvando] = useState(false);
+
 
   // =====================================================
   // ESTADO DO FORMULÁRIO
@@ -64,7 +71,8 @@ function Relatorio() {
 
   useEffect(() => {
 
-    fetch(`http://localhost:3000/relatorios/desafio/${idDesafio}`)
+    // credentials: "include" envia o cookie de login (casos exclusivos de instituição respondem 404 sem ele)
+    fetch(`http://localhost:3000/relatorios/desafio/${idDesafio}`, { credentials: "include" })
 
       .then(resposta => {
 
@@ -78,15 +86,13 @@ function Relatorio() {
 
       .then(dados => {
 
-        console.log("Dados do relatório:", dados);
-
         setDadosDesafio(dados);
 
         // Preenche o formulário automaticamente
         setForm({
           numeroCaso: dados.id_desafio,
           cliente: dados.cliente,
-          data: new Date().toISOString().split("T")[0],
+          data: new Date().toLocaleDateString("en-CA"), // data LOCAL (toISOString usa UTC e mostrava o dia seguinte depois das 21h)
           problema: dados.problema_relatorio,
           diagnostico: dados.diagnostico_relatorio
         });
@@ -96,6 +102,8 @@ function Relatorio() {
       .catch(erro => {
 
         console.error(erro);
+
+        setErroCarregamento("Não foi possível carregar os dados do caso.");
 
       });
 
@@ -122,8 +130,6 @@ function Relatorio() {
 
       .then(dados => {
 
-        console.log("Itens:", dados);
-
         setItens(dados);
 
         setCarregando(false);
@@ -133,6 +139,8 @@ function Relatorio() {
       .catch(erro => {
 
         console.error(erro);
+
+        setErroCarregamento("Não foi possível carregar a lista de itens.");
 
         setCarregando(false);
 
@@ -175,6 +183,14 @@ function Relatorio() {
 
   function salvarLaudo() {
 
+    // ignora o segundo clique enquanto o primeiro ainda está sendo avaliado
+    if (salvando) {
+      return;
+    }
+
+    setSalvando(true);
+    setErroAcao("");
+
     fetch("http://localhost:3000/relatorios/avaliar", {
 
       method: "POST",
@@ -208,11 +224,6 @@ function Relatorio() {
 
       .then(resultado => {
 
-        console.log(
-          "Resultado do relatório:",
-          resultado
-        );
-
         // Os erros são contabilizados somente em continuar()
         setResultadoRelatorio(resultado);
 
@@ -224,6 +235,14 @@ function Relatorio() {
           "Erro ao avaliar relatório:",
           erro
         );
+
+        setErroAcao("Não foi possível salvar o laudo. Verifique a conexão e tente novamente.");
+
+      })
+
+      .finally(() => {
+
+        setSalvando(false);
 
       });
 
@@ -258,6 +277,8 @@ function Relatorio() {
 
         console.error("Erro ao finalizar jogatina:", erro);
 
+        setErroAcao("Não foi possível salvar o resultado da partida. Tente continuar de novo.");
+
       }
 
       return;
@@ -274,6 +295,30 @@ function Relatorio() {
   // =====================================================
   // EVITA MOSTRAR A TELA ANTES DOS DADOS
   // =====================================================
+
+  if (erroCarregamento) {
+
+    return (
+      <div className="relatorio-container">
+
+        <header className="relatorio-header">
+
+          <h1>RELATÓRIO</h1>
+
+          <p role="alert">
+            {erroCarregamento}
+          </p>
+
+          <button type="button" onClick={() => navigate("/dificuldade")}>
+            VOLTAR
+          </button>
+
+        </header>
+
+      </div>
+    );
+
+  }
 
   if (carregando || !dadosDesafio) {
 
@@ -666,14 +711,22 @@ function Relatorio() {
       <footer className="relatorio-footer">
 
 
+        {erroAcao && (
+          <p role="alert" style={{ color: "#ff8a8a", textAlign: "center" }}>
+            {erroAcao}
+          </p>
+        )}
+
         {!resultadoRelatorio && (
 
           <button
+            type="button"
             className="btn-salvar"
             onClick={salvarLaudo}
+            disabled={salvando}
           >
 
-            SALVAR LAUDO
+            {salvando ? "SALVANDO..." : "SALVAR LAUDO"}
 
           </button>
 

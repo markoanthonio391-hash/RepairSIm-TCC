@@ -68,7 +68,18 @@ function modoDaEtapa(tipoItem) {
     return tipoItem === 'software' ? 'software' : 'hardware';
 }
 
-//busca as etapas de um desafio (ordem e modo). NUNCA devolve o id ou o nome do item correto
+//IMAGENS POR ETAPA (opcional). Em desafio_imagens_pc, uma imagem com a função:
+//  monitor_etapa_N   = o que o MONITOR mostra enquanto o jogador está na etapa N
+//  gabinete_etapa_N  = o que o GABINETE ABERTO mostra enquanto o jogador está na etapa N
+//Se o caso não tiver imagem para aquela etapa, o campo vem null e o jogo usa as imagens de sempre.
+//Exemplo (caso 5): etapa 1 = gabinete com faíscas (aviso para usar o multímetro); etapa 2 = fonte queimada.
+function funcaoDaEtapa(funcoesDoCaso, prefixo, ordem) {
+    const funcao = `${prefixo}_etapa_${ordem}`;
+
+    return funcoesDoCaso.has(funcao) ? funcao : null;
+}
+
+//busca as etapas de um desafio (ordem, modo e imagens da etapa). NUNCA devolve o id ou o nome do item correto
 async function buscarEtapas(idDesafio) {
     const [linhas] = await db.query(
         `select di.ordem, i.tipo as tipo_item
@@ -79,11 +90,20 @@ async function buscarEtapas(idDesafio) {
         [idDesafio]
     );
 
+    const [imagens] = await db.query(
+        'select funcao from desafio_imagens_pc where id_desafio = ?',
+        [idDesafio]
+    );
+
+    const funcoesDoCaso = new Set(imagens.map((imagem) => imagem.funcao));
+
     return {
         resumo: calcularResumo(linhas),
         etapas: linhas.map((linha) => ({
             ordem: Number(linha.ordem),
-            modo: modoDaEtapa(linha.tipo_item)
+            modo: modoDaEtapa(linha.tipo_item),
+            funcao_monitor: funcaoDaEtapa(funcoesDoCaso, 'monitor', Number(linha.ordem)),
+            funcao_gabinete: funcaoDaEtapa(funcoesDoCaso, 'gabinete', Number(linha.ordem))
         }))
     };
 }

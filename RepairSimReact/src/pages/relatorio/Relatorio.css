@@ -1,15 +1,19 @@
-* {
+/* Estas regras eram GLOBAIS (valiam em todas as telas depois de visitar o Relatório).
+   Agora valem só na tela do relatório: o relatorio.jsx coloca a classe "tela-relatorio" no body. */
+.relatorio-container,
+.relatorio-container * {
   box-sizing: border-box;
 }
 
 /*Teste de Marko*/
-html, body {
+html:has(body.tela-relatorio),
+body.tela-relatorio {
   margin: 0;
   padding: 0;
   min-height: 100%;
 }
 
-body {
+body.tela-relatorio {
   margin: 0;
   padding: 0;
   font-family: Arial, Helvetica,sans-serif;
@@ -68,7 +72,7 @@ body {
 }
 
 /* Parte da seções. Aqui cria um espaço entre o cabeçalho e o conteúdo principal */
-main{
+.relatorio-container main{
   padding-top:17px;
 }
 

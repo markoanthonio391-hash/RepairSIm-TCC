@@ -12,12 +12,15 @@
     --sombra: 0 8px 24px rgba (0, 0, 0, 0.35);
     --raio: 14px
 }
-body {
+/* antes eram regras globais (vazavam para as outras telas). Agora só valem na tela de resultado,
+   que coloca a classe "tela-resultado" no body (ver resultado.jsx). */
+body.tela-resultado {
     margin: 0;
     background: #0f172a;
     color: white;
 }
-* {
+.resultado,
+.resultado * {
     box-sizing: border-box;
 }
 

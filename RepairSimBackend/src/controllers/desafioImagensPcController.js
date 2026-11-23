@@ -2,10 +2,10 @@ const conexao = require('../config/db'); // ele pega a conexão de db.js.
 
 exports.listar = (req, res) => { // sempre que for pedido a listar de desafio imagens pc, o listar é executado
 
-    //só os desafios padrão (id_instituicao nulo): as imagens dos casos exclusivos não aparecem numa listagem pública
+    //só os desafios padrão (origem_problema nula): as imagens dos casos exclusivos não aparecem numa listagem pública
     const selecao = `select dip.* from desafio_imagens_pc dip
         inner join desafios d on d.id_desafio = dip.id_desafio
-        where d.id_instituicao is null`;
+        where d.origem_problema is null`;
 
     conexao.query(selecao, (erro, resultado) => { // executa no MySQL
 

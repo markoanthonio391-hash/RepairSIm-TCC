@@ -25,11 +25,18 @@ exports.limitadorLogin = criarLimitador(
     { skipSuccessfulRequests: true }
 );
 
-//entrar em instituição: o código de convite não pode ser adivinhado por tentativa e erro (10 erros a cada 15 minutos)
-exports.limitadorEntrarInstituicao = criarLimitador(
+//entrar na sala: o código de 6 dígitos não pode ser adivinhado por tentativa e erro (10 erros a cada 15 minutos).
+//Só código ERRADO conta; acertar não gasta tentativas. (Errar o caso no jogo NÃO tem limite.)
+exports.limitadorEntrarSala = criarLimitador(
     15, 10,
     'Muitas tentativas de código. Aguarde 15 minutos e tente novamente.',
     { skipSuccessfulRequests: true }
+);
+
+//gerar código de sala (professor): evita gerar centenas de códigos em sequência
+exports.limitadorGerarSala = criarLimitador(
+    15, 40,
+    'Muitos códigos gerados em pouco tempo. Aguarde alguns minutos.'
 );
 
 //cadastro de casos exclusivos (envia imagens, então é uma rota mais "pesada")

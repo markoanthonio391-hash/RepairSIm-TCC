@@ -1,9 +1,10 @@
 const conexao = require("../config/db");
 const { validarEtapas, buscarEtapas } = require("../utils/etapas");
+const { registrarTentativa } = require("../utils/partida");
 
 // Lista todos os desafios
 exports.listar = (req, res) => {
-    const sql = "SELECT * FROM desafios WHERE id_instituicao IS NULL"; //só casos padrão: os exclusivos de instituição não aparecem aqui
+    const sql = "SELECT * FROM desafios WHERE origem_problema IS NULL"; //só casos padrão: os exclusivos dos professores não aparecem aqui
 
     conexao.query(sql, (erro, resultado) => {
         if (erro) {
@@ -43,6 +44,16 @@ exports.buscarPorId = (req, res) => {
 //----------------------------------|FUNÇÂO PARA VERIFICAR A ORDEM E O INTEM|-----------------------------np
 
 // Olha se o item que foi escolhido é o correto para o desafio
+// guarda no SERVIDOR o acerto/erro quando quem joga é um aluno numa partida de sala (não faz nada para os demais jogadores).
+// Se der erro aqui o jogo segue normalmente: só o registro da partida deixa de ser atualizado.
+async function anotarNaPartida(req, idDesafio, ordem, correto, pontos) {
+    try {
+        await registrarTentativa(req.usuario ? req.usuario.id : null, idDesafio, ordem, correto, pontos);
+    } catch (erro) {
+        console.error("Erro ao registrar a tentativa na partida:", erro.message);
+    }
+}
+
 exports.verificarItem = (req, res) => {
 
     //id do desafio da URL no caso ele ta buscando
@@ -76,7 +87,7 @@ exports.verificarItem = (req, res) => {
     and ordem = ?
     limit 1`;
 
-    conexao.query(sql, [idDesafio, idItem, ordem],(erro, resultados) => {
+    conexao.query(sql, [idDesafio, idItem, ordem], async (erro, resultados) => {
         //erro de acesso ao banco
         if (erro) {
             console.error("Erro ao verificar item:", erro);
@@ -85,6 +96,8 @@ exports.verificarItem = (req, res) => {
         }
         //item incorreto para a ordem atual
         if (resultados.length === 0) {
+            await anotarNaPartida(req, idDesafio, ordem, false, -5);
+
             return res.json({
                 correto: false,
                 pontos: -5,
@@ -92,6 +105,8 @@ exports.verificarItem = (req, res) => {
             });
         }
         //item correto para a ordem atual
+        await anotarNaPartida(req, idDesafio, ordem, true, 10);
+
         return res.json({
             correto: true,
             pontos: 10,
@@ -112,7 +127,7 @@ exports.listarEtapas = async (req, res) => {
 
     try {
         const [desafios] = await conexao.promise().query(
-            "select id_desafio, dificuldade from desafios where id_desafio = ?",
+            "select id_desafio, dificuldade, pc_inicial, desliga_sozinho_segundos from desafios where id_desafio = ?",
             [idDesafio]
         );
 
@@ -134,6 +149,12 @@ exports.listarEtapas = async (req, res) => {
             total_etapas: etapas.length,
             valido: validacao.valido,
             motivo: validacao.motivo,
+            //comportamento do computador no INÍCIO do caso (ex.: caso 4 começa desligado e, se for ligado,
+            //desliga sozinho por superaquecimento depois de alguns segundos). null = não desliga sozinho.
+            config: {
+                pc_inicial: desafios[0].pc_inicial,
+                desliga_sozinho_segundos: desafios[0].desliga_sozinho_segundos
+            },
             etapas
         });
 
@@ -171,7 +192,7 @@ const sql =`
                min(ordem) as primeira_ordem, max(ordem) as ultima_ordem
         from desafio_itens group by id_desafio
     ) e on e.id_desafio = d.id_desafio
-    where d.dificuldade = ? and d.id_instituicao is null and exists (select 1 from desafio_imagens_pc dip where dip.id_desafio = d.id_desafio)
+    where d.dificuldade = ? and d.origem_problema is null and exists (select 1 from desafio_imagens_pc dip where dip.id_desafio = d.id_desafio)
     order by rand()
 `;
 
