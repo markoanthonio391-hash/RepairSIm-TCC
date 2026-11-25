@@ -1,5 +1,5 @@
-// Importa o useState e o useEffect do React
-import { useState, useEffect } from "react";
+// Importa o useState, o useEffect e o useRef do React
+import { useState, useEffect, useRef } from "react";
 
 // Importa o useNavigate para trocar de página
 import { useNavigate, useParams } from "react-router-dom";
@@ -43,6 +43,18 @@ function Relatorio() {
 
   // trava de clique duplo no SALVAR LAUDO (dois cliques rápidos criavam dois relatórios)
   const [salvando, setSalvando] = useState(false);
+
+
+  // =====================================================
+  // VÍDEO (aparece depois de apertar CONTINUAR no último caso)
+  // =====================================================
+
+  // true = mostra o vídeo no lugar do relatório
+  const [mostrarVideo, setMostrarVideo] = useState(false);
+
+  // trava para não executar o "seguir" duas vezes
+  // (o vídeo terminar + clicar em PULAR ao mesmo tempo)
+  const seguindo = useRef(false);
 
 
   // =====================================================
@@ -224,7 +236,7 @@ function Relatorio() {
 
       .then(resultado => {
 
-        // Os erros são contabilizados somente em continuar()
+        // Os erros são contabilizados somente em seguirDepoisDoVideo()
         setResultadoRelatorio(resultado);
 
       })
@@ -251,17 +263,47 @@ function Relatorio() {
 
   // =====================================================
   // CONTINUAR
-  // Se não for o último caso, vai para o próximo cliente.
-  // Se for o último, salva o resultado e vai para a tela final.
+  // No último caso, mostra o vídeo antes do resultado.
+  // Nos outros casos, vai direto para o próximo cliente.
   // =====================================================
 
-  async function continuar() {
+  function continuar() {
 
     if (!resultadoRelatorio) {
       return;
     }
 
-    const quantidadeErros = resultadoRelatorio.erros || 0;
+    setErroAcao("");
+
+    if (ehUltimoDesafio()) {
+
+      setMostrarVideo(true);
+
+    } else {
+
+      seguirDepoisDoVideo();
+
+    }
+
+  }
+
+
+  // =====================================================
+  // SEGUIR DEPOIS DO VÍDEO
+  // Roda quando o vídeo termina ou quando aperta PULAR.
+  // Se não for o último caso, vai para o próximo cliente.
+  // Se for o último, salva o resultado e vai para a tela final.
+  // =====================================================
+
+  async function seguirDepoisDoVideo() {
+
+    if (seguindo.current) {
+      return;
+    }
+
+    seguindo.current = true;
+
+    const quantidadeErros = resultadoRelatorio?.erros || 0;
 
     // Último desafio: os erros vão direto para finalizarJogatina,
     // pois o estado do React ainda não estaria atualizado.
@@ -279,6 +321,11 @@ function Relatorio() {
 
         setErroAcao("Não foi possível salvar o resultado da partida. Tente continuar de novo.");
 
+        // volta para o relatório para mostrar o erro e deixar tentar de novo
+        setMostrarVideo(false);
+
+        seguindo.current = false;
+
       }
 
       return;
@@ -289,6 +336,38 @@ function Relatorio() {
     proximoDesafio();
 
     navigate("/cliente");
+  }
+
+
+  // =====================================================
+  // TELA DO VÍDEO
+  // (fica depois de todos os hooks, nunca antes deles)
+  // =====================================================
+
+  if (mostrarVideo) {
+
+    return (
+      <main className="tela-video">
+
+        <video
+          className="video-tela"
+          src="/videos/video2.mp4"
+          autoPlay
+          playsInline
+          onEnded={seguirDepoisDoVideo}
+        />
+
+        <button
+          type="button"
+          className="btn-pular"
+          onClick={seguirDepoisDoVideo}
+        >
+          PULAR
+        </button>
+
+      </main>
+    );
+
   }
 
 

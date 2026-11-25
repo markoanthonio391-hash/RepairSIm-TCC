@@ -11,8 +11,9 @@
 :root {
   /* tamanho da fonte: todo "font-size" do projeto é multiplicado por esta variável */
   --escala-fonte: 1;
-
   /* página */
+  -webkit-user-drag:none;
+  user-select:none;
   --t-fundo-pagina: rgb(1, 0, 44);
   --t-texto: #F5F7FA;
   --t-texto-suave: #A8B3C7;
