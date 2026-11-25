@@ -1,42 +1,25 @@
 import styles from './Config.module.css';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-//import { useTheme } from '../../../context/useTheme';
-//import backgroundDark from '../../../assets/imgFundo.jpeg'
-//import backgroundLight from '../../../assets/imgFundoBranco.jpeg'
+import { useTheme } from '../../../context/useTheme';
 import { useLanguage } from '../../../context/useLanguage';
 import { useSound } from '../../../context/useSound';
+import { TEMAS, FONTES, proximoValor } from '../../../context/preferencias';
+import TechSolveLogo from '../../../components/TechSolveLogo';
 
 const IDIOMAS = ['Português', 'English'];
-const FONTES = ['Padrão', 'Grande'];
-
-function proximoValor(lista, atual) {
-  const index = lista.indexOf(atual);
-  return lista[(index + 1) % lista.length];
-}
 
 function Config() {
-  const navigate = useNavigate()
-  //const { tema, setTema } = useTheme();
   
+  const navigate = useNavigate()
+  
+  const { tema, setTema, fonte, setFonte } = useTheme();
   const { volume, setVolume, play } = useSound();
+  const { idioma, setIdioma } = useLanguage();
+
   const [sliderAberto, setSliderAberto] = useState(false);
   
-  const { t } = useLanguage(); // Adicione esta linha para obter a função de tradução
-
-  const [idioma, setIdioma] = useState(() => localStorage.getItem('config_idioma') || IDIOMAS[0]);
-  const [fonte, setFonte] = useState(() => localStorage.getItem('config_fonte') || FONTES[0]);
-
-  useEffect(() => { localStorage.setItem('config_idioma', idioma); }, [idioma]);
-  useEffect(() => { localStorage.setItem('config_fonte', fonte); }, [fonte]);
-
-  
-  const fonteGrande = fonte === 'Grande';
-
-  //const claro = tema === 'Claro';
-  //const backgroundImage = claro ? backgroundLight : backgroundDark;
-
-
+  //const { t } = useLanguage(); // Adicione esta linha para obter a função de tradução
   const [particulas, setParticulas] = useState([]);
 
   useEffect(() => {
@@ -159,20 +142,16 @@ function Config() {
       
       
       
-      
+      <TechSolveLogo size={130} className={styles.logo} />
       <h1 className={styles.title}>CONFIGURAÇÕES</h1>
 
       <div className={styles.optionRow}>
         <p className={styles.optionLabel}>Alteração de tema</p>
-        {/* A troca de tema está desligada (o useTheme está comentado acima), então o botão fica desativado em vez de dar erro ao clicar.
-            Para religar: descomente o useTheme e volte o onClick para setTema(prev => proximoValor(['Escuro', 'Claro'], prev)). */}
         <button
-          type="button"
           className={`${styles.optionButton} ${styles.tema}`}
-          disabled
-          title="Em breve"
+          onClick={() => setTema((anterior) => proximoValor(TEMAS, anterior))}
         >
-          Tema
+          {tema}
         </button>
       </div>
 

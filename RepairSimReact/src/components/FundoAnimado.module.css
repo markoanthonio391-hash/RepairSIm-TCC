@@ -2,10 +2,10 @@
    Fica fixo, atrás de tudo, e não captura cliques. */
 
 .stage {
-  --glow: #2f7bff;
-  --line: #1e5aa8;
-  --line-bright: #5fb0ff;
-  --dot: #7fc4ff;
+  --glow: var(--t-glow, #2f7bff);
+  --line: var(--t-line, #1e5aa8);
+  --line-bright: var(--t-line-bright, #5fb0ff);
+  --dot: var(--t-dot, #7fc4ff);
 
   position: fixed;
   inset: 0;
@@ -13,8 +13,8 @@
   height: 100vh;
   height: 100dvh; /* acompanha a barra do navegador no celular */
   background:
-    radial-gradient(ellipse 60% 55% at 50% 50%, rgba(47,123,255,0.35) 0%, rgba(20,60,140,0.12) 40%, rgba(2,6,17,0) 70%),
-    linear-gradient(180deg, #040a1a 0%, #020611 100%);
+    radial-gradient(ellipse 60% 55% at 50% 50%, var(--t-stage-c1, rgba(47,123,255,0.35)) 0%, var(--t-stage-c2, rgba(20,60,140,0.12)) 40%, var(--t-stage-c3, rgba(2,6,17,0)) 70%),
+    linear-gradient(180deg, var(--t-stage-top, #040a1a) 0%, var(--t-stage-bottom, #020611) 100%);
   animation: breathe 6s ease-in-out infinite;
   overflow: hidden;
   z-index: -1;
@@ -30,8 +30,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(80,140,255,0.09) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(80,140,255,0.09) 1px, transparent 1px);
+    linear-gradient(var(--t-grid, rgba(80,140,255,0.09)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--t-grid, rgba(80,140,255,0.09)) 1px, transparent 1px);
   background-size: 34px 34px;
   -webkit-mask-image: radial-gradient(ellipse 55% 60% at 50% 50%, #000 0%, rgba(0,0,0,0.5) 45%, transparent 75%);
   mask-image: radial-gradient(ellipse 55% 60% at 50% 50%, #000 0%, rgba(0,0,0,0.5) 45%, transparent 75%);
@@ -48,9 +48,9 @@
   width: min(520px, 80vw);   /* encolhe em telas pequenas */
   height: min(520px, 80vw);
   background-image:
-    repeating-linear-gradient(60deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px),
-    repeating-linear-gradient(-60deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px),
-    repeating-linear-gradient(0deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px);
+    repeating-linear-gradient(60deg, transparent 0 30px, var(--t-hex, rgba(70,130,230,0.16)) 30px 31px),
+    repeating-linear-gradient(-60deg, transparent 0 30px, var(--t-hex, rgba(70,130,230,0.16)) 30px 31px),
+    repeating-linear-gradient(0deg, transparent 0 30px, var(--t-hex, rgba(70,130,230,0.16)) 30px 31px);
   opacity: 0.5;
   animation: hexFade 8s ease-in-out infinite;
 }
@@ -93,12 +93,12 @@
   stroke: var(--line-bright);
   opacity: 0.35;
   stroke-width: 1.2;
-  filter: drop-shadow(0 0 2px rgba(120,180,255,0.6));
+  filter: drop-shadow(0 0 2px var(--t-glow-bright, rgba(120,180,255,0.6)));
 }
 
 .node {
   fill: var(--dot);
-  filter: drop-shadow(0 0 4px rgba(120,190,255,0.9));
+  filter: drop-shadow(0 0 4px var(--t-glow-node, rgba(120,190,255,0.9)));
 }
 
 .node.pulse {
@@ -111,8 +111,8 @@
 }
 
 .traveler {
-  fill: #bfe3ff;
-  filter: drop-shadow(0 0 6px #6fbaff) drop-shadow(0 0 12px rgba(80,150,255,0.8));
+  fill: var(--t-traveler, #bfe3ff);
+  filter: drop-shadow(0 0 6px var(--t-traveler-glow-1, #6fbaff)) drop-shadow(0 0 12px var(--t-traveler-glow-2, rgba(80,150,255,0.8)));
 }
 
 .particlesContainer {
@@ -127,7 +127,7 @@
   position: absolute;
   border-radius: 50%;
   background: var(--dot);
-  box-shadow: 0 0 6px 1px rgba(120,190,255,0.8);
+  box-shadow: 0 0 6px 1px var(--t-particle-glow, rgba(120,190,255,0.8));
   animation-name: twinkle;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
@@ -165,7 +165,7 @@
 /* feixe de luz que corre pelo perímetro de alguns favos */
 .hexRunner {
   fill: none;
-  stroke: #bfe3ff;
+  stroke: var(--t-traveler, #bfe3ff);
   stroke-width: 2;
   stroke-linecap: round;
   stroke-dasharray: 16 84;

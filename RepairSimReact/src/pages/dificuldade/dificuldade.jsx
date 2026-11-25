@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import styles from './Dificuldade.module.css'
-import TechSolveLogo from '../../assets/TechSolveLogo.png'
+import TechSolveLogo from '../../components/TechSolveLogo'
 import logoFacil from '../../assets/logoFacil.png'
 import logoNormal from '../../assets/logoNormal.png'
 import logoDificil from '../../assets/logoDificil.png'
@@ -115,9 +115,7 @@ function Dificuldade()
 }
   return (
     <div className={styles.container}>
-      <div className={styles['tech-solve-logo']}>
-        <img src={TechSolveLogo} alt="TechSolve Logo" className={`${styles.logoTechSolve} ${styles['tech-solve-logo']}`} />
-      </div>
+      <TechSolveLogo size={130} className={styles.logo} />
       <h1 className={styles.title}>DIFICULDADES</h1>
       <h2 className={styles.subtitle}>Selecione uma dificuldade</h2>
 

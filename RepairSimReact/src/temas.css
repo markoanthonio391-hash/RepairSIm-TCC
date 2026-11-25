@@ -1,0 +1,77 @@
+/* ==========================================================================
+   Temas (escuro/claro) e tamanho da fonte.
+   O ThemeProvider coloca data-tema="escuro|claro" e data-fonte="pequena|padrao|grande|muito-grande"
+   no <html>. Os arquivos CSS de cada tela leem as variáveis abaixo ou têm um bloco próprio
+   começando por :global(html[data-tema='claro']).
+
+   REGRA: no tema escuro nada muda. Os valores de :root são exatamente as cores que o projeto
+   já usava; o tema claro só sobrescreve.
+   ========================================================================== */
+
+:root {
+  /* tamanho da fonte: todo "font-size" do projeto é multiplicado por esta variável */
+  --escala-fonte: 1;
+
+  /* página */
+  --t-fundo-pagina: rgb(1, 0, 44);
+  --t-texto: #F5F7FA;
+  --t-texto-suave: #A8B3C7;
+
+  /* fundo animado (grade, circuitos, partículas) */
+  --t-glow: #2f7bff;
+  --t-line: #1e5aa8;
+  --t-line-bright: #5fb0ff;
+  --t-dot: #7fc4ff;
+  --t-stage-c1: rgba(47,123,255,0.35);
+  --t-stage-c2: rgba(20,60,140,0.12);
+  --t-stage-c3: rgba(2,6,17,0);
+  --t-stage-top: #040a1a;
+  --t-stage-bottom: #020611;
+  --t-grid: rgba(80,140,255,0.09);
+  --t-hex: rgba(70,130,230,0.16);
+  --t-glow-bright: rgba(120,180,255,0.6);
+  --t-glow-node: rgba(120,190,255,0.9);
+  --t-traveler: #bfe3ff;
+  --t-traveler-glow-1: #6fbaff;
+  --t-traveler-glow-2: rgba(80,150,255,0.8);
+  --t-particle-glow: rgba(120,190,255,0.8);
+}
+
+html[data-fonte='pequena']      { --escala-fonte: 0.9; }
+html[data-fonte='grande']       { --escala-fonte: 1.15; }
+html[data-fonte='muito-grande'] { --escala-fonte: 1.3; }
+
+/* texto que não declara tamanho próprio herda do body (1rem = 16px = o padrão do navegador) */
+body {
+  font-size: calc(1rem * var(--escala-fonte, 1));
+}
+
+html[data-tema='claro'] {
+  --t-fundo-pagina: #e6f2fd;
+  --t-texto: #0A192F;
+  --t-texto-suave: #35496a;
+
+  --t-glow: #1f78d8;
+  --t-line: #2a78c9;
+  --t-line-bright: #0b63c4;
+  --t-dot: #0a6fd1;
+  --t-stage-c1: rgba(255,255,255,0.95);
+  --t-stage-c2: rgba(150,200,250,0.40);
+  --t-stage-c3: rgba(150,200,250,0);
+  --t-stage-top: #eef7ff;
+  --t-stage-bottom: #b9dcf8;
+  --t-grid: rgba(15,95,190,0.13);
+  --t-hex: rgba(15,95,190,0.18);
+  --t-glow-bright: rgba(11,99,196,0.35);
+  --t-glow-node: rgba(11,99,196,0.45);
+  --t-traveler: #0a5fbf;
+  --t-traveler-glow-1: rgba(10,95,191,0.55);
+  --t-traveler-glow-2: rgba(10,95,191,0.35);
+  --t-particle-glow: rgba(10,111,209,0.45);
+}
+
+/* vence os "body { ... }" espalhados pelos arquivos de cada tela */
+html[data-tema='claro'] body {
+  background: var(--t-fundo-pagina);
+  color: var(--t-texto);
+}

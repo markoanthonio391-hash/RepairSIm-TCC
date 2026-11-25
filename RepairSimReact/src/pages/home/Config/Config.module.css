@@ -33,7 +33,7 @@
     font-family: Unispace, monospace;
     font-style: italic;
     text-align: center;
-    font-size: clamp(1.75rem, 5vw, 3rem);
+    font-size: calc(clamp(1.75rem, 5vw, 3rem) * var(--escala-fonte, 1));
     margin: 0 0 clamp(1rem, 3vh, 2rem);
 }
 
@@ -49,7 +49,7 @@
     font-family: Unispace, monospace;
     color: #A8B3C7;
     text-align: center;
-    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    font-size: calc(clamp(0.9rem, 2vw, 1.2rem) * var(--escala-fonte, 1));
     margin: 0;
 }
 
@@ -58,10 +58,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: min(70vw, 16rem);
-    height: clamp(2.5rem, 6vh, 3.25rem);
+    width: min(70vw, calc(16rem * var(--escala-fonte, 1)));
+    height: calc(clamp(2.5rem, 6vh, 3.25rem) * var(--escala-fonte, 1));
     font-family: Unispace, monospace;
-    font-size: clamp(14px, 2vw, 18px);
+    font-size: calc(clamp(14px, 2vw, 18px) * var(--escala-fonte, 1));
     cursor: pointer;
     border-radius: 20px;
     border: 3px solid transparent;
@@ -110,9 +110,9 @@
     margin-top: clamp(2.5rem, 8vh, 4.5rem);
     font-family: Unispace, monospace;
     border: 3px solid transparent;
-    width: min(70vw, 16rem);
-    height: clamp(2.5rem, 6vh, 3.25rem);
-    font-size: clamp(14px, 2vw, 18px);
+    width: min(70vw, calc(16rem * var(--escala-fonte, 1)));
+    height: calc(clamp(2.5rem, 6vh, 3.25rem) * var(--escala-fonte, 1));
+    font-size: calc(clamp(14px, 2vw, 18px) * var(--escala-fonte, 1));
     cursor: pointer;
     border-radius: 20px;
     color: white;
@@ -142,70 +142,23 @@
     --neon-color: #7dd3fc;
 }
 
-/* ===================== TEMA CLARO ===================== */
-
-.temaClaro .title,
-.temaClaro .optionLabel{
-    color: #0A192F;
-    text-shadow: none;
-}
-
-.temaClaro .optionButton,
-.temaClaro .voltarButton{
-    color: #ffffff;
-    text-shadow: none;
-}
-
-.temaClaro .optionButton{
-    box-shadow:
-        0 2px 8px rgba(10, 25, 47, 0.25),
-        0 0 0 1px rgba(10, 25, 47, 0.08);
-}
-
-.temaClaro .optionButton:hover{
-    box-shadow:
-        0 4px 14px rgba(10, 25, 47, 0.35),
-        0 0 0 1px rgba(10, 25, 47, 0.15);
-    filter: brightness(0.95);
-}
-
-.temaClaro .tema{ background-color: #0077cc; --neon-color: #0077cc; }
-.temaClaro .idioma{ background-color: #0077cc; --neon-color: #0077cc; }
-.temaClaro .som{ background-color: #0077cc; --neon-color: #0077cc; }
-.temaClaro .fonte{ background-color: #0077cc; --neon-color: #0077cc; }
-
-.temaClaro .voltar{
-    background-color: #4a5a6c;
-    --neon-color: #4a5a6c;
-}
-
-.temaClaro .voltarButton{
-    box-shadow:
-        0 2px 8px rgba(10, 25, 47, 0.25),
-        0 0 0 1px rgba(10, 25, 47, 0.08);
-}
-
-.temaClaro .voltarButton:hover{
-    box-shadow: 0 4px 14px rgba(10, 25, 47, 0.35);
-    filter: brightness(0.95);
-}
 
 .stage {
   --bg-deep: #020611;
   --bg-mid: #040d21;
-  --glow: #2f7bff;
+  --glow: var(--t-glow, #2f7bff);
   --glow-soft: #1a4fb8;
-  --line: #1e5aa8;
-  --line-bright: #5fb0ff;
-  --dot: #7fc4ff;
+  --line: var(--t-line, #1e5aa8);
+  --line-bright: var(--t-line-bright, #5fb0ff);
+  --dot: var(--t-dot, #7fc4ff);
 
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
   background: 
-    radial-gradient(ellipse 60% 55% at 50% 50%, rgba(47,123,255,0.35) 0%, rgba(20,60,140,0.12) 40%, rgba(2,6,17,0) 70%),
-    linear-gradient(180deg, #040a1a 0%, #020611 100%);
+    radial-gradient(ellipse 60% 55% at 50% 50%, var(--t-stage-c1, rgba(47,123,255,0.35)) 0%, var(--t-stage-c2, rgba(20,60,140,0.12)) 40%, var(--t-stage-c3, rgba(2,6,17,0)) 70%),
+    linear-gradient(180deg, var(--t-stage-top, #040a1a) 0%, var(--t-stage-bottom, #020611) 100%);
   animation: breathe 6s ease-in-out infinite;
   overflow: hidden;
   z-index: -1; /* Mantém o fundo atrás dos botões */
@@ -221,8 +174,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(80,140,255,0.09) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(80,140,255,0.09) 1px, transparent 1px);
+    linear-gradient(var(--t-grid, rgba(80,140,255,0.09)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--t-grid, rgba(80,140,255,0.09)) 1px, transparent 1px);
   background-size: 34px 34px;
   -webkit-mask-image: radial-gradient(ellipse 55% 60% at 50% 50%, #000 0%, rgba(0,0,0,0.5) 45%, transparent 75%);
   mask-image: radial-gradient(ellipse 55% 60% at 50% 50%, #000 0%, rgba(0,0,0,0.5) 45%, transparent 75%);
@@ -240,9 +193,9 @@
   width: 520px;
   height: 520px;
   background-image:
-    repeating-linear-gradient(60deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px),
-    repeating-linear-gradient(-60deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px),
-    repeating-linear-gradient(0deg, transparent 0 30px, rgba(70,130,230,0.16) 30px 31px);
+    repeating-linear-gradient(60deg, transparent 0 30px, var(--t-hex, rgba(70,130,230,0.16)) 30px 31px),
+    repeating-linear-gradient(-60deg, transparent 0 30px, var(--t-hex, rgba(70,130,230,0.16)) 30px 31px),
+    repeating-linear-gradient(0deg, transparent 0 30px, var(--t-hex, rgba(70,130,230,0.16)) 30px 31px);
   opacity: 0.5;
   animation: hexFade 8s ease-in-out infinite;
 }
@@ -286,12 +239,12 @@
   stroke: var(--line-bright);
   opacity: 0.35;
   stroke-width: 1.2;
-  filter: drop-shadow(0 0 2px rgba(120,180,255,0.6));
+  filter: drop-shadow(0 0 2px var(--t-glow-bright, rgba(120,180,255,0.6)));
 }
 
 .node {
   fill: var(--dot);
-  filter: drop-shadow(0 0 4px rgba(120,190,255,0.9));
+  filter: drop-shadow(0 0 4px var(--t-glow-node, rgba(120,190,255,0.9)));
 }
 
 .node.pulse {
@@ -305,8 +258,8 @@
 
 /* Os pulsos de energia que correm as trilhas */
 .traveler {
-  fill: #bfe3ff;
-  filter: drop-shadow(0 0 6px #6fbaff) drop-shadow(0 0 12px rgba(80,150,255,0.8));
+  fill: var(--t-traveler, #bfe3ff);
+  filter: drop-shadow(0 0 6px var(--t-traveler-glow-1, #6fbaff)) drop-shadow(0 0 12px var(--t-traveler-glow-2, rgba(80,150,255,0.8)));
 }
 
 /* Partículas piscantes espalhadas */
@@ -320,7 +273,7 @@
   position: absolute;
   border-radius: 50%;
   background: var(--dot);
-  box-shadow: 0 0 6px 1px rgba(120,190,255,0.8);
+  box-shadow: 0 0 6px 1px var(--t-particle-glow, rgba(120,190,255,0.8));
   animation-name: twinkle;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
@@ -343,7 +296,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    width: min(70vw, 16rem);
+    width: min(70vw, calc(16rem * var(--escala-fonte, 1)));
     padding: 0 0.5rem;
     box-sizing: border-box;
     max-height: 0;
@@ -404,7 +357,60 @@
     text-shadow: 0 0 6px #00c3ff;
 }
 
-.temaClaro .sliderValor{
-    color: #0A192F;
-    text-shadow: none;
+/* ===================== Tema claro =====================
+   O tema vem do atributo data-tema do <html> (ThemeProvider). No claro o brilho neon some
+   (não aparece em fundo claro): entram borda escura e sombra suave, mantendo as cores. */
+
+:global(html[data-tema='claro']) .title,
+:global(html[data-tema='claro']) .optionLabel {
+  color: #0A192F;
+}
+
+:global(html[data-tema='claro']) .optionLabel {
+  color: #2b3f60;
+}
+
+:global(html[data-tema='claro']) .optionButton,
+:global(html[data-tema='claro']) .voltarButton {
+  border-color: rgba(10, 25, 47, 0.55);
+  box-shadow: 0 3px 10px rgba(10, 25, 47, 0.28);
+  text-shadow: none;
+}
+
+:global(html[data-tema='claro']) .optionButton:hover,
+:global(html[data-tema='claro']) .voltarButton:hover,
+:global(html[data-tema='claro']) .optionButton:focus-visible,
+:global(html[data-tema='claro']) .voltarButton:focus-visible {
+  border-color: #0A192F;
+  box-shadow: 0 6px 16px rgba(10, 25, 47, 0.38);
+  text-shadow: none;
+}
+
+:global(html[data-tema='claro']) .slider {
+  background: linear-gradient(90deg, #0b63c4 var(--pct), rgba(10, 25, 47, 0.2) var(--pct));
+  box-shadow: none;
+}
+
+:global(html[data-tema='claro']) .slider::-webkit-slider-thumb,
+:global(html[data-tema='claro']) .slider::-moz-range-thumb {
+  background: #ffffff;
+  border-color: #0b63c4;
+  box-shadow: 0 2px 6px rgba(10, 25, 47, 0.4);
+}
+
+:global(html[data-tema='claro']) .sliderValor {
+  color: #0A192F;
+  text-shadow: none;
+}
+
+
+
+.logo{
+    flex-shrink: 0;
+    width: clamp(90px, 18vh, 150px);
+    height: auto;
+    margin-bottom: clamp(0.25rem, 1vh, 0.75rem);
+    pointer-events: none;
+    -webkit-user-drag: none;
+    user-select: none;
 }

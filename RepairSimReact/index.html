@@ -1,32 +1,24 @@
 <!doctype html>
 <html lang="pt-br">
-
-<head>
-    <meta charset="UTF-8" />
-
-    <link
-        rel="icon"
-        type="image/png"
-        href="/icone_chaveInglesa_aba.png"
-    />
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    />
-
-    <title>RepairSim</title>
-</head>
-
-<body>
-
-    <div id="root"></div>
-
-    <script
-        type="module"
-        src="/src/main.jsx"
-    ></script>
-
-</body>
-
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/png" href="/icone_chaveInglesa_aba.png"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>RepairSim</title>
+        <script>
+            // Aplica o tema e o tamanho de fonte salvos antes de a página aparecer (sem "piscar").
+            // O mapa abaixo precisa ser igual ao de src/context/preferencias.js.
+            try {
+                var tema = localStorage.getItem('config_tema');
+                var fonte = localStorage.getItem('config_fonte');
+                var fontes = { 'Pequena': 'pequena', 'Padrão': 'padrao', 'Grande': 'grande', 'Muito grande': 'muito-grande' };
+                document.documentElement.dataset.tema = tema === 'Claro' ? 'claro' : 'escuro';
+                document.documentElement.dataset.fonte = fontes[fonte] || 'padrao';
+            }   catch (e) { /* sem acesso ao armazenamento: usa o padrão (escuro, fonte normal) */ }
+        </script>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="module" src="/src/main.jsx"></script>
+    </body>
 </html>

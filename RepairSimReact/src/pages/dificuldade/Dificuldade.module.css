@@ -54,19 +54,14 @@ body{
     -webkit-user-drag: none;
 }
 
-.logoTechSolve{
-    width: clamp(60px, 10vw, 140px);
+.logo{
+    flex-shrink: 0;
+    width: clamp(90px, 18vh, 150px);
     height: auto;
-    border-radius: 150px;
-    
-}
-
-.tech-solve-logo{
-    position: fixed;
-    right: clamp(1rem, 3vw, 2rem);
-    bottom: clamp(1rem, 2vh, 2rem);
-    z-index: 1;
+    margin-bottom: clamp(0.25rem, 1vh, 0.75rem);
+    pointer-events: none;
     -webkit-user-drag: none;
+    user-select: none;
 }
 
 .menuButton{

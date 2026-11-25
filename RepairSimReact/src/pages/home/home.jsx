@@ -1,6 +1,6 @@
 import styles from './Home.module.css';
 import { useState, useEffect } from 'react'
-import TechSolveLogo from '../../assets/TechSolveLogo.png'
+import TechSolveLogo from '../../components/TechSolveLogo'
 import { useNavigate } from 'react-router-dom'
 import logoConfig from '../../assets/logoConfig.png'
 import logoConquistas from '../../assets/logoConq.png'
@@ -52,10 +52,7 @@ function Home() {
   return (
     <div className={styles.container}>
       <FundoAnimado />
-
-      <div className={styles['tech-solve-logo']}>
-        <img src={TechSolveLogo} alt="TechSolve Logo" className={`${styles.logoTechSolve} ${styles['tech-solve-logo']}`} />
-      </div>
+      <TechSolveLogo size={130} className={styles.logo} />
 
       <h1 className={styles.title}>{t.homeTitle}</h1>
       <h2 className={styles.subtitle}>{t.homeSubtitle}</h2>
