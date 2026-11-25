@@ -250,3 +250,31 @@ body {
 .resultado-relatorio button:hover {
   background-color: #3037a8;
 }
+
+.tela-video {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.video-tela {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.btn-pular {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  padding: 10px 24px;
+  border: 1px solid #fff;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  cursor: pointer;
+}

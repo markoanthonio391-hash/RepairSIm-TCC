@@ -39,8 +39,6 @@ body{
     width: 100vw;
     min-height: 100vh;
     overflow: hidden;
-    user-select: none;
-    -webkit-user-drag: none;
 }
 
 .sair{
@@ -57,8 +55,6 @@ ul{
     font-family: Unispace, monospace;
     font-size: 20px;
     color: white;
-    user-select: none;
-    -webkit-user-drag: none;
 }
 
 .stage {
@@ -80,8 +76,6 @@ ul{
   animation: breathe 6s ease-in-out infinite;
   overflow: hidden;
   z-index: -1; /* Mantém o fundo atrás dos botões */
-  user-select: none;
-  -webkit-user-drag: none;
 }
 
 @keyframes breathe {

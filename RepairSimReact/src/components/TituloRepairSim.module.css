@@ -1,0 +1,73 @@
+.palavra{
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    max-width: 100%;
+    line-height: 1;
+    filter: drop-shadow(0 0 6px var(--t-glow));
+    animation: brilho 3s ease-in-out infinite;
+}
+
+.item{
+    display: inline-block;
+    animation: onda 2.6s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.12s);
+}
+
+.chave{ margin-right: 0.12em; }
+
+.chaveSvg{
+    display: block;
+    width: 0.8em;
+    height: 0.8em;
+    max-width: 1em;
+    max-height: 1em;
+    flex-shrink: 0;
+    animation: balancarChave 2.2s ease-in-out infinite;
+}
+
+.letraASvg{
+    display: block;
+    width: 1.15em;
+    height: 1.15em;
+    max-width: 1.3em;
+    max-height: 1.3em;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+.engrenagemA{
+    transform-box: view-box;
+    transform-origin: 50px 50px;
+    animation: girar 10s linear infinite;
+}
+
+@keyframes onda{
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-0.12em); }
+}
+
+@keyframes brilho{
+    0%, 100% { filter: drop-shadow(0 0 4px var(--t-glow)); }
+    50%      { filter: drop-shadow(0 0 14px var(--t-glow)); }
+}
+
+@keyframes girar{
+    to { transform: rotate(360deg); }
+}
+
+@keyframes balancarChave{
+    0%, 100% { transform: rotate(-18deg); }
+    50%      { transform: rotate(18deg); }
+}
+
+:global(html[data-tema='claro']) .palavra{
+    filter: none;
+    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce){
+    .palavra, .item, .chaveSvg, .engrenagemA{ animation: none; }
+}
