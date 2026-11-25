@@ -32,19 +32,27 @@ export default function Conquistas() {
     ];
 
     useEffect(() => {
-        const id_usuario_teste = 1;
-
-        fetch(`http://localhost:3000/api/conquistas/${id_usuario_teste}`)
-            .then((res) => res.json())
+        fetch('http://localhost:3000/api/conquistas/minhas', {
+            credentials: 'include'
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    return [];
+                }
+                return res.json();
+            })
             .then((data) => {
                 if (Array.isArray(data)) {
                     const codigos = data.map((c) => c.codigo_conquista);
                     setConquistasDesbloqueadas(codigos);
+                } else {
+                    setConquistasDesbloqueadas([]);
                 }
                 setLoading(false);
             })
             .catch((err) => {
                 console.error('Erro ao buscar conquistas:', err);
+                setConquistasDesbloqueadas([]);
                 setLoading(false);
             });
     }, []);
