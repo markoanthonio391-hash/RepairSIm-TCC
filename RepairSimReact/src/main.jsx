@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-//import './index.css'
+import './temas.css'
 import './fontes.css' //carrega a fonte Unispace (@font-face)
 import App from './App.jsx'
 import { instalarAvisoSessaoSubstituida } from './services/auth'
