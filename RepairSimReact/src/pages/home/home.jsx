@@ -11,7 +11,7 @@ import { useLanguage } from '../../context/useLanguage';
 import FundoAnimado from '../../components/FundoAnimado';
 import { lerUsuario, validarSessao, sairDaConta, ehAdmin } from '../../services/auth';
 import { useTheme } from '../../context/useTheme';
-
+import SubtituloParafusos from '../../components/SubtituloParafusos';
 
 function Home() {
   const navigate = useNavigate();
@@ -58,7 +58,9 @@ function Home() {
       <TechSolveLogo size={130} className={styles.logo} />
 
       <h1 className={styles.title} aria-label="RepairSim"><TituloRepairSim /></h1>
-      <h2 className={styles.subtitle}>{t.homeSubtitle}</h2>
+      <h2 className={styles.subtitle} aria-label={t.homeSubtitle}>
+        <SubtituloParafusos texto={t.homeSubtitle} />
+      </h2>
 
       <button
         className={`${styles.menuButton} ${styles.jogar} ${faseClasse}`}
@@ -125,6 +127,17 @@ function Home() {
           {t.login}
         </button>
       )}
+
+      <button
+        type="button"
+        className={`${styles.faqButton} ${faseClasse}`}
+        onClick={() => navigate('/faq')}
+        aria-label="Abrir perguntas frequentes (FAQ)"
+        title="FAQ"
+      >
+        ?
+      </button>
+
     </div>
     
   );
