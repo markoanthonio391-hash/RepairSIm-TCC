@@ -525,41 +525,20 @@ img{
     50%      { transform: scaleY(1); }
 }
 
-/* Jogar: o play pulsa */
-.jogar .iconWrap svg{
-    animation: pulsar 1.6s ease-in-out infinite;
-}
 
-/* Configurações: a engrenagem gira */
-.config .iconWrap svg{
-    animation: girar 8s linear infinite;
-}
+.jogar .iconWrap svg{ animation: pulsar calc(1.6s * var(--v-icones, 1)) ease-in-out infinite; }
 
-/* Conquistas: o troféu balança */
-.conquistas .iconWrap svg{
-    transform-origin: 50% 100%;
-    animation: balancar 2s ease-in-out infinite;
-}
+.config .iconWrap svg{ animation: girar calc(8s * var(--v-icones, 1)) linear infinite; }
 
-/* Histórico: os ponteiros giram no sentido anti-horário */
-.historico .iconWrap svg path:last-child{
-    transform-origin: 12px 12px;
-    animation: girarAntiHorario 4s linear infinite;
-}
+.conquistas .iconWrap svg{ transform-origin: 50% 100%; animation: balancar calc(2s * var(--v-icones, 1)) ease-in-out infinite; }
 
-/* Cadastrar desafio: o "+" pulsa */
-.cadastrar .iconWrap svg path:last-child{
-    transform-origin: 12px 14px;
-    animation: pulsar 1.4s ease-in-out infinite;
-}
+.historico .iconWrap svg path:last-child{ transform-origin: 12px 12px; animation: girarAntiHorario calc(4s * var(--v-icones, 1)) linear infinite; }
 
-/* Resultados: as barras sobem e descem */
-.resultados .iconWrap svg path:first-child{
-    transform-origin: 12px 21px;
-    animation: crescer 1.8s ease-in-out infinite;
-}
+.cadastrar .iconWrap svg path:last-child{ transform-origin: 12px 14px; animation: pulsar calc(1.4s * var(--v-icones, 1)) ease-in-out infinite; }
 
-@media (prefers-reduced-motion: reduce){
+.resultados .iconWrap svg path:first-child{ transform-origin: 12px 21px; animation: crescer calc(1.8s * var(--v-icones, 1)) ease-in-out infinite; }
+
+/* @media (prefers-reduced-motion: reduce){
     .iconWrap svg,
     .iconWrap svg path{ animation: none !important; }
-}
+} */

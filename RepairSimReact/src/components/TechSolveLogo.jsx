@@ -36,17 +36,17 @@ const CSS = `
 @keyframes tsl-march-b { to { stroke-dashoffset: -244; } }
 @keyframes tsl-pulse   { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
 @keyframes tsl-comet   { from { stroke-dashoffset: 70; } to { stroke-dashoffset: -930; } }
-.tsl-march-a { animation: tsl-march-a 6s linear infinite; }
-.tsl-march-b { animation: tsl-march-b 8s linear infinite reverse; }
-.tsl-pulse   { animation: tsl-pulse 2.4s ease-in-out infinite; }
-.tsl-pulse-2 { animation: tsl-pulse 2.4s ease-in-out infinite; animation-delay: -1.2s; }
-.tsl-comet   { animation: tsl-comet 6s linear infinite; }
+.tsl-march-a { animation: tsl-march-a calc(6s * var(--v-logo, 1)) linear infinite; }
+.tsl-march-b { animation: tsl-march-b calc(8s * var(--v-logo, 1)) linear infinite reverse; }
+.tsl-pulse   { animation: tsl-pulse calc(2.4s * var(--v-logo, 1)) ease-in-out infinite; }
+.tsl-pulse-2 { animation: tsl-pulse calc(2.4s * var(--v-logo, 1)) ease-in-out infinite; animation-delay: -1.2s; }
+.tsl-comet   { animation: tsl-comet calc(6s * var(--v-logo, 1)) linear infinite; }
 .tsl-link { cursor: pointer; }
 .tsl-link:focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
-@media (prefers-reduced-motion: reduce) {
-  .tsl-march-a, .tsl-march-b, .tsl-pulse, .tsl-pulse-2, .tsl-comet { animation: none; }
-  .tsl-dot, .tsl-comet { display: none; }
-}
+// @media (prefers-reduced-motion: reduce) {
+//   .tsl-march-a, .tsl-march-b, .tsl-pulse, .tsl-pulse-2, .tsl-comet { animation: none; }
+//   .tsl-dot, .tsl-comet { display: none; }
+// }
 `;
 
 /**
@@ -94,6 +94,7 @@ export default function TechSolveLogo({
       height={(size * 450) / 512}
       role={href ? undefined : "img"}
       aria-label={href ? undefined : "TechSolve"}
+      data-efeito="logo"
       {...props}
     >
       {animated && <style>{CSS}</style>}

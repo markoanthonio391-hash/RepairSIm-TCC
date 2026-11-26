@@ -1,0 +1,36 @@
+/* Multiplicador de duração: 1 = normal, 2.5 = reduzido (mais lento) */
+html {
+  --v-fundo: 1; --v-titulo: 1; --v-icones: 1; --v-logo: 1;
+}
+html[data-efeito-fundo='reduzido']  { --v-fundo: 2.5; }
+html[data-efeito-titulo='reduzido'] { --v-titulo: 2.5; }
+html[data-efeito-icones='reduzido'] { --v-icones: 2.5; }
+html[data-efeito-logo='reduzido']   { --v-logo: 2.5; }
+
+/* DESLIGADO: para as animações CSS */
+html[data-efeito-fundo='desligado']  [data-efeito='fundo'],
+html[data-efeito-fundo='desligado']  [data-efeito='fundo'] *,
+html[data-efeito-titulo='desligado'] [data-efeito='titulo'],
+html[data-efeito-titulo='desligado'] [data-efeito='titulo'] *,
+html[data-efeito-icones='desligado'] [data-efeito='menu'] button svg,
+html[data-efeito-icones='desligado'] [data-efeito='menu'] button svg *,
+html[data-efeito-logo='desligado']   [data-efeito='logo'],
+html[data-efeito-logo='desligado']   [data-efeito='logo'] * {
+  animation: none !important;
+}
+
+/* Neon desligado: sem brilho */
+html[data-efeito-neon='desligado'] [data-efeito='menu'] button {
+  animation: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Pulsos SMIL (animateMotion) não obedecem CSS de animação: some com eles */
+html[data-efeito-fundo='reduzido']   [data-pulso],
+html[data-efeito-fundo='desligado']  [data-pulso],
+html[data-efeito-logo='reduzido']    .tsl-dot,
+html[data-efeito-logo='desligado']   .tsl-dot,
+html[data-efeito-logo='desligado']   .tsl-comet {
+  display: none;
+}

@@ -7,12 +7,12 @@
     max-width: 100%;
     line-height: 1;
     filter: drop-shadow(0 0 6px var(--t-glow));
-    animation: brilho 3s ease-in-out infinite;
+    animation: brilho calc(3s * var(--v-titulo, 1)) ease-in-out infinite;
 }
 
 .item{
     display: inline-block;
-    animation: onda 2.6s ease-in-out infinite;
+    animation: onda calc(2.6s * var(--v-titulo, 1)) ease-in-out infinite;
     animation-delay: calc(var(--i) * 0.12s);
 }
 
@@ -25,7 +25,7 @@
     max-width: 1em;
     max-height: 1em;
     flex-shrink: 0;
-    animation: balancarChave 2.2s ease-in-out infinite;
+    animation: balancarChave calc(2.2s * var(--v-titulo, 1)) ease-in-out infinite;
 }
 
 .letraASvg{
@@ -41,7 +41,7 @@
 .engrenagemA{
     transform-box: view-box;
     transform-origin: 50px 50px;
-    animation: girar 10s linear infinite;
+    animation: girar calc(10s * var(--v-titulo, 1)) linear infinite;
 }
 
 @keyframes onda{
@@ -68,6 +68,6 @@
     animation: none;
 }
 
-@media (prefers-reduced-motion: reduce){
+/* @media (prefers-reduced-motion: reduce){
     .palavra, .item, .chaveSvg, .engrenagemA{ animation: none; }
-}
+} */
