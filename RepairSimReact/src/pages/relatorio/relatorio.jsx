@@ -12,6 +12,23 @@ import { useJogo } from "../../context/JogoContext";
 // pausa a música de fundo enquanto um vídeo (que tem som próprio) está tocando
 import { usePausarMusica } from "../../audio/musicaControle";
 
+import { ganharConquista } from "../../utils/ganharConquista";
+
+const CHAVE_RELATORIOS_DETALHADOS = "repairsim_relatorios_detalhados_count";
+
+function registrarConquistasRelatorio(quantidadeItensSelecionados) {
+  ganharConquista("RELATORIO_ENTREGUE", "Relatório Entregue");
+
+  if (quantidadeItensSelecionados > 0) {
+    const atual = Number(localStorage.getItem(CHAVE_RELATORIOS_DETALHADOS) || "0");
+    const novoTotal = atual + 1;
+    localStorage.setItem(CHAVE_RELATORIOS_DETALHADOS, String(novoTotal));
+
+    if (novoTotal >= 5) {
+      ganharConquista("DETALHISTA_OFICINA", "Detalhista da Oficina");
+    }
+  }
+}
 
 function Relatorio() {
   const navigate = useNavigate();
@@ -247,6 +264,8 @@ function Relatorio() {
 
         // Os erros são contabilizados somente em seguirDepoisDoVideo()
         setResultadoRelatorio(resultado);
+
+        registrarConquistasRelatorio(itensSelecionados.length);
 
       })
 
