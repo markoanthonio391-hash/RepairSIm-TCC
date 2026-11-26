@@ -1,0 +1,121 @@
+.icone{
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+}
+
+/* todos os elementos animados giram/escalam em torno do próprio centro */
+.piscar,
+.olhar,
+.rindo,
+.olhosFelizes,
+.bocaRindo,
+.bocaReta,
+.respirar,
+.olhosCansados,
+.bocaSuspiro,
+.sopro1,
+.sopro2,
+.seta{
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+/* ---------- FÁCIL: rindo ---------- */
+.rindo{ animation: balancarRindo calc(1.8s * var(--v-icones, 1)) ease-in-out infinite; }
+
+@keyframes balancarRindo{
+    0%, 100% { transform: rotate(0deg) translateY(0); }
+    25%      { transform: rotate(-3deg) translateY(-0.4px); }
+    75%      { transform: rotate(3deg) translateY(-0.4px); }
+}
+
+.olhosFelizes{ animation: sobeOlhos calc(1.8s * var(--v-icones, 1)) ease-in-out infinite; }
+
+@keyframes sobeOlhos{
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-0.7px); }
+}
+
+.bocaRindo{
+    transform-origin: 50% 0%;
+    animation: gargalhar calc(0.9s * var(--v-icones, 1)) ease-in-out infinite;
+}
+
+@keyframes gargalhar{
+    0%, 100% { transform: scale(1, 1); }
+    50%      { transform: scale(1.06, 0.7); }
+}
+
+/* ---------- NORMAL: "hmm" ---------- */
+.piscar{ animation: piscar calc(4s * var(--v-icones, 1)) ease-in-out infinite; }
+.piscarAtrasado{ animation-delay: 1.2s; }
+
+@keyframes piscar{
+    0%, 90%, 100% { transform: scaleY(1); }
+    94%           { transform: scaleY(0.1); }
+}
+
+.olhar{ animation: olhar calc(3.6s * var(--v-icones, 1)) ease-in-out infinite; }
+
+@keyframes olhar{
+    0%, 100% { transform: translateX(0); }
+    30%      { transform: translateX(-1.2px); }
+    70%      { transform: translateX(1.2px); }
+}
+
+.bocaReta{ animation: balancarBoca calc(2.8s * var(--v-icones, 1)) ease-in-out infinite; }
+
+@keyframes balancarBoca{
+    0%, 100% { transform: translateX(0) scaleX(1); }
+    35%      { transform: translateX(-1.4px) scaleX(0.7); }
+    70%      { transform: translateX(1.4px) scaleX(0.85); }
+}
+
+/* ---------- DIFÍCIL: suspirando ---------- */
+.respirar{ animation: respirar calc(3s * var(--v-icones, 1)) ease-in-out infinite; }
+
+@keyframes respirar{
+    0%, 100% { transform: scale(1); }
+    40%      { transform: scale(1.06); }  /* puxa o ar */
+    70%      { transform: scale(0.97); }  /* solta o ar */
+}
+
+.olhosCansados{ animation: cansar calc(3s * var(--v-icones, 1)) ease-in-out infinite; }
+
+@keyframes cansar{
+    0%, 100% { transform: translateY(0); }
+    70%      { transform: translateY(0.8px); }
+}
+
+.bocaSuspiro{
+    transform-origin: 50% 100%;
+    animation: suspirar calc(3s * var(--v-icones, 1)) ease-in-out infinite;
+}
+
+@keyframes suspirar{
+    0%, 100% { transform: scale(1, 1); }
+    40%      { transform: scale(1.08, 1.2); }
+    55%      { transform: scale(0.95, 0.55); }
+    70%      { transform: scale(1.05, 1.15); }
+    85%      { transform: scale(1, 0.8); }
+}
+
+/* sopro de ar saindo na hora do suspiro */
+.sopro1{ animation: soprar calc(3s * var(--v-icones, 1)) ease-out infinite; }
+.sopro2{ animation: soprar calc(3s * var(--v-icones, 1)) ease-out infinite 0.25s; }
+
+@keyframes soprar{
+    0%, 45% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+    60%     { opacity: 0.85; }
+    100%    { transform: translate(4px, -4px) scale(1.5); opacity: 0; }
+}
+
+/* ---------- VOLTAR ---------- */
+.seta{ animation: empurrar calc(1.4s * var(--v-icones, 1)) ease-in-out infinite; }
+
+@keyframes empurrar{
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(-2.5px); }
+}

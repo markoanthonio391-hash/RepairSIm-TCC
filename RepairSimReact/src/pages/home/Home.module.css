@@ -542,3 +542,52 @@ img{
     .iconWrap svg,
     .iconWrap svg path{ animation: none !important; }
 } */
+
+/* ================= BOTÃO FAQ (canto inferior direito) ================= */
+.faqButton{
+    position: fixed;
+    right: clamp(0.75rem, 2.5vw, 1.5rem);
+    bottom: clamp(0.75rem, 2.5vh, 1.5rem);
+    z-index: 5;
+    width: clamp(2.25rem, 5vh, 2.75rem);
+    height: clamp(2.25rem, 5vh, 2.75rem);
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: linear-gradient(135deg, #009dff, #36d8ff);
+    color: #001018;
+    font-family: Unispace, monospace;
+    font-weight: bold;
+    font-size: clamp(1.1rem, 2.5vh, 1.4rem);
+    line-height: 1;
+    cursor: pointer;
+    box-sizing: border-box;
+    --neon-color: #00c3ff;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.faqButton:hover,
+.faqButton:focus-visible{
+    outline: none;
+    transform: scale(1.12);
+    box-shadow:
+        0 0 8px var(--neon-color),
+        0 0 20px var(--neon-color),
+        0 0 36px color-mix(in srgb, var(--neon-color) 60%, transparent);
+}
+
+/* modo claro: mesma faixa azul escura dos outros botões */
+:global(html[data-tema='claro']) .faqButton{
+    color: #ffffff;
+    border-color: #0b4f8a;
+    box-shadow: 0 4px 10px rgba(10, 25, 47, 0.25);
+    animation: none;
+}
+:global(html[data-tema='claro']) .faqButton:hover{
+    box-shadow: 0 6px 16px rgba(10, 25, 47, 0.35);
+}

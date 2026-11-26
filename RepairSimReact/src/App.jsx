@@ -4,10 +4,14 @@ import { ThemeProvider } from './context/ThemeProvider'
 import { LanguageProvider } from './context/LanguageProvider';
 import { SoundProvider } from './context/SoundProvider';
 import { JogoProvider } from './context/JogoContext';
-import SomGlobal from './components/SomGlobal';
-import MusicaGlobal from './components/MusicaGlobal';
 
-const Home = lazy(() => import ('./pages/home/home'));
+
+const Suporte = lazy(() => import('./pages/Suporte/Suporte'));
+const Faq = lazy(() => import('./pages/Faq/Faq'));
+const EsqueciSenha = lazy(() => import('./pages/EsqueciSenha/EsqueciSenha'));
+const SomGlobal = lazy(() => import('./components/SomGlobal'));
+const MusicaGlobal = lazy(() => import('./components/MusicaGlobal'));
+const Home = lazy(() => import('./pages/home/home'));
 const Dificuldade = lazy(() => import('./pages/dificuldade/dificuldade'));
 const Config = lazy(() => import('./pages/home/Config/Config'));
 const Historico = lazy(() => import('./pages/home/Historico/Historico'));
@@ -49,8 +53,11 @@ function App() {
                     <Route path="/relatorio/:id" element={<Relatorio />} />
                     <Route path="/caso" element={<Caso />} />
                     <Route path='/resultado' element={<Resultado/>} />
+                    <Route path="/faq" element={<Faq />} />
+                    <Route path="/esqueci-senha" element={<EsqueciSenha />} />
                     <Route path='/cadastrar-desafio' element={<CadastrarDesafio />} />
                     <Route path='/resultados-professor' element={<ResultadosProfessor />} />
+                    <Route path="/suporte" element={<Suporte />} />
                     <Route path='*' element={
                       <div style={{ color: 'white', textAlign: 'center', padding: '48px 16px' }}>
                         <h1>Página não encontrada</h1>
