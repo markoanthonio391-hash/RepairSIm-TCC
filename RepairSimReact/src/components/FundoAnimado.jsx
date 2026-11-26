@@ -134,7 +134,7 @@ function gerarParticulas(quantidade) {
       height: `${size}px`,
       left: `${Math.random() * 100}vw`,
       top: `${Math.random() * 100}vh`,
-      animationDuration: `${(Math.random() * 3 + 2).toFixed(2)}s`,
+      animationDuration: `calc(${(Math.random() * 3 + 2).toFixed(2)}s * var(--v-fundo, 1))`,
       animationDelay: `${(Math.random() * 4).toFixed(2)}s`,
     };
   });
@@ -202,7 +202,7 @@ function GrupoCircuitos({ trilhas, nos, styles: s }) {
       {trilhas.map((t) => {
         const p = PULSOS[t.id];
         return (
-          <circle key={`pulso-${t.id}`} className={s.traveler} r={p.r}>
+          <circle key={`pulso-${t.id}`} className={s.traveler} r={p.r} data-pulso>
             <animateMotion
               dur={p.dur}
               begin={p.begin}
@@ -240,7 +240,7 @@ function FundoAnimado({ particulas = 60 }) {
   const transformDir = `translate(${w} ${h}) scale(${k}) translate(${-PROJETO_W} ${-PROJETO_H})`;
 
   return (
-    <div className={styles.stage} aria-hidden="true">
+    <div className={styles.stage} data-efeito="fundo" aria-hidden="true">
       <div className={styles.grid}></div>
       <div className={`${styles.hex} ${styles.bl}`}></div>
       <div className={`${styles.hex} ${styles.tr}`}></div>

@@ -10,6 +10,7 @@ import TituloRepairSim from '../../components/TituloRepairSim';
 import { useLanguage } from '../../context/useLanguage';
 import FundoAnimado from '../../components/FundoAnimado';
 import { lerUsuario, validarSessao, sairDaConta, ehAdmin } from '../../services/auth';
+import { useTheme } from '../../context/useTheme';
 
 
 function Home() {
@@ -35,6 +36,7 @@ function Home() {
            
 
   const { t } = useLanguage(); // Adicione esta linha para obter a função de tradução
+  const { efeitos } = useTheme(); 
 
   const [estaAberta, setEstaAberta] = useState(true);
   const [ligando, setLigando] = useState(true);
@@ -48,10 +50,10 @@ function Home() {
     return null;
   }
 
-  const faseClasse = ligando ? styles.ligando : styles.ligado;
+  const faseClasse = ligando && efeitos.neon === 'normal' ? styles.ligando : styles.ligado;
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-efeito="menu">
       <FundoAnimado />
       <TechSolveLogo size={130} className={styles.logo} />
 

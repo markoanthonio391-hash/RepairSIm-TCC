@@ -1,18 +1,32 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { ThemeContext } from './ThemeContext';
-import { TEMAS, FONTES, lerPreferencia, salvarPreferencia, aplicarAparencia } from './preferencias';
+import {
+  TEMAS, FONTES, EFEITOS,
+  lerPreferencia, salvarPreferencia, aplicarAparencia, lerEfeitos, salvarEfeitos,
+} from './preferencias';
 
-// Guarda o tema (Escuro/Claro) e o tamanho da fonte, salva no navegador e avisa o CSS pelos
-// atributos data-tema e data-fonte do <html>. Todas as telas reagem sozinhas (veja temas.css).
 export function ThemeProvider({ children }) {
   const [tema, setTema] = useState(() => lerPreferencia('config_tema', TEMAS, 'Escuro'));
   const [fonte, setFonte] = useState(() => lerPreferencia('config_fonte', FONTES, 'Padrão'));
+  const [efeitos, setEfeitos] = useState(lerEfeitos);
 
   useEffect(() => { salvarPreferencia('config_tema', tema); }, [tema]);
   useEffect(() => { salvarPreferencia('config_fonte', fonte); }, [fonte]);
-  useEffect(() => { aplicarAparencia(tema, fonte); }, [tema, fonte]);
+  useEffect(() => { salvarEfeitos(efeitos); }, [efeitos]);
+  useEffect(() => { aplicarAparencia(tema, fonte, efeitos); }, [tema, fonte, efeitos]);
 
-  const valor = useMemo(() => ({ tema, setTema, fonte, setFonte }), [tema, fonte]);
+  const setEfeito = useCallback((chave, nivel) => {
+    setEfeitos((anterior) => ({ ...anterior, [chave]: nivel }));
+  }, []);
+
+  const setTodosEfeitos = useCallback((nivel) => {
+    setEfeitos(Object.fromEntries(EFEITOS.map(({ chave }) => [chave, nivel])));
+  }, []);
+
+  const valor = useMemo(
+    () => ({ tema, setTema, fonte, setFonte, efeitos, setEfeito, setTodosEfeitos }),
+    [tema, fonte, efeitos, setEfeito, setTodosEfeitos]
+  );
 
   return (
     <ThemeContext.Provider value={valor}>
