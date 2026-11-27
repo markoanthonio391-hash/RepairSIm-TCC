@@ -14,21 +14,51 @@ import { ganharConquista } from "../../utils/ganharConquista";
 import { usePausarMusica } from "../../audio/musicaControle";
 
 const CHAVE_RELATORIOS_DETALHADOS = "repairsim_relatorios_detalhados_count";
+const CHAVE_DETALHISTA_DISPARADA = "repairsim_detalhista_oficina_disparada";
+const META_RELATORIOS_DETALHADOS = 5;
+
+function lerContadorRelatoriosDetalhados() {
+  try {
+    const bruto = localStorage.getItem(CHAVE_RELATORIOS_DETALHADOS);
+    const numero = Number(bruto);
+    return Number.isFinite(numero) && numero > 0 ? Math.floor(numero) : 0;
+  } catch {
+    return 0;
+  }
+}
 
 function registrarConquistasRelatorio(quantidadeItensSelecionados) {
   ganharConquista("RELATORIO_ENTREGUE", "Relatório Entregue");
 
-  if (quantidadeItensSelecionados > 0) {
-    const atual = Number(localStorage.getItem(CHAVE_RELATORIOS_DETALHADOS) || "0");
-    const novoTotal = atual + 1;
-    localStorage.setItem(CHAVE_RELATORIOS_DETALHADOS, String(novoTotal));
+  const itensEscolhidos = Number(quantidadeItensSelecionados) || 0;
+  if (itensEscolhidos <= 0) {
+    return;
+  }
 
-    if (novoTotal >= 5) {
-      ganharConquista("DETALHISTA_OFICINA", "Detalhista da Oficina");
+  const novoTotal = lerContadorRelatoriosDetalhados() + 1;
+
+  try {
+    localStorage.setItem(CHAVE_RELATORIOS_DETALHADOS, String(novoTotal));
+  } catch {
+    // ignora erro de armazenamento local
+  }
+
+  let jaDisparou = false;
+  try {
+    jaDisparou = localStorage.getItem(CHAVE_DETALHISTA_DISPARADA) === "true";
+  } catch {
+    jaDisparou = false;
+  }
+
+  if (novoTotal >= META_RELATORIOS_DETALHADOS && !jaDisparou) {
+    try {
+      localStorage.setItem(CHAVE_DETALHISTA_DISPARADA, "true");
+    } catch {
+      // ignora erro de armazenamento local
     }
+    ganharConquista("DETALHISTA_OFICINA", "Detalhista da Oficina");
   }
 }
-
 
 function Relatorio() {
   const navigate = useNavigate();
@@ -95,14 +125,16 @@ function Relatorio() {
     problema: "",
     diagnostico: ""
   });
+
   useEffect(() => {
     // Coloca uma classe especial no body
     document.body.classList.add("tela-relatorio");
     // Quando sair da tela,
     // remove a classe novamente.
-    return () => {document.body.classList.remove("tela-relatorio");
+    return () => {
+      document.body.classList.remove("tela-relatorio");
     };
-}, []);
+  }, []);
 
   // =====================================================
   // BUSCAR DADOS DO DESAFIO
@@ -235,8 +267,8 @@ function Relatorio() {
 
       method: "POST",
 
-       // envia o cookie de login: se estiver logado, o relatório é salvo na conta
-       credentials: "include",
+      // envia o cookie de login: se estiver logado, o relatório é salvo na conta
+      credentials: "include",
 
       headers: {
         "Content-Type": "application/json"
@@ -881,6 +913,5 @@ function Relatorio() {
   );
 
 }
-
 
 export default Relatorio;

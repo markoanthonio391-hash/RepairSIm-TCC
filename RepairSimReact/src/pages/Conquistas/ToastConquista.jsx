@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./ToastConquista.css";
 
 const EVENTO_CONQUISTA = "repairsim:conquista-desbloqueada";
@@ -6,6 +6,7 @@ const DURACAO_MS = 4500;
 
 export default function ToastConquista() {
     const [fila, setFila] = useState([]);
+    const exibidasNaSessaoRef = useRef(new Set());
     const conquistaAtual = fila[0] || null;
 
     useEffect(() => {
@@ -13,14 +14,27 @@ export default function ToastConquista() {
             const { codigo, titulo } = evento.detail || {};
             if (!titulo && !codigo) return;
 
-            setFila(prev => [
-                ...prev,
-                {
-                    id: `${Date.now()}-${Math.random()}`,
-                    codigo,
-                    titulo: titulo || codigo
-                }
-            ]);
+            const chave = String(codigo || titulo).trim().toUpperCase();
+            if (exibidasNaSessaoRef.current.has(chave)) {
+                return;
+            }
+
+            exibidasNaSessaoRef.current.add(chave);
+
+            setFila(prev => {
+                const jaNaFila = prev.some(item => item.chave === chave);
+                if (jaNaFila) return prev;
+
+                return [
+                    ...prev,
+                    {
+                        id: `${Date.now()}-${Math.random()}`,
+                        chave,
+                        codigo,
+                        titulo: titulo || codigo
+                    }
+                ];
+            });
         }
 
         window.addEventListener(EVENTO_CONQUISTA, aoDesbloquear);
