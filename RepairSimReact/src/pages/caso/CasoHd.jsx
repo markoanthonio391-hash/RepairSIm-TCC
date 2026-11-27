@@ -1,3 +1,5 @@
+import { registrarTempoBancada } from "../../utils/tempoConquista";
+import { ganharConquista } from "../../utils/ganharConquista";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./caso.module.css";        // estilos que o grupo já usa nos outros casos
@@ -5,7 +7,6 @@ import hd from "./casoHd.module.css";          // estilos exclusivos do Caso 8
 import bancada from "../../assets/bancada.jpeg";
 import { useJogo } from "../../context/JogoContext";
 import VisualizadorImagem from "../../pages/caso/VisualizadorImagem";
-import { ganharConquista } from "../../utils/ganharConquista";
 
 const API = "http://localhost:3000";
 
@@ -13,6 +14,14 @@ const PORCENTAGENS_BACKUP = [0, 25, 50, 75, 100];
 const ULTIMO_INDICE_BACKUP = PORCENTAGENS_BACKUP.length - 1;
 const MS_POR_IMAGEM_BACKUP = 1000;
 const TEMPO_MENSAGEM_MS = 3500;
+
+function normalizarDificuldade(dificuldade) {
+    return String(dificuldade || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+}
 
 function urlImagem(imagem) {
     if (!imagem?.caminho_imagem) {
@@ -23,11 +32,13 @@ function urlImagem(imagem) {
 }
 
 function dispararConquistasConclusao(dificuldade, totalErros) {
-    if (dificuldade === "Facil") {
+    const dif = normalizarDificuldade(dificuldade);
+
+    if (dif === "facil") {
         ganharConquista("TECNICO_INICIANTE", "Técnico Iniciante");
-    } else if (dificuldade === "Medio") {
+    } else if (dif === "medio") {
         ganharConquista("DIAGNOSTICO_MEDIO", "Diagnóstico Intermediário");
-    } else if (dificuldade === "Dificil") {
+    } else if (dif === "dificil") {
         ganharConquista("ESPECIALISTA_BANCADA", "Especialista de Bancada");
         if (totalErros === 0) {
             ganharConquista("AUDITORIA_PERFEITA", "Auditoria Perfeita");
@@ -66,6 +77,7 @@ function CasoHd() {
     const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
     const temporizadorMensagem = useRef(null);
+    const inicioCasoRef = useRef(Date.now());
     const errosCasoRef = useRef(0);
     const abriuPainelRef = useRef(false);
 
@@ -88,6 +100,8 @@ function CasoHd() {
             setCarregandoImagens(false);
             return;
         }
+        inicioCasoRef.current = Date.now();
+        errosCasoRef.current = 0;
 
         let cancelado = false;
         setCarregandoImagens(true);
@@ -264,9 +278,6 @@ function CasoHd() {
             return;
         }
 
-        setGabineteAberto(true);
-        mostrarMensagem("Gabinete aberto.");
-
         if (!gabineteAberto){
             setGabineteAberto(true);
             mostrarMensagem("Gabinete aberto.");
@@ -309,6 +320,7 @@ function CasoHd() {
             }
             setTipoSelecionado(tipo);
             setCategoriaAberta(true);
+            ganharConquista("MAO_NA_MASSA", "Mão na Massa");
         }
     }
 
@@ -392,6 +404,8 @@ function CasoHd() {
             if (etapa === 3) {
                 setEtapa(4);
                 setRespostaFinalizada(true);
+                const segundosGastos = Math.max(1, Math.round((Date.now() - inicioCasoRef.current) / 1000));
+                registrarTempoBancada(desafioAtual?.dificuldade, segundosGastos);
                 dispararConquistasConclusao(desafioAtual?.dificuldade, errosCasoRef.current);
                 mostrarMensagem("Reparo concluído! Feche o gabinete para continuar.", true);
             }

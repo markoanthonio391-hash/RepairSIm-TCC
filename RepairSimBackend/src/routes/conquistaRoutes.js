@@ -22,9 +22,10 @@ router.get('/minhas', autenticarOpcional, async (req, res) => {
 
 router.post('/desbloquear', autenticar, async (req, res) => {
     const id_usuario = req.usuario.id;
-    const { codigo_conquista, titulo } = req.body;
+    const codigoLimpo = String(req.body?.codigo_conquista || '').trim().toUpperCase();
+    const tituloLimpo = String(req.body?.titulo || codigoLimpo).trim();
 
-    if (!codigo_conquista) {
+    if (!codigoLimpo) {
         return res.status(400).json({ erro: 'Código da conquista é obrigatório.' });
     }
 
@@ -35,11 +36,12 @@ router.post('/desbloquear', autenticar, async (req, res) => {
             VALUES (?, ?, ?)
             ON DUPLICATE KEY UPDATE data_conquista = data_conquista
         `;
-        await conexao.query(query, [id_usuario, codigo_conquista, titulo]);
+
+        await conexao.query(query, [id_usuario, codigoLimpo, tituloLimpo]);
 
         // Verifica se completou as 3 dificuldades para liberar MESTRE_MUNDOS
         const dificuldades = ['TECNICO_INICIANTE', 'DIAGNOSTICO_MEDIO', 'ESPECIALISTA_BANCADA'];
-        if (dificuldades.includes(codigo_conquista)) {
+        if (dificuldades.includes(codigoLimpo)) {
             const [rows] = await conexao.query(
                 `SELECT COUNT(DISTINCT codigo_conquista) AS total
                  FROM conquistas_usuario

@@ -13,6 +13,13 @@ const ID_CASO_HD = 8;
 // Só apague o CasoPadrao depois de testar todos os Fáceis com esta chave em true.
 const USAR_CASO_ETAPAS_NOS_FACEIS = true;
 
+function normalizarDificuldade(dificuldade) {
+  return String(dificuldade || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
+
 function CasoPadrao() {
 
   const navigate = useNavigate();
@@ -94,14 +101,6 @@ function CasoPadrao() {
     setIsOpen(true);
     }
   }
-
-  //------------------------
-  //pega uma imagem especifica pelo id
-  //------------------------
-  // function pegarImagemPc(idPc) {
-  //   return imagensPc.find( //.find pecorre o array ate atender a condição
-  //     imagem => Number(imagem.id_pc) === idPc);
-  // }
 
   //------------------------
   //botão desligar
@@ -187,11 +186,10 @@ function CasoPadrao() {
           setMensagem('✅ ' + resultado.mensagem);
           setRespostaFinalizada(true);
 
-          if (desafioAtual?.dificuldade === 'Facil') {
-    ganharConquista('TECNICO_INICIANTE', 'Técnico Iniciante');
-  }
-}
-        
+          if (normalizarDificuldade(desafioAtual?.dificuldade) === 'facil') {
+            ganharConquista('TECNICO_INICIANTE', 'Técnico Iniciante');
+          }
+        }
 
         //item errado
         else {

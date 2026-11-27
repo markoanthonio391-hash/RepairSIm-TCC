@@ -1,3 +1,4 @@
+import { registrarTempoBancada } from "../../utils/tempoConquista";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import styles from "./caso.module.css";        // estilos que o grupo já usa nos outros casos
@@ -23,12 +24,22 @@ function urlImagem(imagem) {
     return `${API}${imagem.caminho_imagem}`;
 }
 
+function normalizarDificuldade(dificuldade) {
+    return String(dificuldade || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+}
+
 function dispararConquistasConclusao(dificuldade, totalErros) {
-    if (dificuldade === "Facil") {
+    const dif = normalizarDificuldade(dificuldade);
+
+    if (dif === "facil") {
         ganharConquista("TECNICO_INICIANTE", "Técnico Iniciante");
-    } else if (dificuldade === "Medio") {
+    } else if (dif === "medio") {
         ganharConquista("DIAGNOSTICO_MEDIO", "Diagnóstico Intermediário");
-    } else if (dificuldade === "Dificil") {
+    } else if (dif === "dificil") {
         ganharConquista("ESPECIALISTA_BANCADA", "Especialista de Bancada");
         if (totalErros === 0) {
             ganharConquista("AUDITORIA_PERFEITA", "Auditoria Perfeita");
@@ -69,9 +80,12 @@ function CasoEtapas() {
     const [popup, setPopup] = useState(null);
     const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
+    // Trava contra clique duplo e controle por caso
     const verificandoRef = useRef(false);
-    const temporizadorMensagem = useRef(null);
+    const conclusaoRegistradaRef = useRef(false);
     const errosCasoRef = useRef(0);
+    const inicioCasoRef = useRef(Date.now());
+    const temporizadorMensagem = useRef(null);
     const abriuPainelRef = useRef(false);
 
     useEffect(() => {
@@ -92,6 +106,9 @@ function CasoEtapas() {
         if (!idDesafio) {
             return;
         }
+        inicioCasoRef.current = Date.now();
+        conclusaoRegistradaRef.current = false;
+        errosCasoRef.current = 0;
 
         let cancelado = false;
 
@@ -343,6 +360,7 @@ function CasoEtapas() {
             abriuPainelRef.current = true;
             setTipoSelecionado(tipo);
             setCategoriaAberta(true);
+            ganharConquista("MAO_NA_MASSA", "Mão na Massa");
         }
     }
 
@@ -419,7 +437,13 @@ function CasoEtapas() {
             setRespostaFinalizada(true);
             setCategoriaAberta(false);
 
-            dispararConquistasConclusao(desafioAtual?.dificuldade, errosCasoRef.current);
+            if (!conclusaoRegistradaRef.current) {
+                conclusaoRegistradaRef.current = true;
+                const segundosGastos = Math.max(1, Math.round((Date.now() - inicioCasoRef.current) / 1000));
+
+                registrarTempoBancada(desafioAtual?.dificuldade, segundosGastos);
+                dispararConquistasConclusao(desafioAtual?.dificuldade, errosCasoRef.current);
+            }
 
             if (modoUltimaEtapa === "software") {
                 mostrarMensagem("Reparo concluído com sucesso.", true);
