@@ -1,3 +1,5 @@
+import { registrarTempoBancada } from "../../utils/tempoConquista";
+import { ganharConquista } from "../../utils/ganharConquista";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./caso.module.css";        // estilos que o grupo já usa nos outros casos
@@ -14,6 +16,45 @@ const PORCENTAGENS_BACKUP = [0, 25, 50, 75, 100];
 const ULTIMO_INDICE_BACKUP = PORCENTAGENS_BACKUP.length - 1;
 const MS_POR_IMAGEM_BACKUP = 1000;
 const TEMPO_MENSAGEM_MS = 3500;
+const CHAVE_MUNDOS_CONCLUIDOS = "repairsim_mundos_concluidos_v1";
+
+function normalizarDificuldade(dificuldade) {
+    const limpa = String(dificuldade || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+
+    if (limpa === "medio") return "Medio";
+    if (limpa === "dificil") return "Dificil";
+    return "Facil";
+}
+
+function registrarDificuldadeConcluida(dificuldade) {
+    const dif = normalizarDificuldade(dificuldade);
+    let atual = {};
+    try {
+        atual = JSON.parse(window.localStorage.getItem(CHAVE_MUNDOS_CONCLUIDOS) || "{}");
+    } catch {
+        atual = {};
+    }
+
+    const estado = {
+        Facil: Boolean(atual?.Facil) || dif === "Facil",
+        Medio: Boolean(atual?.Medio) || dif === "Medio",
+        Dificil: Boolean(atual?.Dificil) || dif === "Dificil",
+    };
+
+    try {
+        window.localStorage.setItem(CHAVE_MUNDOS_CONCLUIDOS, JSON.stringify(estado));
+    } catch (erro) {
+        console.warn("Não foi possível salvar progresso das dificuldades:", erro);
+    }
+
+    if (estado.Facil && estado.Medio && estado.Dificil) {
+        ganharConquista("MESTRE_MUNDOS", "Mestre dos Três Mundos");
+    }
+}
 
 // Monta a URL completa de uma imagem que veio do banco.
 function urlImagem(imagem) {
@@ -64,6 +105,8 @@ function CasoHd() {
     const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
     const temporizadorMensagem = useRef(null);
+    const inicioCasoRef = useRef(Date.now());
+    const errosCasoRef = useRef(0);
 
     const mostrarMensagem = useCallback((texto, fixa = false) => {
         window.clearTimeout(temporizadorMensagem.current);
@@ -82,6 +125,8 @@ function CasoHd() {
             setCarregandoImagens(false);
             return;
         }
+        inicioCasoRef.current = Date.now();
+        errosCasoRef.current = 0;
 
         let cancelado = false; // evita atualizar o estado se a tela já foi fechada
         setCarregandoImagens(true);
@@ -326,6 +371,7 @@ function CasoHd() {
                 setItens([]); }
             setTipoSelecionado(tipo);
             setCategoriaAberta(true);
+            ganharConquista("MAO_NA_MASSA", "Mão na Massa");
         }
     }
 
@@ -386,6 +432,7 @@ function CasoHd() {
 
             // Item errado: continua na mesma etapa para tentar de novo
             if (!resultado.correto) {
+                errosCasoRef.current += 1;
                 registrarErroDesafio();
                 mostrarMensagem("❌ " + resultado.mensagem);
                 return;
@@ -417,6 +464,18 @@ function CasoHd() {
                 // nem desliga sozinho. O jogador fecha o gabinete e só então o botão do relatório aparece.
                 setEtapa(4);
                 setRespostaFinalizada(true);
+                const segundosGastos = Math.max(1, Math.round((Date.now() - inicioCasoRef.current) / 1000));
+                const difNormalizada = normalizarDificuldade(desafioAtual?.dificuldade);
+                registrarTempoBancada(desafioAtual?.dificuldade, segundosGastos);
+                registrarDificuldadeConcluida(desafioAtual?.dificuldade);
+
+                if (difNormalizada === "Dificil") {
+                    ganharConquista("ESPECIALISTA_BANCADA", "Especialista de Bancada");
+                    if (errosCasoRef.current === 0) {
+                        ganharConquista("AUDITORIA_PERFEITA", "Auditoria Perfeita");
+                    }
+                }
+
                 mostrarMensagem("Reparo concluído! Feche o gabinete para continuar.", true);
             }
         }
