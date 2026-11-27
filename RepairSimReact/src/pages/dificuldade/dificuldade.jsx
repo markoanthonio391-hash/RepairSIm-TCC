@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { useJogo } from "../../context/JogoContext";
 import { temInstituicao } from '../../services/auth';
 import SalaExclusiva from '../../components/SalaExclusiva';
+import { usePausarMusica } from '../../audio/musicaControle';
 
 function Dificuldade()
  {
@@ -23,6 +24,9 @@ function Dificuldade()
   const [erro, setErro] = useState(""); // mensagem na tela (antes o erro só ia para o console)
   const [iniciando, setIniciando] = useState(false); // evita clicar em duas dificuldades ao mesmo tempo
   const [salaAberta, setSalaAberta] = useState(false); // janela dos casos exclusivos (código da sala)
+
+  // o vídeo de entrada tem som próprio: a música do lobby pausa enquanto ele toca
+  usePausarMusica(mostrarVideos);
 
   useEffect(() => {
     const count = 60; // Total de partículas do seu código original

@@ -7,11 +7,10 @@ import hd from "./casoHd.module.css";          // estilos exclusivos do Caso 8
 import bancada from "../../assets/bancada.jpeg";
 import { useJogo } from "../../context/JogoContext";
 import VisualizadorImagem from "../../pages/caso/VisualizadorImagem";
+import { ganharConquista } from "../../utils/ganharConquista";
 
-// Endereço do servidor (o mesmo usado no restante do projeto).
 const API = "http://localhost:3000";
 
-// O backup mostra 5 imagens (0%, 25%, 50%, 75% e 100%), cada uma por 5 segundos.
 const PORCENTAGENS_BACKUP = [0, 25, 50, 75, 100];
 const ULTIMO_INDICE_BACKUP = PORCENTAGENS_BACKUP.length - 1;
 const MS_POR_IMAGEM_BACKUP = 1000;
@@ -56,13 +55,25 @@ function registrarDificuldadeConcluida(dificuldade) {
     }
 }
 
-// Monta a URL completa de uma imagem que veio do banco.
 function urlImagem(imagem) {
     if (!imagem?.caminho_imagem) {
         return "";
     }
 
     return `${API}${imagem.caminho_imagem}`;
+}
+
+function dispararConquistasConclusao(dificuldade, totalErros) {
+    if (dificuldade === "Facil") {
+        ganharConquista("TECNICO_INICIANTE", "Técnico Iniciante");
+    } else if (dificuldade === "Medio") {
+        ganharConquista("DIAGNOSTICO_MEDIO", "Diagnóstico Intermediário");
+    } else if (dificuldade === "Dificil") {
+        ganharConquista("ESPECIALISTA_BANCADA", "Especialista de Bancada");
+        if (totalErros === 0) {
+            ganharConquista("AUDITORIA_PERFEITA", "Auditoria Perfeita");
+        }
+    }
 }
 
 function CasoHd() {
@@ -72,32 +83,23 @@ function CasoHd() {
     const desafioAtual = getDesafioAtual();
     const idDesafio = desafioAtual?.id_desafio;
 
-    // ----------------------- ESTADOS -----------------------
-
-    // Dados vindos do backend
     const [imagensPc, setImagensPc] = useState([]);
     const [carregandoImagens, setCarregandoImagens] = useState(true);
     const [itens, setItens] = useState([]);
 
-    // Menu de itens
     const [tipoSelecionado, setTipoSelecionado] = useState(null);
     const [categoriaAberta, setCategoriaAberta] = useState(false);
 
-    // 1 = verificar saúde do HD | 2 = fazer backup | 3 = trocar o HD | 4 = concluído
-    // O número da etapa é enviado ao backend como "ordem".
     const [etapa, setEtapa] = useState(1);
 
-    // Estado do computador (energia e gabinete são independentes)
     const [pcLigado, setPcLigado] = useState(true);
     const [gabineteAberto, setGabineteAberto] = useState(false);
 
-    // Progresso das ações
     const [saudeVerificada, setSaudeVerificada] = useState(false);
     const [backupEmAndamento, setBackupEmAndamento] = useState(false);
     const [backupConcluido, setBackupConcluido] = useState(false);
     const [backupIndice, setBackupIndice] = useState(0);
 
-    // Controles da interface
     const [verificandoItem, setVerificandoItem] = useState(false);
     const [respostaFinalizada, setRespostaFinalizada] = useState(false);
     const [mensagem, setMensagem] = useState("");
@@ -105,8 +107,18 @@ function CasoHd() {
     const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
     const temporizadorMensagem = useRef(null);
+<<<<<<< HEAD
     const inicioCasoRef = useRef(Date.now());
     const errosCasoRef = useRef(0);
+=======
+    const errosCasoRef = useRef(0);
+    const abriuPainelRef = useRef(false);
+
+    useEffect(() => {
+        errosCasoRef.current = 0;
+        abriuPainelRef.current = false;
+    }, [idDesafio]);
+>>>>>>> origin/dev-diego
 
     const mostrarMensagem = useCallback((texto, fixa = false) => {
         window.clearTimeout(temporizadorMensagem.current);
@@ -117,9 +129,6 @@ function CasoHd() {
     }, []);
     useEffect(() => () => window.clearTimeout(temporizadorMensagem.current), []);
 
-    // ----------------------- BUSCAS NO BACKEND -----------------------
-
-    // Imagens do computador neste desafio
     useEffect(() => {
         if (!idDesafio) {
             setCarregandoImagens(false);
@@ -128,10 +137,9 @@ function CasoHd() {
         inicioCasoRef.current = Date.now();
         errosCasoRef.current = 0;
 
-        let cancelado = false; // evita atualizar o estado se a tela já foi fechada
+        let cancelado = false;
         setCarregandoImagens(true);
 
-        // credentials: "include" envia o cookie de login (os casos exclusivos de instituição respondem 404 sem ele)
         fetch(`${API}/desafio-imagens-pc/desafio/${idDesafio}`, { credentials: "include" })
             .then(resposta => {
                 if (!resposta.ok) {
@@ -161,7 +169,6 @@ function CasoHd() {
         };
     }, [idDesafio, mostrarMensagem]);
 
-    // Itens da categoria aberta (ferramenta, peça ou software)
     useEffect(() => {
         if (!tipoSelecionado){
             return;
@@ -193,10 +200,6 @@ function CasoHd() {
         };
     }, [tipoSelecionado, mostrarMensagem]);
 
-    // ----------------------- ANIMAÇÃO DO BACKUP -----------------------
-
-    // A cada 5 segundos avança uma imagem (0% -> 25% -> ... -> 100%).
-    // Quando a imagem de 100% já ficou 5 segundos, o backup termina.
     useEffect(() => {
         if (!backupEmAndamento) {
             return;
@@ -218,14 +221,9 @@ function CasoHd() {
             });
         }, MS_POR_IMAGEM_BACKUP);
 
-        // Cancela o temporizador se a tela for fechada no meio do backup.
         return () => window.clearTimeout(temporizador);
     }, [backupEmAndamento, backupIndice, mostrarMensagem]);
 
-    // ----------------------- IMAGENS DO PC -----------------------
-
-    // Procura uma imagem pela "funcao" cadastrada em desafio_imagens_pc.
-    // Os nomes são testados NA ORDEM em que foram passados (o primeiro que existir vence).
     function buscarImagem(...funcoes) {
         for (const funcao of funcoes) {
             const imagem = imagensPc.find(item => item.funcao === funcao);
@@ -243,20 +241,15 @@ function CasoHd() {
     const gabineteLigado = buscarImagem("gabinete_ligado");
     const gabineteDesligado = buscarImagem("gabinete_desligado");
 
-    // Imagens próprias do Caso 8
     const monitorErroHd = buscarImagem("monitor_erro_hd");
     const monitorSaudeHd = buscarImagem("monitor_saude_hd");
     const gabineteAbertoHd = buscarImagem("gabinete_aberto_hd");
     const gabineteBackup = buscarImagem("gabinete_backup");
 
-    // No banco os nomes são "monitor_backup_0%", "monitor_backup_25%"...
-    // (o nome sem o "%" também é aceito, caso o grupo padronize depois).
     const imagensBackup = PORCENTAGENS_BACKUP.map(porcentagem =>
         buscarImagem(`monitor_backup_${porcentagem}%`, `monitor_backup_${porcentagem}`)
     );
 
-    // Qual imagem do MONITOR aparece agora?
-    // O "??" garante uma imagem reserva se alguma do caso não estiver cadastrada.
     let imagemMonitorAtual;
 
     if (!pcLigado) {
@@ -275,7 +268,6 @@ function CasoHd() {
         imagemMonitorAtual = monitorErroHd ?? monitorLigado;
     }
 
-    // Qual imagem do GABINETE aparece agora?
     let imagemGabineteAtual;
 
     if (backupEmAndamento) {
@@ -291,9 +283,6 @@ function CasoHd() {
         imagemGabineteAtual = gabineteDesligado;
     }
 
-    // ----------------------- AÇÕES DO JOGADOR -----------------------
-
-    // Botão LIGAR / DESLIGAR
     function alternarEnergia() {
         if (backupEmAndamento) {
             mostrarMensagem("Aguarde o backup terminar antes de desligar o computador.");
@@ -313,7 +302,6 @@ function CasoHd() {
         mostrarMensagem(pcLigado ? "Computador desligado." : "Computador ligado.");
     }
 
-    // Clicar no gabinete: só abre com o PC desligado
     function abrirOuAmpliarGabinete() {
         if (backupEmAndamento || respostaFinalizada) {
             return;
@@ -324,18 +312,15 @@ function CasoHd() {
             return;
         }
 
-        // Continua aberto mesmo depois de fechar o zoom.
         setGabineteAberto(true);
         mostrarMensagem("Gabinete aberto.");
 
-        //não da zoom quando abre o gabinete
         if (!gabineteAberto){
             setGabineteAberto(true);
             mostrarMensagem("Gabinete aberto.");
             return;
         }
 
-        //agora da o zoom se clicado na segunda vez
         if (gabineteAbertoHd) {
             setImagemAmpliada({
                 src: urlImagem(gabineteAbertoHd),
@@ -349,7 +334,6 @@ function CasoHd() {
         mostrarMensagem("Gabinete fechado.");
     }
 
-    // Clicar no monitor: abre a imagem ampliada
     function ampliarImagem(imagem, alt) {
         if (!imagem || backupEmAndamento) {
             return;
@@ -367,22 +351,21 @@ function CasoHd() {
             setCategoriaAberta(false);
         }
         else {
-            if (tipoSelecionado !== tipo){ 
-                setItens([]); }
+            abriuPainelRef.current = true;
+            if (tipoSelecionado !== tipo){
+                setItens([]);
+            }
             setTipoSelecionado(tipo);
             setCategoriaAberta(true);
             ganharConquista("MAO_NA_MASSA", "Mão na Massa");
         }
     }
 
-    // Clicar em um item: confere se o computador está no estado certo
-    // e depois pergunta ao backend se o item está certo PARA ESTA ETAPA.
     async function usarItem(item) {
         if (verificandoItem || backupEmAndamento || respostaFinalizada) {
             return;
         }
 
-        // Etapas 1 e 2 (software): PC ligado e gabinete fechado
         if (etapa === 1 || etapa === 2) {
             if (!pcLigado) {
                 mostrarMensagem("Ligue o computador para executar esta ação.");
@@ -395,7 +378,6 @@ function CasoHd() {
             }
         }
 
-        // Etapa 3 (troca do HD): PC desligado e gabinete aberto
         if (etapa === 3) {
             if (pcLigado) {
                 mostrarMensagem("Desligue o computador antes de mexer nas peças.");
@@ -408,16 +390,18 @@ function CasoHd() {
             }
         }
 
+        if (abriuPainelRef.current) {
+            ganharConquista("MAO_NA_MASSA", "Mão na Massa");
+        }
+
         setVerificandoItem(true);
-        mostrarMensagem("Verificando item...", true); //true permite não sumir sozinha
+        mostrarMensagem("Verificando item...", true);
 
         try {
             const resposta = await fetch(`${API}/desafios/${idDesafio}/verificar`, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
-                // "ordem" é a etapa atual: o backend só aceita o item se ele
-                // estiver cadastrado em desafio_itens com essa ordem.
                 body: JSON.stringify({ id_item: item.id_item, ordem: etapa })
             });
 
@@ -427,10 +411,8 @@ function CasoHd() {
                 throw new Error(resultado.mensagem || "Erro ao verificar o item.");
             }
 
-            // +10 se acertou, -5 se errou
             adicionarPontos(Number(resultado.pontos || 0));
 
-            // Item errado: continua na mesma etapa para tentar de novo
             if (!resultado.correto) {
                 errosCasoRef.current += 1;
                 registrarErroDesafio();
@@ -438,7 +420,6 @@ function CasoHd() {
                 return;
             }
 
-            // Etapa 1: saúde do HD
             if (etapa === 1) {
                 setSaudeVerificada(true);
                 setEtapa(2);
@@ -450,7 +431,6 @@ function CasoHd() {
                 return;
             }
 
-            // Etapa 2: backup (a etapa 3 só abre quando a animação terminar)
             if (etapa === 2) {
                 setBackupIndice(0);
                 setBackupEmAndamento(true);
@@ -458,12 +438,10 @@ function CasoHd() {
                 return;
             }
 
-            // Etapa 3: troca do HD (fim do desafio)
             if (etapa === 3) {
-                // Final de caso de hardware: o gabinete CONTINUA aberto (mostrando a imagem limpa) e o PC não liga
-                // nem desliga sozinho. O jogador fecha o gabinete e só então o botão do relatório aparece.
                 setEtapa(4);
                 setRespostaFinalizada(true);
+<<<<<<< HEAD
                 const segundosGastos = Math.max(1, Math.round((Date.now() - inicioCasoRef.current) / 1000));
                 const difNormalizada = normalizarDificuldade(desafioAtual?.dificuldade);
                 registrarTempoBancada(desafioAtual?.dificuldade, segundosGastos);
@@ -476,6 +454,9 @@ function CasoHd() {
                     }
                 }
 
+=======
+                dispararConquistasConclusao(desafioAtual?.dificuldade, errosCasoRef.current);
+>>>>>>> origin/dev-diego
                 mostrarMensagem("Reparo concluído! Feche o gabinete para continuar.", true);
             }
         }
@@ -488,9 +469,6 @@ function CasoHd() {
         }
     }
 
-    // ----------------------- TELA -----------------------
-
-    // Todos os hooks ficam ACIMA deste return (regra dos hooks do React).
     if (!desafioAtual) {
         return (
             <div className={styles.screenWrapper}>
@@ -505,7 +483,6 @@ function CasoHd() {
         <div className={styles.screenWrapper}>
             <div className={styles.mainContainer}>
 
-                {/* Status da jogatina */}
                 <div className={styles.statusJogo}>
                     <span>Caso {jogatina.indiceAtual + 1} / {jogatina.quantidadeCasos}</span>
                     <span>Pontos: {jogatina.pontos}</span>
@@ -517,8 +494,6 @@ function CasoHd() {
                     VOLTAR
                 </button>
 
-
-                {/* Computador na bancada */}
                 <div className={styles.pcContainer}>
                     {imagemMonitorAtual ? (
                         <img
@@ -547,7 +522,6 @@ function CasoHd() {
                     )}
                 </div>
 
-                {/* Ligar / desligar (some com o gabinete aberto, durante o backup e no fim) */}
                 {!gabineteAberto && !backupEmAndamento && !respostaFinalizada && (
                     <button
                         type="button"
@@ -566,7 +540,6 @@ function CasoHd() {
 
                 {mensagem && <div className={styles.mensagem}>{mensagem}</div>}
 
-                {/* Categorias e itens */}
                 <div className={styles.toolsContainer}>
                     <button
                         type="button"
@@ -619,7 +592,6 @@ function CasoHd() {
                     )}
                 </div>
 
-                {/* O relatório só é liberado depois das 3 ações E com o gabinete fechado */}
                 {respostaFinalizada && !gabineteAberto && (
                     <button
                         type="button"
@@ -630,7 +602,6 @@ function CasoHd() {
                     </button>
                 )}
 
-                {/* Imagem ampliada */}
                 {imagemAmpliada && (
                     <VisualizadorImagem
                         src={imagemAmpliada.src}
@@ -640,7 +611,6 @@ function CasoHd() {
                     />
                 )}
 
-                {/* Pop-ups das etapas */}
                 {popup && (
                     <div className={hd.overlayPopup} role="presentation">
                         <section

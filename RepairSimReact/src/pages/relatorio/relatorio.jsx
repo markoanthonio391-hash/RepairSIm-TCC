@@ -10,6 +10,7 @@ import "./Relatorio.css";
 import { useJogo } from "../../context/JogoContext";
 import { ganharConquista } from "../../utils/ganharConquista";
 
+<<<<<<< HEAD
 const CHAVE_RELATORIOS_SALVOS = "repairsim_relatorios_salvos_v1";
 const META_DETALHISTA_OFICINA = 5;
 
@@ -30,6 +31,26 @@ function registrarRelatorioSalvo() {
 
   if (proximo >= META_DETALHISTA_OFICINA) {
     ganharConquista("DETALHISTA_OFICINA", "Detalhista da Oficina");
+=======
+// pausa a música de fundo enquanto um vídeo (que tem som próprio) está tocando
+import { usePausarMusica } from "../../audio/musicaControle";
+
+import { ganharConquista } from "../../utils/ganharConquista";
+
+const CHAVE_RELATORIOS_DETALHADOS = "repairsim_relatorios_detalhados_count";
+
+function registrarConquistasRelatorio(quantidadeItensSelecionados) {
+  ganharConquista("RELATORIO_ENTREGUE", "Relatório Entregue");
+
+  if (quantidadeItensSelecionados > 0) {
+    const atual = Number(localStorage.getItem(CHAVE_RELATORIOS_DETALHADOS) || "0");
+    const novoTotal = atual + 1;
+    localStorage.setItem(CHAVE_RELATORIOS_DETALHADOS, String(novoTotal));
+
+    if (novoTotal >= 5) {
+      ganharConquista("DETALHISTA_OFICINA", "Detalhista da Oficina");
+    }
+>>>>>>> origin/dev-diego
   }
 }
 
@@ -73,8 +94,14 @@ function Relatorio() {
   // VÍDEO (aparece depois de apertar CONTINUAR no último caso)
   // =====================================================
 
-  // true = mostra o vídeo no lugar do relatório
+  // true = mostra o vídeo de FINALIZAÇÃO DO CASO antes do relatório (acontece depois de TODO caso)
+  const [videoCaso, setVideoCaso] = useState(true);
+
+  // true = mostra o vídeo de FINALIZAÇÃO DO JOGO no lugar do relatório (só depois do ÚLTIMO caso)
   const [mostrarVideo, setMostrarVideo] = useState(false);
+
+  // enquanto algum vídeo toca, a música dos casos pausa e depois volta
+  usePausarMusica(videoCaso || mostrarVideo);
 
   // trava para não executar o "seguir" duas vezes
   // (o vídeo terminar + clicar em PULAR ao mesmo tempo)
@@ -264,11 +291,15 @@ function Relatorio() {
         // Os erros são contabilizados somente em seguirDepoisDoVideo()
         setResultadoRelatorio(resultado);
 
+<<<<<<< HEAD
         if (!conquistaRelatorioDisparada.current) {
           conquistaRelatorioDisparada.current = true;
           ganharConquista("RELATORIO_ENTREGUE", "Relatório Entregue");
           registrarRelatorioSalvo();
         }
+=======
+        registrarConquistasRelatorio(itensSelecionados.length);
+>>>>>>> origin/dev-diego
 
       })
 
@@ -294,7 +325,7 @@ function Relatorio() {
 
   // =====================================================
   // CONTINUAR
-  // No último caso, mostra o vídeo antes do resultado.
+  // No último caso, mostra o vídeo de finalização do jogo antes do resultado.
   // Nos outros casos, vai direto para o próximo cliente.
   // =====================================================
 
@@ -375,6 +406,34 @@ function Relatorio() {
   // (fica depois de todos os hooks, nunca antes deles)
   // =====================================================
 
+  // 1) vídeo de finalização do CASO: toca ao abrir o relatório de qualquer caso, e depois mostra o relatório
+  if (videoCaso) {
+
+    return (
+      <main className="tela-video">
+
+        <video
+          className="video-tela"
+          src="/videos/finalizacao_caso.mp4"
+          autoPlay
+          playsInline
+          onEnded={() => setVideoCaso(false)}
+        />
+
+        <button
+          type="button"
+          className="btn-pular"
+          onClick={() => setVideoCaso(false)}
+        >
+          PULAR
+        </button>
+
+      </main>
+    );
+
+  }
+
+  // 2) vídeo de finalização do JOGO: toca depois do relatório do ÚLTIMO caso e leva para a tela de resultado
   if (mostrarVideo) {
 
     return (
@@ -382,7 +441,7 @@ function Relatorio() {
 
         <video
           className="video-tela"
-          src="/videos/video2.mp4"
+          src="/videos/finalizacao_jogo.mp4"
           autoPlay
           playsInline
           onEnded={seguirDepoisDoVideo}

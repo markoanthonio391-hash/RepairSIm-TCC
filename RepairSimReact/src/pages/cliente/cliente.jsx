@@ -6,10 +6,10 @@ import { useJogo } from "../../context/JogoContext";
 const BALAO_INICIO = 2;
 const BALAO_FIM = 9;
 
-const AUDIO_INICIO = BALAO_INICIO;
-const AUDIO_SRC = "/audios/audio1.mpeg";
-const AUDIO_EM_LOOP = false;
-const AUDIO_VOLUME = 1;
+// O vídeo NÃO repete: ele para (congela) nos últimos milissegundos e o cliente fica parado no balcão.
+// A música dos casos (musica_casos) agora toca no MusicaGlobal, durante todos os casos, e continua com o vídeo congelado.
+const CONGELAR_NO_SEGUNDO = 8.9;     // null = congela no ÚLTIMO quadro. Ex.: 8.8 congela com o balão ainda na tela.
+const MARGEM_ULTIMO_QUADRO = 0.04;    // segundos antes do fim (últimos milissegundos)
 
 function Cliente() {
 
@@ -19,21 +19,13 @@ function Cliente() {
   const [mostrarTexto, setMostrarTexto] = useState(false);
 
   const videoRef = useRef(null);
-  const audioRef = useRef(null);
   const textoVisivelRef = useRef(false);
-  const audioTocouRef = useRef(false);
 
   useEffect(() => {
     const video = videoRef.current;
-    const audio = audioRef.current;
     if (!video) return;
 
-    if (audio) {
-      audio.volume = AUDIO_VOLUME;
-
-      if (AUDIO_EM_LOOP) audio.play().catch(() => {});
-    }
-
+    let congelou = false;
     let frame;
 
     const verificar = () => {
@@ -46,13 +38,13 @@ function Cliente() {
         setMostrarTexto(deveMostrar);
       }
 
-      if (audio && !AUDIO_EM_LOOP) {
-        if (t < AUDIO_INICIO) {
-          audioTocouRef.current = false;
-        } else if (!audioTocouRef.current) {
-          audioTocouRef.current = true;
-          audio.currentTime = 0;
-          audio.play().catch(() => {});
+      // congela o vídeo no ponto escolhido (o quadro fica na tela e o vídeo não recomeça)
+      if (!congelou && Number.isFinite(video.duration)) {
+        const pontoDeParada = CONGELAR_NO_SEGUNDO ?? (video.duration - MARGEM_ULTIMO_QUADRO);
+
+        if (t >= pontoDeParada) {
+          congelou = true;
+          video.pause();
         }
       }
 
@@ -63,7 +55,6 @@ function Cliente() {
 
     return () => {
       cancelAnimationFrame(frame);
-      audio?.pause();
     };
   }, []);
 
@@ -110,13 +101,6 @@ function Cliente() {
   return (
     <div className={styles.container}>
 
-      <audio
-        ref={audioRef}
-        src={AUDIO_SRC}
-        loop={AUDIO_EM_LOOP}
-        preload="auto"
-      />
-
       <div className={styles.balcao}>
 
         <div className={styles.cabecalho}>
@@ -127,10 +111,9 @@ function Cliente() {
         <div className={styles.palco}>
           <video
             className={styles.video}
-            src="/videos/video1.mp4"
+            src="/videos/problema_cliente.mp4"
             autoPlay
             muted
-            loop
             playsInline
             ref={videoRef}
           />
@@ -148,10 +131,7 @@ function Cliente() {
 
         <button
           className={`${styles.btnPrincipal} ${styles.btnBalcao}`}
-          onClick={() => {
-            if (AUDIO_EM_LOOP) audioRef.current?.play().catch(() => {});
-            setIsModalOpen(true);
-          }}
+          onClick={() => setIsModalOpen(true)}
         >
           Sistema de Manutenção
         </button>

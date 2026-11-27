@@ -6,27 +6,17 @@ import hd from "./casoHd.module.css";          // estilos reaproveitados do Caso
 import bancada from "../../assets/bancada.jpeg";
 import { useJogo } from "../../context/JogoContext";
 import VisualizadorImagem from "./VisualizadorImagem";
-import { ganharConquista } from "../../utils/ganharConquista"; // conquistas (arquivo que veio da main do Diego)
+import { ganharConquista } from "../../utils/ganharConquista";
 
-// CASO COM ETAPAS (serve para Fácil = 1 etapa, Médio = 2 etapas e, no futuro, Difícil = 3).
-// É o CasoHd sem as partes do HD: a quantidade de etapas e ONDE cada uma acontece vêm do backend (GET /desafios/:id/etapas).
-//   modo "software" -> computador LIGADO e gabinete FECHADO
-//   modo "hardware" -> computador DESLIGADO e gabinete ABERTO
-
-// Endereço do servidor (o mesmo usado no restante do projeto).
 const API = "http://localhost:3000";
 
 const TEMPO_MENSAGEM_MS = 3500;
 const CHAVE_MUNDOS_CONCLUIDOS = "repairsim_mundos_concluidos_v1";
 
-// Gabinete aberto de lado e limpo, usado SÓ se o caso não tiver nenhuma imagem de gabinete aberto cadastrada.
-// (Antes, casos sem essa imagem, como os casos 6 e 7, mostravam "Imagem do gabinete não cadastrada" ao abrir o gabinete.)
 const GABINETE_ABERTO_PADRAO = { caminho_imagem: "/imagens/gabinetes/gabinete_de_lado.png" };
 
-// texto quando o computador desliga sozinho (casos com "desliga_sozinho_segundos", como o caso 4)
 const MENSAGEM_SUPERAQUECIMENTO = "O computador superaqueceu e desligou sozinho.";
 
-// Monta a URL completa de uma imagem que veio do banco.
 function urlImagem(imagem) {
     if (!imagem?.caminho_imagem) {
         return "";
@@ -35,6 +25,7 @@ function urlImagem(imagem) {
     return `${API}${imagem.caminho_imagem}`;
 }
 
+<<<<<<< HEAD
 function normalizarDificuldade(dificuldade) {
     return String(dificuldade || "")
         .normalize("NFD")
@@ -66,6 +57,18 @@ function registrarDificuldadeConcluida(dificuldade) {
 
     if (estado.Facil && estado.Medio && estado.Dificil) {
         ganharConquista("MESTRE_MUNDOS", "Mestre dos Três Mundos");
+=======
+function dispararConquistasConclusao(dificuldade, totalErros) {
+    if (dificuldade === "Facil") {
+        ganharConquista("TECNICO_INICIANTE", "Técnico Iniciante");
+    } else if (dificuldade === "Medio") {
+        ganharConquista("DIAGNOSTICO_MEDIO", "Diagnóstico Intermediário");
+    } else if (dificuldade === "Dificil") {
+        ganharConquista("ESPECIALISTA_BANCADA", "Especialista de Bancada");
+        if (totalErros === 0) {
+            ganharConquista("AUDITORIA_PERFEITA", "Auditoria Perfeita");
+        }
+>>>>>>> origin/dev-diego
     }
 }
 
@@ -76,48 +79,48 @@ function CasoEtapas() {
     const desafioAtual = getDesafioAtual();
     const idDesafio = desafioAtual?.id_desafio;
 
-    // ----------------------- ESTADOS -----------------------
-
-    // Dados vindos do backend
     const [imagensPc, setImagensPc] = useState([]);
     const [carregandoImagens, setCarregandoImagens] = useState(true);
     const [todosItens, setTodosItens] = useState([]);
     const [itensCarregados, setItensCarregados] = useState(false);
 
-    // Etapas do caso (GET /desafios/:id/etapas)
     const [etapas, setEtapas] = useState([]);
     const [totalEtapas, setTotalEtapas] = useState(0);
     const [carregandoEtapas, setCarregandoEtapas] = useState(true);
-    const [erroCaso, setErroCaso] = useState(""); // caso mal configurado ou falha ao buscar as etapas
+    const [erroCaso, setErroCaso] = useState("");
 
-    // Etapa atual (começa em 1). O número da etapa é enviado ao backend como "ordem".
     const [etapa, setEtapa] = useState(1);
 
-    // Comportamento do computador neste caso (vem do backend em /etapas):
-    //  pc_inicial = "ligado" ou "desligado" | desliga_sozinho_segundos = se ligar o PC, ele desliga sozinho depois de X segundos
     const [config, setConfig] = useState({ pc_inicial: "ligado", desliga_sozinho_segundos: null });
 
-    // Menu de itens
     const [tipoSelecionado, setTipoSelecionado] = useState(null);
     const [categoriaAberta, setCategoriaAberta] = useState(false);
 
-    // Estado do computador (energia e gabinete são independentes)
     const [pcLigado, setPcLigado] = useState(true);
     const [gabineteAberto, setGabineteAberto] = useState(false);
 
-    // Controles da interface
     const [verificandoItem, setVerificandoItem] = useState(false);
     const [respostaFinalizada, setRespostaFinalizada] = useState(false);
     const [mensagem, setMensagem] = useState("");
     const [popup, setPopup] = useState(null);
     const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
+<<<<<<< HEAD
     // Trava contra clique duplo e controle por caso
+=======
+>>>>>>> origin/dev-diego
     const verificandoRef = useRef(false);
     const conclusaoRegistradaRef = useRef(false);
     const errosCasoRef = useRef(0);
     const inicioCasoRef = useRef(Date.now());
     const temporizadorMensagem = useRef(null);
+    const errosCasoRef = useRef(0);
+    const abriuPainelRef = useRef(false);
+
+    useEffect(() => {
+        errosCasoRef.current = 0;
+        abriuPainelRef.current = false;
+    }, [idDesafio]);
 
     const mostrarMensagem = useCallback((texto, fixa = false) => {
         window.clearTimeout(temporizadorMensagem.current);
@@ -128,11 +131,7 @@ function CasoEtapas() {
     }, []);
     useEffect(() => () => window.clearTimeout(temporizadorMensagem.current), []);
 
-    // ----------------------- BUSCAS NO BACKEND -----------------------
-
-    // Etapas do caso: quantas são e onde cada uma acontece
     useEffect(() => {
-        // sem desafio na memória a tela já redireciona para /dificuldade (ver mais abaixo)
         if (!idDesafio) {
             return;
         }
@@ -140,10 +139,8 @@ function CasoEtapas() {
         conclusaoRegistradaRef.current = false;
         errosCasoRef.current = 0;
 
-        // o caso é remontado a cada desafio novo (key no caso.jsx), então os estados já começam "carregando"
-        let cancelado = false; // evita atualizar o estado se a tela já foi fechada
+        let cancelado = false;
 
-        // credentials: "include" envia o cookie de login (os casos exclusivos de instituição respondem 404 sem ele)
         fetch(`${API}/desafios/${idDesafio}/etapas`, { credentials: "include" })
             .then(async resposta => {
                 const dados = await resposta.json().catch(() => ({}));
@@ -169,7 +166,6 @@ function CasoEtapas() {
                 setEtapas(Array.isArray(dados.etapas) ? dados.etapas : []);
                 setEtapa(1);
 
-                // o caso 4, por exemplo, começa com o computador DESLIGADO e desliga sozinho se for ligado
                 const configDoCaso = {
                     pc_inicial: dados.config?.pc_inicial === "desligado" ? "desligado" : "ligado",
                     desliga_sozinho_segundos: Number(dados.config?.desliga_sozinho_segundos) || null
@@ -194,7 +190,6 @@ function CasoEtapas() {
         };
     }, [idDesafio]);
 
-    // Imagens do computador neste desafio
     useEffect(() => {
         if (!idDesafio) {
             return;
@@ -231,7 +226,6 @@ function CasoEtapas() {
         };
     }, [idDesafio, mostrarMensagem]);
 
-    // Todos os itens, uma única vez (a categoria é filtrada na tela, sem buscar de novo a cada troca)
     useEffect(() => {
         let cancelado = false;
 
@@ -261,8 +255,6 @@ function CasoEtapas() {
         };
     }, [mostrarMensagem]);
 
-    // DESLIGA SOZINHO (superaquecimento): enquanto o PC estiver ligado e o caso não terminou, conta os segundos.
-    // Se o jogador desligar antes (ou o caso terminar), a contagem é cancelada.
     useEffect(() => {
         const segundos = config.desliga_sozinho_segundos;
 
@@ -278,10 +270,6 @@ function CasoEtapas() {
         return () => window.clearTimeout(temporizador);
     }, [pcLigado, respostaFinalizada, config.desliga_sozinho_segundos, mostrarMensagem]);
 
-    // ----------------------- IMAGENS DO PC -----------------------
-
-    // Procura uma imagem pela "funcao" cadastrada em desafio_imagens_pc.
-    // Os nomes são testados NA ORDEM em que foram passados (o primeiro que existir vence).
     function buscarImagem(...funcoes) {
         for (const funcao of funcoes) {
             const imagem = imagensPc.find(item => item.funcao === funcao);
@@ -296,45 +284,35 @@ function CasoEtapas() {
 
     const monitorLigado = buscarImagem("monitor_ligado");
     const monitorDesligado = buscarImagem("monitor_desligado");
-    const monitorProblema = buscarImagem("monitor_problema"); // imagem do problema de software (casos exclusivos)
+    const monitorProblema = buscarImagem("monitor_problema");
     const gabineteLigado = buscarImagem("gabinete_ligado");
     const gabineteDesligado = buscarImagem("gabinete_desligado");
 
-    // Gabinete ABERTO mostrando o defeito do caso (mesma regra do caso.jsx):
-    // "gabinete_empoeirado" (caso 1) ou qualquer função terminada em "_defeito" (ex: gabinete_ram_defeito, gabinete_fonte_defeito)
     const gabineteDefeito = imagensPc.find(
         imagem => imagem.funcao === "gabinete_empoeirado" || imagem.funcao?.endsWith("_defeito")
     );
 
-    // Gabinete aberto e LIMPO (no Caso 8 essa mesma imagem genérica se chama gabinete_aberto_hd)
     const gabineteLimpo = buscarImagem("gabinete_limpo", "gabinete_aberto_hd");
 
-    // ----------------------- REGRAS DA ETAPA -----------------------
-
-    // modo da etapa atual e da última etapa (software ou hardware)
     const infoEtapaAtual = etapas.find(item => Number(item.ordem) === etapa);
     const modoDaEtapa = infoEtapaAtual?.modo ?? "hardware";
 
-    // Imagens ESPECÍFICAS da etapa atual (monitor_etapa_N / gabinete_etapa_N), se o caso tiver.
-    // Ex.: caso 5, etapa 1 = gabinete com faíscas (aviso); etapa 2 = fonte queimada. Caso 6, etapa 2 = monitor com "HD cheio".
     const monitorDaEtapa = infoEtapaAtual?.funcao_monitor ? buscarImagem(infoEtapaAtual.funcao_monitor) : undefined;
     const gabineteDaEtapa = infoEtapaAtual?.funcao_gabinete ? buscarImagem(infoEtapaAtual.funcao_gabinete) : undefined;
     const modoUltimaEtapa = etapas.find(item => Number(item.ordem) === totalEtapas)?.modo ?? "hardware";
 
-    // Qual imagem do MONITOR aparece agora?
     let imagemMonitorAtual;
 
     if (!pcLigado) {
         imagemMonitorAtual = monitorDesligado;
     }
     else if (respostaFinalizada) {
-        imagemMonitorAtual = monitorLigado; // problema resolvido: monitor volta ao normal
+        imagemMonitorAtual = monitorLigado;
     }
     else {
         imagemMonitorAtual = monitorDaEtapa ?? monitorProblema ?? monitorLigado;
     }
 
-    // Qual imagem do GABINETE aparece agora?
     let imagemGabineteAtual;
 
     if (gabineteAberto) {
@@ -349,9 +327,6 @@ function CasoEtapas() {
         imagemGabineteAtual = gabineteDesligado;
     }
 
-    // ----------------------- AÇÕES DO JOGADOR -----------------------
-
-    // Botão LIGAR / DESLIGAR
     function alternarEnergia() {
         if (respostaFinalizada) {
             return;
@@ -366,7 +341,6 @@ function CasoEtapas() {
         mostrarMensagem(pcLigado ? "Computador desligado." : "Computador ligado.");
     }
 
-    // Clicar no gabinete: só abre com o PC desligado; o segundo clique amplia a imagem
     function abrirOuAmpliarGabinete() {
         if (respostaFinalizada) {
             return;
@@ -377,15 +351,13 @@ function CasoEtapas() {
             return;
         }
 
-        // Primeiro clique: só abre (não dá zoom)
         if (!gabineteAberto) {
             setGabineteAberto(true);
             mostrarMensagem("Gabinete aberto.");
             return;
         }
 
-        // Segundo clique: amplia a imagem do defeito
-        const imagemZoom = imagemGabineteAtual; // amplia exatamente a imagem que está na tela (inclusive a da etapa)
+        const imagemZoom = imagemGabineteAtual;
 
         if (imagemZoom) {
             setImagemAmpliada({ src: urlImagem(imagemZoom), alt: "Interior do gabinete" });
@@ -397,7 +369,6 @@ function CasoEtapas() {
         mostrarMensagem("Gabinete fechado.");
     }
 
-    // Clicar no monitor: abre a imagem ampliada
     function ampliarImagem(imagem, alt) {
         if (!imagem) {
             return;
@@ -406,7 +377,6 @@ function CasoEtapas() {
         setImagemAmpliada({ src: urlImagem(imagem), alt });
     }
 
-    // O menu de categorias fica sempre clicável: o estado do PC só é conferido na hora de usar o item.
     function abrirCategoria(tipo) {
         if (respostaFinalizada || verificandoItem) {
             return;
@@ -416,20 +386,18 @@ function CasoEtapas() {
             setCategoriaAberta(false);
         }
         else {
+            abriuPainelRef.current = true;
             setTipoSelecionado(tipo);
             setCategoriaAberta(true);
             ganharConquista("MAO_NA_MASSA", "Mão na Massa");
         }
     }
 
-    // Clicar em um item: confere se o computador está no estado certo
-    // e depois pergunta ao backend se o item está certo PARA ESTA ETAPA.
     async function usarItem(item) {
         if (verificandoRef.current || respostaFinalizada) {
             return;
         }
 
-        // Etapa de software: PC ligado e gabinete fechado
         if (modoDaEtapa === "software") {
             if (!pcLigado) {
                 mostrarMensagem("Ligue o computador para executar esta ação.");
@@ -442,7 +410,6 @@ function CasoEtapas() {
             }
         }
 
-        // Etapa de hardware: PC desligado e gabinete aberto
         if (modoDaEtapa === "hardware") {
             if (pcLigado) {
                 mostrarMensagem("Desligue o computador antes de mexer nas peças.");
@@ -455,17 +422,19 @@ function CasoEtapas() {
             }
         }
 
+        if (abriuPainelRef.current) {
+            ganharConquista("MAO_NA_MASSA", "Mão na Massa");
+        }
+
         verificandoRef.current = true;
         setVerificandoItem(true);
-        mostrarMensagem("Verificando item...", true); // true = a mensagem não some sozinha
+        mostrarMensagem("Verificando item...", true);
 
         try {
             const resposta = await fetch(`${API}/desafios/${idDesafio}/verificar`, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
-                // "ordem" é a etapa atual: o backend só aceita o item se ele
-                // estiver cadastrado em desafio_itens com essa ordem.
                 body: JSON.stringify({ id_item: item.id_item, ordem: etapa })
             });
 
@@ -475,10 +444,8 @@ function CasoEtapas() {
                 throw new Error(resultado.mensagem || "Erro ao verificar o item.");
             }
 
-            // +10 se acertou, -5 se errou
             adicionarPontos(Number(resultado.pontos || 0));
 
-            // Item errado: continua na mesma etapa para tentar de novo
             if (!resultado.correto) {
                 errosCasoRef.current += 1;
                 registrarErroDesafio();
@@ -486,7 +453,6 @@ function CasoEtapas() {
                 return;
             }
 
-            // Acertou uma etapa que NÃO é a última: avança e avisa
             if (etapa < totalEtapas) {
                 setEtapa(etapa + 1);
                 mostrarMensagem("");
@@ -497,10 +463,10 @@ function CasoEtapas() {
                 return;
             }
 
-            // Última etapa: fim do caso
             setRespostaFinalizada(true);
             setCategoriaAberta(false);
 
+<<<<<<< HEAD
             if (!conclusaoRegistradaRef.current) {
                 conclusaoRegistradaRef.current = true;
                 const segundosGastos = Math.max(1, Math.round((Date.now() - inicioCasoRef.current) / 1000));
@@ -520,14 +486,14 @@ function CasoEtapas() {
                     }
                 }
             }
+=======
+            dispararConquistasConclusao(desafioAtual?.dificuldade, errosCasoRef.current);
+>>>>>>> origin/dev-diego
 
             if (modoUltimaEtapa === "software") {
-                // Software: o monitor volta ao normal e o botão do relatório aparece na hora
                 mostrarMensagem("Reparo concluído com sucesso.", true);
             }
             else {
-                // Hardware: o gabinete continua aberto e limpo; o jogador precisa fechá-lo para seguir.
-                // O PC não liga nem desliga sozinho.
                 mostrarMensagem("Reparo concluído! Feche o gabinete para continuar.", true);
             }
         }
@@ -541,10 +507,6 @@ function CasoEtapas() {
         }
     }
 
-    // ----------------------- TELA -----------------------
-
-    // Todos os hooks ficam ACIMA deste return (regra dos hooks do React).
-    // Sem desafio na memória (ex.: F5 no meio da partida): volta para a escolha de dificuldade.
     if (!desafioAtual) {
         return <Navigate to="/dificuldade" replace />;
     }
@@ -563,17 +525,13 @@ function CasoEtapas() {
     }
 
     const menuBloqueado = respostaFinalizada || verificandoItem;
-
-    // O relatório aparece: (software) na hora; (hardware) só depois de fechar o gabinete
     const mostrarRelatorio = respostaFinalizada && !gabineteAberto;
-
     const itensDaCategoria = todosItens.filter(item => item.tipo === tipoSelecionado);
 
     return (
         <div className={styles.screenWrapper}>
             <div className={styles.mainContainer}>
 
-                {/* Status da jogatina */}
                 <div className={styles.statusJogo}>
                     <span>Caso {jogatina.indiceAtual + 1} / {jogatina.quantidadeCasos}</span>
                     <span>Pontos: {jogatina.pontos}</span>
@@ -585,7 +543,6 @@ function CasoEtapas() {
                     VOLTAR
                 </button>
 
-                {/* Computador na bancada */}
                 <div className={styles.pcContainer}>
                     {imagemMonitorAtual && !carregandoEtapas ? (
                         <img
@@ -614,7 +571,6 @@ function CasoEtapas() {
                     )}
                 </div>
 
-                {/* Ligar / desligar (some com o gabinete aberto e no fim do caso) */}
                 {!gabineteAberto && !respostaFinalizada && (
                     <button
                         type="button"
@@ -625,7 +581,6 @@ function CasoEtapas() {
                     </button>
                 )}
 
-                {/* Fechar gabinete: continua visível mesmo depois de finalizar o caso */}
                 {gabineteAberto && (
                     <button type="button" className={hd.btnFecharGabinete} onClick={fecharGabinete}>
                         FECHAR GABINETE
@@ -634,7 +589,6 @@ function CasoEtapas() {
 
                 {mensagem && <div className={styles.mensagem}>{mensagem}</div>}
 
-                {/* Categorias e itens */}
                 <div className={styles.toolsContainer}>
                     <button
                         type="button"
@@ -696,7 +650,6 @@ function CasoEtapas() {
                     )}
                 </div>
 
-                {/* O relatório só é liberado no fim do caso (e, no hardware, com o gabinete fechado) */}
                 {mostrarRelatorio && (
                     <button
                         type="button"
@@ -707,7 +660,6 @@ function CasoEtapas() {
                     </button>
                 )}
 
-                {/* Imagem ampliada */}
                 {imagemAmpliada && (
                     <VisualizadorImagem
                         src={imagemAmpliada.src}
@@ -717,7 +669,6 @@ function CasoEtapas() {
                     />
                 )}
 
-                {/* Pop-up de etapa concluída (textos fixos do front) */}
                 {popup && (
                     <div className={hd.overlayPopup} role="presentation">
                         <section

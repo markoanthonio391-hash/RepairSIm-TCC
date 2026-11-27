@@ -414,3 +414,5 @@
     -webkit-user-drag: none;
     user-select: none;
 }
+
+.efeitos{ background-color: #009dff; --neon-color: #00c3ff; }

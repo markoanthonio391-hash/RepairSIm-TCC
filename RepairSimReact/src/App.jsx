@@ -5,6 +5,7 @@ import { LanguageProvider } from './context/LanguageProvider';
 import { SoundProvider } from './context/SoundProvider';
 import { JogoProvider } from './context/JogoContext';
 import SomGlobal from './components/SomGlobal';
+import MusicaGlobal from './components/MusicaGlobal';
 
 const Home = lazy(() => import ('./pages/home/home'));
 const Dificuldade = lazy(() => import('./pages/dificuldade/dificuldade'));
@@ -32,6 +33,8 @@ function App() {
             <SomGlobal />
               <Suspense fallback={<div style={{color: 'white'}}>Carregando...</div>}>
                 <JogoProvider>
+                  {/* música de fundo: lobby nas telas iniciais, música dos casos durante os casos e comemoração no resultado */}
+                  <MusicaGlobal />
                   <Routes>
                     <Route path='/' element={<Home />} />
                     <Route path='/Dificuldade' element={<Dificuldade />} />

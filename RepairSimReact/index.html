@@ -14,6 +14,15 @@
                 var fontes = { 'Pequena': 'pequena', 'Padrão': 'padrao', 'Grande': 'grande', 'Muito grande': 'muito-grande' };
                 document.documentElement.dataset.tema = tema === 'Claro' ? 'claro' : 'escuro';
                 document.documentElement.dataset.fonte = fontes[fonte] || 'padrao';
+                var padraoEfeito = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reduzido' : 'normal';
+                var efeitos = JSON.parse(localStorage.getItem('config_efeitos')) || {};
+                ['fundo', 'titulo', 'icones', 'neon', 'logo'].forEach(function (k) {
+                    var v = efeitos[k];
+                    document.documentElement.setAttribute(
+                        'data-efeito-' + k,
+                        (v === 'normal' || v === 'reduzido' || v === 'desligado') ? v : padraoEfeito
+                    );
+                });
             }   catch (e) { /* sem acesso ao armazenamento: usa o padrão (escuro, fonte normal) */ }
         </script>
     </head>
