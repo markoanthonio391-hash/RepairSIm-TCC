@@ -546,3 +546,40 @@ function CasoHd() {
                     <button
                         type="button"
                         className={styles.btnRelatorio}
+                        onClick={() => navigate(`/relatorio/${idDesafio}`)}
+                    >
+                        IR PARA RELATÓRIO
+                    </button>
+                )}
+
+                {imagemAmpliada && (
+                    <VisualizadorImagem
+                        src={imagemAmpliada.src}
+                        alt={imagemAmpliada.alt}
+                        closeLabel="VOLTAR AO COMPUTADOR"
+                        onClose={() => setImagemAmpliada(null)}
+                    />
+                )}
+
+                {popup && (
+                    <div className={hd.overlayPopup} role="presentation">
+                        <section
+                            className={hd.popupCard}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="titulo-popup-hd"
+                        >
+                            <h2 id="titulo-popup-hd">{popup.titulo}</h2>
+                            <p>{popup.texto}</p>
+                            <button type="button" className={hd.botaoPopup} onClick={() => setPopup(null)}>
+                                CONTINUAR
+                            </button>
+                        </section>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+export default CasoHd;
