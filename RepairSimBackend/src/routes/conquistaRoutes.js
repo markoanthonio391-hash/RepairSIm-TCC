@@ -22,9 +22,10 @@ router.get('/minhas', autenticarOpcional, async (req, res) => {
 
 router.post('/desbloquear', autenticar, async (req, res) => {
     const id_usuario = req.usuario.id;
-    const { codigo_conquista, titulo } = req.body;
+    const codigoLimpo = String(req.body?.codigo_conquista || '').trim().toUpperCase();
+    const tituloLimpo = String(req.body?.titulo || codigoLimpo).trim();
 
-    if (!codigo_conquista) {
+    if (!codigoLimpo) {
         return res.status(400).json({ erro: 'Código da conquista é obrigatório.' });
     }
 
@@ -34,7 +35,7 @@ router.post('/desbloquear', autenticar, async (req, res) => {
             VALUES (?, ?, ?)
             ON DUPLICATE KEY UPDATE data_conquista = data_conquista
         `;
-        await db.promise().query(query, [id_usuario, codigo_conquista, titulo]);
+        await db.promise().query(query, [id_usuario, codigoLimpo, tituloLimpo]);
         return res.status(200).json({ sucesso: true, mensagem: 'Conquista desbloqueada com sucesso!' });
     } catch (error) {
         console.error(error);

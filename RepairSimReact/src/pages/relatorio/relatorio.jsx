@@ -8,7 +8,30 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./Relatorio.css";
 
 import { useJogo } from "../../context/JogoContext";
+import { ganharConquista } from "../../utils/ganharConquista";
 
+const CHAVE_RELATORIOS_SALVOS = "repairsim_relatorios_salvos_v1";
+const META_DETALHISTA_OFICINA = 5;
+
+function registrarRelatorioSalvo() {
+  let atual = 0;
+  try {
+    atual = Number(window.localStorage.getItem(CHAVE_RELATORIOS_SALVOS) || 0);
+  } catch {
+    atual = 0;
+  }
+
+  const proximo = (Number.isFinite(atual) ? atual : 0) + 1;
+  try {
+    window.localStorage.setItem(CHAVE_RELATORIOS_SALVOS, String(proximo));
+  } catch (erro) {
+    console.warn("Não foi possível salvar contagem de relatórios:", erro);
+  }
+
+  if (proximo >= META_DETALHISTA_OFICINA) {
+    ganharConquista("DETALHISTA_OFICINA", "Detalhista da Oficina");
+  }
+}
 
 function Relatorio() {
   const navigate = useNavigate();
@@ -43,6 +66,7 @@ function Relatorio() {
 
   // trava de clique duplo no SALVAR LAUDO (dois cliques rápidos criavam dois relatórios)
   const [salvando, setSalvando] = useState(false);
+  const conquistaRelatorioDisparada = useRef(false);
 
 
   // =====================================================
@@ -82,6 +106,7 @@ function Relatorio() {
   // =====================================================
 
   useEffect(() => {
+    conquistaRelatorioDisparada.current = false;
 
     // credentials: "include" envia o cookie de login (casos exclusivos de instituição respondem 404 sem ele)
     fetch(`http://localhost:3000/relatorios/desafio/${idDesafio}`, { credentials: "include" })
@@ -238,6 +263,12 @@ function Relatorio() {
 
         // Os erros são contabilizados somente em seguirDepoisDoVideo()
         setResultadoRelatorio(resultado);
+
+        if (!conquistaRelatorioDisparada.current) {
+          conquistaRelatorioDisparada.current = true;
+          ganharConquista("RELATORIO_ENTREGUE", "Relatório Entregue");
+          registrarRelatorioSalvo();
+        }
 
       })
 

@@ -1,3 +1,4 @@
+import { registrarTempoBancada } from "../../utils/tempoConquista";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import styles from "./caso.module.css";        // estilos que o grupo já usa nos outros casos
@@ -16,6 +17,7 @@ import { ganharConquista } from "../../utils/ganharConquista"; // conquistas (ar
 const API = "http://localhost:3000";
 
 const TEMPO_MENSAGEM_MS = 3500;
+const CHAVE_MUNDOS_CONCLUIDOS = "repairsim_mundos_concluidos_v1";
 
 // Gabinete aberto de lado e limpo, usado SÓ se o caso não tiver nenhuma imagem de gabinete aberto cadastrada.
 // (Antes, casos sem essa imagem, como os casos 6 e 7, mostravam "Imagem do gabinete não cadastrada" ao abrir o gabinete.)
@@ -31,6 +33,40 @@ function urlImagem(imagem) {
     }
 
     return `${API}${imagem.caminho_imagem}`;
+}
+
+function normalizarDificuldade(dificuldade) {
+    return String(dificuldade || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+}
+
+function registrarDificuldadeConcluida(dificuldade) {
+    const dif = normalizarDificuldade(dificuldade);
+    let atual = {};
+    try {
+        atual = JSON.parse(window.localStorage.getItem(CHAVE_MUNDOS_CONCLUIDOS) || "{}");
+    } catch {
+        atual = {};
+    }
+
+    const estado = {
+        Facil: Boolean(atual?.Facil) || dif === "facil",
+        Medio: Boolean(atual?.Medio) || dif === "medio",
+        Dificil: Boolean(atual?.Dificil) || dif === "dificil",
+    };
+
+    try {
+        window.localStorage.setItem(CHAVE_MUNDOS_CONCLUIDOS, JSON.stringify(estado));
+    } catch (erro) {
+        console.warn("Não foi possível salvar progresso das dificuldades:", erro);
+    }
+
+    if (estado.Facil && estado.Medio && estado.Dificil) {
+        ganharConquista("MESTRE_MUNDOS", "Mestre dos Três Mundos");
+    }
 }
 
 function CasoEtapas() {
@@ -76,8 +112,11 @@ function CasoEtapas() {
     const [popup, setPopup] = useState(null);
     const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
-    // Trava contra clique duplo: o estado só muda no próximo render, a ref muda na hora.
+    // Trava contra clique duplo e controle por caso
     const verificandoRef = useRef(false);
+    const conclusaoRegistradaRef = useRef(false);
+    const errosCasoRef = useRef(0);
+    const inicioCasoRef = useRef(Date.now());
     const temporizadorMensagem = useRef(null);
 
     const mostrarMensagem = useCallback((texto, fixa = false) => {
@@ -97,6 +136,9 @@ function CasoEtapas() {
         if (!idDesafio) {
             return;
         }
+        inicioCasoRef.current = Date.now();
+        conclusaoRegistradaRef.current = false;
+        errosCasoRef.current = 0;
 
         // o caso é remontado a cada desafio novo (key no caso.jsx), então os estados já começam "carregando"
         let cancelado = false; // evita atualizar o estado se a tela já foi fechada
@@ -376,6 +418,7 @@ function CasoEtapas() {
         else {
             setTipoSelecionado(tipo);
             setCategoriaAberta(true);
+            ganharConquista("MAO_NA_MASSA", "Mão na Massa");
         }
     }
 
@@ -437,6 +480,7 @@ function CasoEtapas() {
 
             // Item errado: continua na mesma etapa para tentar de novo
             if (!resultado.correto) {
+                errosCasoRef.current += 1;
                 registrarErroDesafio();
                 mostrarMensagem("❌ " + resultado.mensagem);
                 return;
@@ -457,10 +501,24 @@ function CasoEtapas() {
             setRespostaFinalizada(true);
             setCategoriaAberta(false);
 
-            // Conquista "Técnico Iniciante": mesma regra que o Diego colocou no CasoPadrao (caso fácil concluído).
-            // Os casos fáceis agora abrem este componente, então o gatilho precisa estar aqui também.
-            if (desafioAtual?.dificuldade === "Facil") {
-                ganharConquista("TECNICO_INICIANTE", "Técnico Iniciante");
+            if (!conclusaoRegistradaRef.current) {
+                conclusaoRegistradaRef.current = true;
+                const segundosGastos = Math.max(1, Math.round((Date.now() - inicioCasoRef.current) / 1000));
+                const dif = normalizarDificuldade(desafioAtual?.dificuldade);
+
+                registrarTempoBancada(desafioAtual?.dificuldade, segundosGastos);
+                registrarDificuldadeConcluida(desafioAtual?.dificuldade);
+
+                if (dif === "facil") {
+                    ganharConquista("TECNICO_INICIANTE", "Técnico Iniciante");
+                } else if (dif === "medio") {
+                    ganharConquista("DIAGNOSTICO_MEDIO", "Diagnóstico Intermediário");
+                } else if (dif === "dificil") {
+                    ganharConquista("ESPECIALISTA_BANCADA", "Especialista de Bancada");
+                    if (errosCasoRef.current === 0) {
+                        ganharConquista("AUDITORIA_PERFEITA", "Auditoria Perfeita");
+                    }
+                }
             }
 
             if (modoUltimaEtapa === "software") {

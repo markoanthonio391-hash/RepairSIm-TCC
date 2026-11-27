@@ -13,6 +13,10 @@ import imgMaoNaMassa from '../../assets/conquistas/conquista 8.jpg';
 import imgConexaoGlobal from '../../assets/conquistas/conquista 9.jpg';
 import imgAuditoriaPerfeita from '../../assets/conquistas/conquista 10.jpg';
 
+function normalizarCodigo(codigo) {
+    return String(codigo || '').trim().toUpperCase();
+}
+
 export default function Conquistas() {
     const navigate = useNavigate();
     const [conquistasDesbloqueadas, setConquistasDesbloqueadas] = useState([]);
@@ -35,15 +39,19 @@ export default function Conquistas() {
         fetch('http://localhost:3000/api/conquistas/minhas', {
             credentials: 'include'
         })
-            .then((res) => {
+            .then(async (res) => {
                 if (!res.ok) {
+                    const textoErro = await res.text().catch(() => '');
+                    console.warn('Falha ao buscar conquistas:', res.status, textoErro);
                     return [];
                 }
                 return res.json();
             })
             .then((data) => {
                 if (Array.isArray(data)) {
-                    const codigos = data.map((c) => c.codigo_conquista);
+                    const codigos = data
+                        .map((c) => normalizarCodigo(c.codigo_conquista))
+                        .filter(Boolean);
                     setConquistasDesbloqueadas(codigos);
                 } else {
                     setConquistasDesbloqueadas([]);
@@ -107,7 +115,9 @@ export default function Conquistas() {
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                         {listaConquistas.map((c) => {
-                            const desbloqueada = conquistasDesbloqueadas.includes(c.codigo);
+                            const codigoNorm = normalizarCodigo(c.codigo);
+                            const desbloqueada = conquistasDesbloqueadas.includes(codigoNorm) && codigoNorm !== 'CONEXAO_GLOBAL';
+                            const mostrarCadeado = codigoNorm === 'CONEXAO_GLOBAL';
 
                             return (
                                 <div key={c.id} style={{ 
@@ -133,6 +143,7 @@ export default function Conquistas() {
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
+                                        position: 'relative',
                                         boxShadow: desbloqueada ? '0 0 10px rgba(0,255,136,0.4)' : 'none'
                                     }}>
                                         <img 
@@ -146,9 +157,28 @@ export default function Conquistas() {
                                             }} 
                                             onError={(e) => { e.target.src = 'https://via.placeholder.com/76'; }}
                                         />
+                                        {mostrarCadeado && (
+                                            <span
+                                                title="Conquista bloqueada"
+                                                aria-label="Conquista bloqueada"
+                                                style={{
+                                                    position: 'absolute',
+                                                    fontSize: '24px',
+                                                    background: 'rgba(2, 11, 24, 0.75)',
+                                                    borderRadius: '50%',
+                                                    width: '38px',
+                                                    height: '38px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center'
+                                                }}
+                                            >
+                                                🔒
+                                            </span>
+                                        )}
                                     </div>
                                     <div style={{ flex: 1 }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
                                             <h4 style={{ 
                                                 margin: '0 0 6px 0', 
                                                 color: desbloqueada ? '#00ff88' : '#00ffff', 
@@ -164,7 +194,8 @@ export default function Conquistas() {
                                                 background: desbloqueada ? 'rgba(0, 255, 136, 0.2)' : 'rgba(0, 255, 255, 0.1)',
                                                 color: desbloqueada ? '#00ff88' : '#00ffff',
                                                 border: desbloqueada ? '1px solid #00ff88' : '1px solid rgba(0, 255, 255, 0.3)',
-                                                fontWeight: 'bold'
+                                                fontWeight: 'bold',
+                                                whiteSpace: 'nowrap'
                                             }}>
                                                 {desbloqueada ? 'DESBLOQUEADA' : 'BLOQUEADA'}
                                             </span>
