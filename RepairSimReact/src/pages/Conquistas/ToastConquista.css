@@ -1,0 +1,57 @@
+.toast-conquista-wrapper {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.toast-conquista-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 270px;
+    max-width: 360px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #1b2838 0%, #2a475e 100%);
+    border: 1px solid #66c0f4;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+    color: #ffffff;
+    animation: toastEntrar 0.3s ease-out;
+}
+
+.toast-conquista-icone {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.toast-conquista-texto {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.toast-conquista-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #a4d7f5;
+}
+
+.toast-conquista-titulo {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+@keyframes toastEntrar {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

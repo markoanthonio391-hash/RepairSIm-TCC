@@ -14,44 +14,13 @@ const PORCENTAGENS_BACKUP = [0, 25, 50, 75, 100];
 const ULTIMO_INDICE_BACKUP = PORCENTAGENS_BACKUP.length - 1;
 const MS_POR_IMAGEM_BACKUP = 1000;
 const TEMPO_MENSAGEM_MS = 3500;
-const CHAVE_MUNDOS_CONCLUIDOS = "repairsim_mundos_concluidos_v1";
 
 function normalizarDificuldade(dificuldade) {
-    const limpa = String(dificuldade || "")
+    return String(dificuldade || "")
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .toLowerCase()
         .trim();
-
-    if (limpa === "medio") return "Medio";
-    if (limpa === "dificil") return "Dificil";
-    return "Facil";
-}
-
-function registrarDificuldadeConcluida(dificuldade) {
-    const dif = normalizarDificuldade(dificuldade);
-    let atual = {};
-    try {
-        atual = JSON.parse(window.localStorage.getItem(CHAVE_MUNDOS_CONCLUIDOS) || "{}");
-    } catch {
-        atual = {};
-    }
-
-    const estado = {
-        Facil: Boolean(atual?.Facil) || dif === "Facil",
-        Medio: Boolean(atual?.Medio) || dif === "Medio",
-        Dificil: Boolean(atual?.Dificil) || dif === "Dificil",
-    };
-
-    try {
-        window.localStorage.setItem(CHAVE_MUNDOS_CONCLUIDOS, JSON.stringify(estado));
-    } catch (erro) {
-        console.warn("Não foi possível salvar progresso das dificuldades:", erro);
-    }
-
-    if (estado.Facil && estado.Medio && estado.Dificil) {
-        ganharConquista("MESTRE_MUNDOS", "Mestre dos Três Mundos");
-    }
 }
 
 function urlImagem(imagem) {
@@ -63,11 +32,13 @@ function urlImagem(imagem) {
 }
 
 function dispararConquistasConclusao(dificuldade, totalErros) {
-    if (dificuldade === "Facil") {
+    const dif = normalizarDificuldade(dificuldade);
+
+    if (dif === "facil") {
         ganharConquista("TECNICO_INICIANTE", "Técnico Iniciante");
-    } else if (dificuldade === "Medio") {
+    } else if (dif === "medio") {
         ganharConquista("DIAGNOSTICO_MEDIO", "Diagnóstico Intermediário");
-    } else if (dificuldade === "Dificil") {
+    } else if (dif === "dificil") {
         ganharConquista("ESPECIALISTA_BANCADA", "Especialista de Bancada");
         if (totalErros === 0) {
             ganharConquista("AUDITORIA_PERFEITA", "Auditoria Perfeita");
@@ -435,7 +406,6 @@ function CasoHd() {
                 setRespostaFinalizada(true);
                 const segundosGastos = Math.max(1, Math.round((Date.now() - inicioCasoRef.current) / 1000));
                 registrarTempoBancada(desafioAtual?.dificuldade, segundosGastos);
-                registrarDificuldadeConcluida(desafioAtual?.dificuldade);
                 dispararConquistasConclusao(desafioAtual?.dificuldade, errosCasoRef.current);
                 mostrarMensagem("Reparo concluído! Feche o gabinete para continuar.", true);
             }

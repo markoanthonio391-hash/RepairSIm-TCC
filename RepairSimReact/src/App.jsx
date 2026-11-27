@@ -1,9 +1,10 @@
-import {lazy, Suspense} from 'react'
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { ThemeProvider } from './context/ThemeProvider'
 import { LanguageProvider } from './context/LanguageProvider';
 import { SoundProvider } from './context/SoundProvider';
 import { JogoProvider } from './context/JogoContext';
+import ToastConquista from './pages/Conquistas/ToastConquista';
 
 
 const Suporte = lazy(() => import('./pages/Suporte/Suporte'));
@@ -39,6 +40,7 @@ function App() {
                 <JogoProvider>
                   {/* música de fundo: lobby nas telas iniciais, música dos casos durante os casos e comemoração no resultado */}
                   <MusicaGlobal />
+                  <ToastConquista />
                   <Routes>
                     <Route path='/' element={<Home />} />
                     <Route path='/Dificuldade' element={<Dificuldade />} />

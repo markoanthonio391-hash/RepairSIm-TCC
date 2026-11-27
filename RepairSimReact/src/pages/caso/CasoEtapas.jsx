@@ -11,7 +11,6 @@ import { ganharConquista } from "../../utils/ganharConquista";
 const API = "http://localhost:3000";
 
 const TEMPO_MENSAGEM_MS = 3500;
-const CHAVE_MUNDOS_CONCLUIDOS = "repairsim_mundos_concluidos_v1";
 
 const GABINETE_ABERTO_PADRAO = { caminho_imagem: "/imagens/gabinetes/gabinete_de_lado.png" };
 
@@ -31,32 +30,6 @@ function normalizarDificuldade(dificuldade) {
         .replace(/[\u0300-\u036f]/g, "")
         .toLowerCase()
         .trim();
-}
-
-function registrarDificuldadeConcluida(dificuldade) {
-    const dif = normalizarDificuldade(dificuldade);
-    let atual = {};
-    try {
-        atual = JSON.parse(window.localStorage.getItem(CHAVE_MUNDOS_CONCLUIDOS) || "{}");
-    } catch {
-        atual = {};
-    }
-
-    const estado = {
-        Facil: Boolean(atual?.Facil) || dif === "facil",
-        Medio: Boolean(atual?.Medio) || dif === "medio",
-        Dificil: Boolean(atual?.Dificil) || dif === "dificil",
-    };
-
-    try {
-        window.localStorage.setItem(CHAVE_MUNDOS_CONCLUIDOS, JSON.stringify(estado));
-    } catch (erro) {
-        console.warn("Não foi possível salvar progresso das dificuldades:", erro);
-    }
-
-    if (estado.Facil && estado.Medio && estado.Dificil) {
-        ganharConquista("MESTRE_MUNDOS", "Mestre dos Três Mundos");
-    }
 }
 
 function dispararConquistasConclusao(dificuldade, totalErros) {
@@ -469,7 +442,6 @@ function CasoEtapas() {
                 const segundosGastos = Math.max(1, Math.round((Date.now() - inicioCasoRef.current) / 1000));
 
                 registrarTempoBancada(desafioAtual?.dificuldade, segundosGastos);
-                registrarDificuldadeConcluida(desafioAtual?.dificuldade);
                 dispararConquistasConclusao(desafioAtual?.dificuldade, errosCasoRef.current);
             }
 
