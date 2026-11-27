@@ -36,14 +36,12 @@ router.post('/desbloquear', autenticar, async (req, res) => {
             VALUES (?, ?, ?)
             ON DUPLICATE KEY UPDATE data_conquista = data_conquista
         `;
-HEAD
-        await db.promise().query(query, [id_usuario, codigoLimpo, tituloLimpo]);
 
-        await conexao.query(query, [id_usuario, codigo_conquista, titulo]);
+        await conexao.query(query, [id_usuario, codigoLimpo, tituloLimpo]);
 
         // Verifica se completou as 3 dificuldades para liberar MESTRE_MUNDOS
         const dificuldades = ['TECNICO_INICIANTE', 'DIAGNOSTICO_MEDIO', 'ESPECIALISTA_BANCADA'];
-        if (dificuldades.includes(codigo_conquista)) {
+        if (dificuldades.includes(codigoLimpo)) {
             const [rows] = await conexao.query(
                 `SELECT COUNT(DISTINCT codigo_conquista) AS total
                  FROM conquistas_usuario
@@ -56,7 +54,6 @@ HEAD
             }
         }
 
- origin/dev-diego
         return res.status(200).json({ sucesso: true, mensagem: 'Conquista desbloqueada com sucesso!' });
     } catch (error) {
         console.error(error);
