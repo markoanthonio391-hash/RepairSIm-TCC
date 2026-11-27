@@ -525,41 +525,69 @@ img{
     50%      { transform: scaleY(1); }
 }
 
-/* Jogar: o play pulsa */
-.jogar .iconWrap svg{
-    animation: pulsar 1.6s ease-in-out infinite;
-}
 
-/* Configurações: a engrenagem gira */
-.config .iconWrap svg{
-    animation: girar 8s linear infinite;
-}
+.jogar .iconWrap svg{ animation: pulsar calc(1.6s * var(--v-icones, 1)) ease-in-out infinite; }
 
-/* Conquistas: o troféu balança */
-.conquistas .iconWrap svg{
-    transform-origin: 50% 100%;
-    animation: balancar 2s ease-in-out infinite;
-}
+.config .iconWrap svg{ animation: girar calc(8s * var(--v-icones, 1)) linear infinite; }
 
-/* Histórico: os ponteiros giram no sentido anti-horário */
-.historico .iconWrap svg path:last-child{
-    transform-origin: 12px 12px;
-    animation: girarAntiHorario 4s linear infinite;
-}
+.conquistas .iconWrap svg{ transform-origin: 50% 100%; animation: balancar calc(2s * var(--v-icones, 1)) ease-in-out infinite; }
 
-/* Cadastrar desafio: o "+" pulsa */
-.cadastrar .iconWrap svg path:last-child{
-    transform-origin: 12px 14px;
-    animation: pulsar 1.4s ease-in-out infinite;
-}
+.historico .iconWrap svg path:last-child{ transform-origin: 12px 12px; animation: girarAntiHorario calc(4s * var(--v-icones, 1)) linear infinite; }
 
-/* Resultados: as barras sobem e descem */
-.resultados .iconWrap svg path:first-child{
-    transform-origin: 12px 21px;
-    animation: crescer 1.8s ease-in-out infinite;
-}
+.cadastrar .iconWrap svg path:last-child{ transform-origin: 12px 14px; animation: pulsar calc(1.4s * var(--v-icones, 1)) ease-in-out infinite; }
 
-@media (prefers-reduced-motion: reduce){
+.resultados .iconWrap svg path:first-child{ transform-origin: 12px 21px; animation: crescer calc(1.8s * var(--v-icones, 1)) ease-in-out infinite; }
+
+/* @media (prefers-reduced-motion: reduce){
     .iconWrap svg,
     .iconWrap svg path{ animation: none !important; }
+} */
+
+/* ================= BOTÃO FAQ (canto inferior direito) ================= */
+.faqButton{
+    position: fixed;
+    right: clamp(0.75rem, 2.5vw, 1.5rem);
+    bottom: clamp(0.75rem, 2.5vh, 1.5rem);
+    z-index: 5;
+    width: clamp(2.25rem, 5vh, 2.75rem);
+    height: clamp(2.25rem, 5vh, 2.75rem);
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: linear-gradient(135deg, #009dff, #36d8ff);
+    color: #001018;
+    font-family: Unispace, monospace;
+    font-weight: bold;
+    font-size: clamp(1.1rem, 2.5vh, 1.4rem);
+    line-height: 1;
+    cursor: pointer;
+    box-sizing: border-box;
+    --neon-color: #00c3ff;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.faqButton:hover,
+.faqButton:focus-visible{
+    outline: none;
+    transform: scale(1.12);
+    box-shadow:
+        0 0 8px var(--neon-color),
+        0 0 20px var(--neon-color),
+        0 0 36px color-mix(in srgb, var(--neon-color) 60%, transparent);
+}
+
+/* modo claro: mesma faixa azul escura dos outros botões */
+:global(html[data-tema='claro']) .faqButton{
+    color: #ffffff;
+    border-color: #0b4f8a;
+    box-shadow: 0 4px 10px rgba(10, 25, 47, 0.25);
+    animation: none;
+}
+:global(html[data-tema='claro']) .faqButton:hover{
+    box-shadow: 0 6px 16px rgba(10, 25, 47, 0.35);
 }

@@ -75,7 +75,7 @@ const PARTES = ['R', 'e', 'p', 'A', 'i', 'r', 'S', 'i', 'm'];
 
 export default function TituloRepairSim() {
   return (
-    <span className={styles.palavra} aria-hidden="true">
+    <span className={styles.palavra} data-efeito="titulo" aria-hidden="true">
       <span className={`${styles.item} ${styles.chave}`} style={{ '--i': 0 }}>
         <ChaveInglesa />
       </span>

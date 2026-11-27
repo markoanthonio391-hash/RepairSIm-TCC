@@ -30,12 +30,30 @@ router.post('/desbloquear', autenticar, async (req, res) => {
     }
 
     try {
+        const conexao = db.promise();
         const query = `
             INSERT INTO conquistas_usuario (id_usuario, codigo_conquista, titulo)
             VALUES (?, ?, ?)
             ON DUPLICATE KEY UPDATE data_conquista = data_conquista
         `;
-        await db.promise().query(query, [id_usuario, codigoLimpo, tituloLimpo]);
+
+        await conexao.query(query, [id_usuario, codigoLimpo, tituloLimpo]);
+
+        // Verifica se completou as 3 dificuldades para liberar MESTRE_MUNDOS
+        const dificuldades = ['TECNICO_INICIANTE', 'DIAGNOSTICO_MEDIO', 'ESPECIALISTA_BANCADA'];
+        if (dificuldades.includes(codigoLimpo)) {
+            const [rows] = await conexao.query(
+                `SELECT COUNT(DISTINCT codigo_conquista) AS total
+                 FROM conquistas_usuario
+                 WHERE id_usuario = ? AND codigo_conquista IN (?, ?, ?)`,
+                [id_usuario, ...dificuldades]
+            );
+
+            if (rows[0]?.total === 3) {
+                await conexao.query(query, [id_usuario, 'MESTRE_MUNDOS', 'Mestre dos Três Mundos']);
+            }
+        }
+
         return res.status(200).json({ sucesso: true, mensagem: 'Conquista desbloqueada com sucesso!' });
     } catch (error) {
         console.error(error);

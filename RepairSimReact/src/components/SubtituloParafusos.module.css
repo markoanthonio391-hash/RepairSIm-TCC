@@ -1,0 +1,45 @@
+.parafuso{
+    position: relative;
+    display: inline-block;          /* vazio: assenta na linha de base, como um ponto final */
+    width: 0.5em;
+    top: 4.5px;
+    height: 0.5em;
+    margin: 0 0.06em;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #eef3fa 0%, #94a5bd 55%, #4b5a72 100%);
+    box-shadow:
+        inset 0 0 0 0.04em rgba(0, 0, 0, 0.35),
+        0 0 0.35em rgba(54, 216, 255, 0.35);
+    transform: rotate(var(--inicio, 0deg));
+    animation: apertar calc(7s * var(--v-icones, 1)) ease-in-out infinite;
+    animation-delay: var(--atraso, 0s);
+}
+
+/* fenda em cruz (Phillips): duas barras que cruzam no centro */
+.parafuso::before,
+.parafuso::after{
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 64%;
+    height: 15%;
+    border-radius: 0.1em;
+    background: #1b2638;
+    box-shadow: inset 0 0.02em 0 rgba(0, 0, 0, 0.5);
+}
+.parafuso::before{ transform: translate(-50%, -50%); }
+.parafuso::after{  transform: translate(-50%, -50%) rotate(90deg); }
+
+/* fica parado a maior parte do tempo e dá uma volta completa para a direita */
+@keyframes apertar{
+    0%, 78%  { transform: rotate(var(--inicio, 0deg)); }
+    100%     { transform: rotate(calc(var(--inicio, 0deg) + 360deg)); }
+}
+
+/* modo claro: contorno um pouco mais forte para aparecer sobre o fundo claro */
+:global(html[data-tema='claro']) .parafuso{
+    box-shadow:
+        inset 0 0 0 0.04em rgba(0, 0, 0, 0.55),
+        0 0.05em 0.15em rgba(10, 25, 47, 0.35);
+}

@@ -10,7 +10,8 @@ import TituloRepairSim from '../../components/TituloRepairSim';
 import { useLanguage } from '../../context/useLanguage';
 import FundoAnimado from '../../components/FundoAnimado';
 import { lerUsuario, validarSessao, sairDaConta, ehAdmin } from '../../services/auth';
-
+import { useTheme } from '../../context/useTheme';
+import SubtituloParafusos from '../../components/SubtituloParafusos';
 
 function Home() {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ function Home() {
            
 
   const { t } = useLanguage(); // Adicione esta linha para obter a função de tradução
+  const { efeitos } = useTheme(); 
 
   const [estaAberta, setEstaAberta] = useState(true);
   const [ligando, setLigando] = useState(true);
@@ -48,15 +50,17 @@ function Home() {
     return null;
   }
 
-  const faseClasse = ligando ? styles.ligando : styles.ligado;
+  const faseClasse = ligando && efeitos.neon === 'normal' ? styles.ligando : styles.ligado;
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-efeito="menu">
       <FundoAnimado />
       <TechSolveLogo size={130} className={styles.logo} />
 
       <h1 className={styles.title} aria-label="RepairSim"><TituloRepairSim /></h1>
-      <h2 className={styles.subtitle}>{t.homeSubtitle}</h2>
+      <h2 className={styles.subtitle} aria-label={t.homeSubtitle}>
+        <SubtituloParafusos texto={t.homeSubtitle} />
+      </h2>
 
       <button
         className={`${styles.menuButton} ${styles.jogar} ${faseClasse}`}
@@ -123,6 +127,17 @@ function Home() {
           {t.login}
         </button>
       )}
+
+      <button
+        type="button"
+        className={`${styles.faqButton} ${faseClasse}`}
+        onClick={() => navigate('/faq')}
+        aria-label="Abrir perguntas frequentes (FAQ)"
+        title="FAQ"
+      >
+        ?
+      </button>
+
     </div>
     
   );

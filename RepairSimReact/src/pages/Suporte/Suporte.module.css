@@ -1,0 +1,49 @@
+.textarea{
+    width: 100%;
+    min-height: 7rem;
+    margin-bottom: clamp(0.9rem, 2.5vh, 1.25rem);
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 195, 255, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+    color: #F5F7FA;
+    font-family: Unispace, monospace;
+    font-size: clamp(14px, 2vw, 16px);
+    resize: vertical;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.textarea::placeholder{ color: #6b7d94; }
+.textarea:focus{
+    outline: none;
+    border-color: #00c3ff;
+    box-shadow: 0 0 12px rgba(0, 195, 255, 0.35);
+}
+
+.gmailButton{
+    width: 100%;
+    height: clamp(2.5rem, 5.5vh, 3rem);
+    margin-top: 0.6rem;
+    border: 1px solid rgba(54, 216, 255, 0.5);
+    border-radius: 10px;
+    background: transparent;
+    color: #36d8ff;
+    font-family: Unispace, monospace;
+    font-size: clamp(13px, 2vw, 15px);
+    cursor: pointer;
+    transition: background 0.2s ease-in-out, transform 0.15s ease-in-out;
+}
+.gmailButton:hover{
+    background: rgba(54, 216, 255, 0.1);
+    transform: scale(1.02);
+}
+
+.alternativa{
+    margin: 1rem 0 0;
+    text-align: center;
+    font-family: Unispace, monospace;
+    font-size: clamp(11px, 1.8vw, 13px);
+    color: #A8B3C7;
+    word-break: break-word;
+}
+.alternativa strong{ color: #36d8ff; font-weight: normal; }
