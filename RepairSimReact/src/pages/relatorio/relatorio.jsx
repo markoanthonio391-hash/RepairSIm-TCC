@@ -28,7 +28,6 @@ function registrarConquistasRelatorio(quantidadeItensSelecionados) {
     }
   }
 }
-  
 
 
 function Relatorio() {
@@ -272,6 +271,7 @@ function Relatorio() {
           conquistaRelatorioDisparada.current = true;
           registrarConquistasRelatorio(itensSelecionados.length);
         }
+
       })
 
       .catch(erro => {
